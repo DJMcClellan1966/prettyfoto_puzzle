@@ -13,7 +13,7 @@
     <meta name="apple-mobile-web-app-title" content="PrettyFoto">
     
     <!-- SEO -->
-    <meta name="description" content="Play daily sliding tile puzzles with beautiful nature photography. Create your own puzzle with any photo!">
+    <meta name="description" content="Play daily sliding tile puzzles with beautiful nature photography from PrettyFoto. New puzzle every day!">
     
     <link rel="stylesheet" href="styles.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -32,7 +32,7 @@
                 <button id="statsBtn" class="header-btn" title="Statistics">📊</button>
                 <button id="soundBtn" class="header-btn" title="Toggle Sound">🔊</button>
                 <a href="https://www.prettyfoto.com/shop-art" target="_blank" class="shop-link">
-                    Shop →
+                    Shop Art →
                 </a>
             </div>
         </header>
@@ -74,33 +74,17 @@
                     </div>
                 </div>
 
-                <!-- Create Your Own Section -->
-                <div class="create-section">
-                    <h2>🎨 Create Your Own</h2>
-                    <p>Upload any photo to make a puzzle</p>
-                    <div class="create-options">
-                        <label class="create-btn" for="uploadInput">
-                            📷 Upload Photo
-                            <input type="file" id="uploadInput" accept="image/*" hidden>
-                        </label>
-                        <button id="cameraBtn" class="create-btn camera-btn">
-                            📱 Take Photo
-                        </button>
-                    </div>
-                    <p class="create-note">Free to play • No account needed</p>
-                </div>
-
                 <!-- Gallery Section -->
                 <div class="free-play-section">
-                    <h2>PrettyFoto Gallery</h2>
-                    <p>Play with beautiful nature photography</p>
+                    <h2>Explore Gallery</h2>
+                    <p>20+ puzzles featuring nature photography</p>
                     
                     <!-- Category Filter -->
                     <div class="category-filter">
                         <button class="filter-btn active" data-category="all">All</button>
                         <button class="filter-btn" data-category="butterflies">🦋</button>
                         <button class="filter-btn" data-category="flowers">🌸</button>
-                        <button class="filter-btn" data-category="wildlife">🦌</button>
+                        <button class="filter-btn" data-category="horses">🐴</button>
                         <button class="filter-btn" data-category="landscapes">🏔️</button>
                     </div>
 
@@ -115,6 +99,7 @@
                         <a href="https://www.prettyfoto.com/shop-art" target="_blank" class="gallery-shop-btn">
                             Shop Art Prints at PrettyFoto.com
                         </a>
+                        <p class="cta-discount">Use code <strong>EVERYWHERE26</strong> for 25% off!</p>
                     </div>
                 </div>
             </section>
@@ -125,7 +110,7 @@
                 <div class="puzzle-nav">
                     <button id="backBtn" class="icon-btn">← Back</button>
                     <a id="shopLink" href="#" target="_blank" class="shop-btn">
-                        🛒 Shop Print
+                        🛒 Buy This Print
                     </a>
                 </div>
 
@@ -133,7 +118,6 @@
                 <div class="puzzle-title-bar">
                     <h2 id="puzzleTitle">Puzzle</h2>
                     <span id="dailyBadge" class="daily-badge-small hidden">Daily #<span id="dailyBadgeNum">1</span></span>
-                    <span id="customBadge" class="custom-badge hidden">Your Photo</span>
                 </div>
 
                 <!-- Difficulty Selection -->
@@ -180,8 +164,8 @@
                         </div>
                     </div>
 
-                    <!-- Shuffle button -->
-                    <button id="shuffleBtn" class="shuffle-btn">🔀 Shuffle Again</button>
+                    <!-- Shuffle button (non-daily only) -->
+                    <button id="shuffleBtn" class="shuffle-btn hidden">🔀 Shuffle Again</button>
                 </div>
             </section>
         </main>
@@ -191,7 +175,7 @@
             <div class="modal-content onboarding-modal">
                 <div class="onboarding-slide active" data-slide="1">
                     <div class="onboarding-icon">🧩</div>
-                    <h2>Welcome!</h2>
+                    <h2>Welcome to PrettyFoto Puzzles!</h2>
                     <p>Solve beautiful nature photo puzzles</p>
                 </div>
                 <div class="onboarding-slide" data-slide="2">
@@ -202,19 +186,13 @@
                 <div class="onboarding-slide" data-slide="3">
                     <div class="onboarding-icon">📅</div>
                     <h2>Daily Challenge</h2>
-                    <p>New puzzle every day - same for everyone!</p>
-                </div>
-                <div class="onboarding-slide" data-slide="4">
-                    <div class="onboarding-icon">📷</div>
-                    <h2>Create Your Own</h2>
-                    <p>Upload any photo to make your own puzzle!</p>
+                    <p>New puzzle every day - track your streak!</p>
                 </div>
                 <div class="onboarding-nav">
                     <div class="onboarding-dots">
                         <span class="dot active" data-slide="1"></span>
                         <span class="dot" data-slide="2"></span>
                         <span class="dot" data-slide="3"></span>
-                        <span class="dot" data-slide="4"></span>
                     </div>
                     <button id="onboardingNext" class="onboarding-btn">Next</button>
                 </div>
@@ -227,11 +205,9 @@
                 <button id="closeEmail" class="close-btn">×</button>
                 <div class="email-icon">🎁</div>
                 <h2>Nice Solve!</h2>
-                <p>Get <strong>20% off</strong> your first art print + daily puzzle reminders</p>
-                <form id="emailForm" class="email-form">
-                    <input type="email" id="emailInput" placeholder="Enter your email" required>
-                    <button type="submit" class="email-submit">Get My Discount</button>
-                </form>
+                <p>Get <strong>25% off</strong> your first art print!</p>
+                <p class="email-subtext">Use code: <strong>EVERYWHERE26</strong></p>
+                <a href="https://www.prettyfoto.com/shop-art" target="_blank" class="email-shop-btn">Shop Now →</a>
                 <button id="skipEmail" class="skip-link">Maybe later</button>
             </div>
         </div>
@@ -292,18 +268,19 @@
                     </div>
                 </div>
                 
-                <!-- Share Section -->
+                <!-- Share Section (Daily only) -->
                 <div id="shareSection" class="share-section hidden">
                     <button id="shareResultBtn" class="share-btn large">📤 Share Result</button>
                     <p id="copiedMsg" class="copied-msg hidden">Copied to clipboard!</p>
                 </div>
 
-                <!-- Shop CTA (PrettyFoto images only) -->
-                <div id="completionCta" class="completion-cta">
-                    <p>Love this image?</p>
+                <!-- Shop CTA - Always visible -->
+                <div class="completion-cta">
+                    <p>Love this image? Own it as a print!</p>
                     <a id="completionShopLink" href="#" target="_blank" class="cta-btn primary">
-                        🛒 Shop This Print
+                        🛒 Shop This Print - 25% Off
                     </a>
+                    <p class="cta-code">Code: EVERYWHERE26</p>
                 </div>
                 
                 <div class="completion-actions">
@@ -326,7 +303,7 @@
 
         <!-- Footer -->
         <footer class="footer">
-            <p>Photos by <a href="https://www.prettyfoto.com" target="_blank">PrettyFoto.com</a></p>
+            <p>Photos by <a href="https://www.prettyfoto.com" target="_blank">PrettyFoto.com</a> • <a href="https://www.prettyfoto.com/shop-art" target="_blank">Shop Art</a></p>
             <button id="installBtn" class="install-btn hidden">📲 Install App</button>
         </footer>
     </div>

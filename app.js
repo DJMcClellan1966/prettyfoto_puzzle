@@ -1,9 +1,9 @@
-// PrettyFoto Daily Puzzle - With Custom Upload Feature
-// 12 unique PrettyFoto images + user uploaded photos
+// PrettyFoto Daily Puzzle - Streamlined for Sales
+// 20 unique PrettyFoto images - all driving to shop
 
-// ============ PUZZLE DATA (12 Unique Images) ============
+// ============ PUZZLE DATA (20 Unique Images) ============
 const puzzles = [
-    // Butterflies
+    // Butterflies (3)
     { 
         id: 1, 
         title: "Whimsical Wings", 
@@ -13,7 +13,7 @@ const puzzles = [
     },
     { 
         id: 2, 
-        title: "Magic Moment", 
+        title: "Flutter By", 
         category: "butterflies", 
         image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1700943044/2264CA79-BD70-48AD-966D-DD9AF33E3D96_wsxgg7.jpg", 
         shopUrl: "https://www.prettyfoto.com/butterflies-in-nature" 
@@ -26,7 +26,7 @@ const puzzles = [
         shopUrl: "https://www.prettyfoto.com/butterflies-in-nature" 
     },
     
-    // Flowers  
+    // Flowers - Tulips, Orchids, Water Lilies (9)
     { 
         id: 4, 
         title: "Pink Paradise", 
@@ -62,37 +62,93 @@ const puzzles = [
         image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1719113391/2N4A5107_imfztx.jpg", 
         shopUrl: "https://www.prettyfoto.com/orchids" 
     },
-    
-    // Wildlife
     { 
         id: 9, 
+        title: "Water Lily Afternoon", 
+        category: "flowers", 
+        image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1714324985/IMG_1453_ypftdw.jpg", 
+        shopUrl: "https://www.prettyfoto.com/floating-gems-water-lilies" 
+    },
+    { 
+        id: 10, 
+        title: "Best in Show", 
+        category: "flowers", 
+        image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1700958423/IMG_8345_maatlv.jpg", 
+        shopUrl: "https://www.prettyfoto.com/floating-gems-water-lilies" 
+    },
+    { 
+        id: 11, 
+        title: "Sunny Daze", 
+        category: "flowers", 
+        image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1719113429/2N4A5194_situp5.jpg", 
+        shopUrl: "https://www.prettyfoto.com/sun-kissed-sunflowers" 
+    },
+    { 
+        id: 12, 
+        title: "Center Stage", 
+        category: "flowers", 
+        image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1719113491/2N4A5195_d6urme.jpg", 
+        shopUrl: "https://www.prettyfoto.com/sun-kissed-sunflowers" 
+    },
+    { 
+        id: 13, 
+        title: "Cherry Swirl", 
+        category: "flowers", 
+        image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1737159084/IMG_1512_q9xltq.jpg", 
+        shopUrl: "https://www.prettyfoto.com/pretty-in-pink-cherry-blossoms" 
+    },
+    
+    // Horses (4)
+    { 
+        id: 14, 
+        title: "Golden Days", 
+        category: "horses", 
+        image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1719113644/2N4A4928_ugnovr.jpg", 
+        shopUrl: "https://www.prettyfoto.com/equine-beauties" 
+    },
+    { 
+        id: 15, 
+        title: "Magic Moment", 
+        category: "horses", 
+        image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1708488576/IMG_2866_b8y05a.jpg", 
+        shopUrl: "https://www.prettyfoto.com/equine-beauties" 
+    },
+    { 
+        id: 16, 
         title: "Gentle Giant", 
-        category: "wildlife", 
+        category: "horses", 
         image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1701103235/IMG_0726_dk7hqu.jpg", 
         shopUrl: "https://www.prettyfoto.com/wildlifefcmiacr2jse" 
     },
     { 
-        id: 10, 
+        id: 17, 
         title: "Wild Motion", 
-        category: "wildlife", 
+        category: "horses", 
         image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1700942833/IMG_0261_kxgqjx.jpg", 
         shopUrl: "https://www.prettyfoto.com/wildlifefcmiacr2jse" 
     },
     
-    // Landscapes
+    // Landscapes - Mountains & Sunsets (3)
     { 
-        id: 11, 
+        id: 18, 
         title: "Mountain Majesty", 
         category: "landscapes", 
         image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1701103309/IMG_7621_eonzfe.jpg", 
         shopUrl: "https://www.prettyfoto.com/mountains" 
     },
     { 
-        id: 12, 
+        id: 19, 
         title: "An Unexpected View", 
         category: "landscapes", 
         image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1719113577/IMG_2394_nbgkpf.jpg", 
         shopUrl: "https://www.prettyfoto.com/mountains" 
+    },
+    { 
+        id: 20, 
+        title: "Golden Shimmer", 
+        category: "landscapes", 
+        image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1700942833/IMG_0261_kxgqjx.jpg", 
+        shopUrl: "https://www.prettyfoto.com/shimmering-sunshine-sunsets" 
     },
 ];
 
@@ -104,7 +160,6 @@ const DAY_MS = 24 * 60 * 60 * 1000;
 // ============ GAME STATE ============
 let currentPuzzle = null;
 let isDaily = false;
-let isCustom = false;
 let gridSize = 4;
 let tiles = [];
 let emptyIndex = 0;
@@ -116,7 +171,6 @@ let tileImages = [];
 let shuffleSeed = 0;
 let soundEnabled = true;
 let deferredPrompt = null;
-let customImageData = null;
 
 // ============ STATS ============
 let stats = {
@@ -131,8 +185,7 @@ let stats = {
     todayMoves: 0,
     todayTime: 0,
     hasSeenOnboarding: false,
-    hasSeenEmailPrompt: false,
-    email: null
+    hasSeenPromo: false
 };
 
 // ============ AUDIO ============
@@ -293,7 +346,7 @@ function setupEventListeners() {
     // Hint button
     document.getElementById('hintBtn').addEventListener('click', showHint);
     
-    // Shuffle button
+    // Shuffle button (non-daily only)
     document.getElementById('shuffleBtn').addEventListener('click', () => {
         if (isDaily) return;
         shuffleSeed = Date.now();
@@ -327,7 +380,7 @@ function setupEventListeners() {
     let currentSlide = 1;
     document.getElementById('onboardingNext').addEventListener('click', () => {
         playSound('click');
-        if (currentSlide < 4) {
+        if (currentSlide < 3) {
             currentSlide++;
             updateOnboardingSlide(currentSlide);
         } else {
@@ -344,32 +397,12 @@ function setupEventListeners() {
         });
     });
     
-    // Email modal
+    // Email/Promo modal
     document.getElementById('closeEmail').addEventListener('click', () => emailModal.classList.add('hidden'));
     document.getElementById('skipEmail').addEventListener('click', () => {
         emailModal.classList.add('hidden');
-        stats.hasSeenEmailPrompt = true;
+        stats.hasSeenPromo = true;
         saveStats();
-    });
-    
-    document.getElementById('emailForm').addEventListener('submit', (e) => {
-        e.preventDefault();
-        const email = document.getElementById('emailInput').value;
-        stats.email = email;
-        stats.hasSeenEmailPrompt = true;
-        saveStats();
-        emailModal.classList.add('hidden');
-        alert('Thanks! Check your email for your 20% discount code.');
-    });
-    
-    // Custom puzzle upload
-    document.getElementById('uploadInput').addEventListener('change', handleImageUpload);
-    document.getElementById('cameraBtn').addEventListener('click', () => {
-        // Trigger file input with camera on mobile
-        const input = document.getElementById('uploadInput');
-        input.setAttribute('capture', 'environment');
-        input.click();
-        input.removeAttribute('capture');
     });
     
     // Close modals
@@ -382,70 +415,6 @@ function setupEventListeners() {
     });
 }
 
-// ============ CUSTOM PUZZLE UPLOAD ============
-function handleImageUpload(e) {
-    const file = e.target.files[0];
-    if (!file) return;
-    
-    playSound('click');
-    
-    const reader = new FileReader();
-    reader.onload = (event) => {
-        // Create square cropped version
-        const img = new Image();
-        img.onload = () => {
-            const canvas = document.createElement('canvas');
-            const size = Math.min(img.width, img.height);
-            canvas.width = 600;
-            canvas.height = 600;
-            const ctx = canvas.getContext('2d');
-            
-            // Center crop to square
-            const sx = (img.width - size) / 2;
-            const sy = (img.height - size) / 2;
-            ctx.drawImage(img, sx, sy, size, size, 0, 0, 600, 600);
-            
-            customImageData = canvas.toDataURL('image/jpeg', 0.9);
-            startCustomPuzzle();
-        };
-        img.src = event.target.result;
-    };
-    reader.readAsDataURL(file);
-    
-    // Reset input so same file can be selected again
-    e.target.value = '';
-}
-
-function startCustomPuzzle() {
-    isDaily = false;
-    isCustom = true;
-    currentPuzzle = {
-        title: "Your Photo",
-        category: "custom",
-        image: customImageData,
-        shopUrl: null
-    };
-    
-    shuffleSeed = Date.now();
-    
-    puzzleTitle.textContent = "Your Photo";
-    puzzlePreview.src = customImageData;
-    document.getElementById('hintImage').src = customImageData;
-    
-    // Hide shop button for custom puzzles
-    shopLink.classList.add('hidden');
-    document.getElementById('dailyBadge').classList.add('hidden');
-    document.getElementById('customBadge').classList.remove('hidden');
-    document.getElementById('shuffleBtn').classList.remove('hidden');
-    
-    homeView.classList.add('hidden');
-    puzzleView.classList.remove('hidden');
-    difficultySelect.classList.remove('hidden');
-    gameArea.classList.add('hidden');
-    
-    resetGame();
-}
-
 function updateOnboardingSlide(num) {
     document.querySelectorAll('.onboarding-slide').forEach(s => s.classList.remove('active'));
     document.querySelectorAll('.onboarding-dots .dot').forEach(d => d.classList.remove('active'));
@@ -453,7 +422,7 @@ function updateOnboardingSlide(num) {
     document.querySelector(`.onboarding-slide[data-slide="${num}"]`).classList.add('active');
     document.querySelector(`.dot[data-slide="${num}"]`).classList.add('active');
     
-    document.getElementById('onboardingNext').textContent = num === 4 ? "Let's Play!" : 'Next';
+    document.getElementById('onboardingNext').textContent = num === 3 ? "Let's Play!" : 'Next';
 }
 
 function toggleSound() {
@@ -521,7 +490,6 @@ function hideDailyCompleted() {
 function playDaily() {
     playSound('click');
     isDaily = true;
-    isCustom = false;
     currentPuzzle = getDailyPuzzle();
     gridSize = 4;
     shuffleSeed = getDailyPuzzleNumber();
@@ -529,13 +497,11 @@ function playDaily() {
     puzzleTitle.textContent = currentPuzzle.title;
     puzzlePreview.src = currentPuzzle.image;
     shopLink.href = currentPuzzle.shopUrl;
-    shopLink.classList.remove('hidden');
     document.getElementById('completionShopLink').href = currentPuzzle.shopUrl;
     document.getElementById('hintImage').src = currentPuzzle.image;
     
     document.getElementById('dailyBadge').classList.remove('hidden');
     document.getElementById('dailyBadgeNum').textContent = getDailyPuzzleNumber();
-    document.getElementById('customBadge').classList.add('hidden');
     document.getElementById('shuffleBtn').classList.add('hidden');
     
     homeView.classList.add('hidden');
@@ -586,7 +552,6 @@ function renderGallery(category = 'all') {
 function selectPuzzle(id) {
     playSound('click');
     isDaily = false;
-    isCustom = false;
     currentPuzzle = puzzles.find(p => p.id === id);
     if (!currentPuzzle) return;
     
@@ -595,12 +560,10 @@ function selectPuzzle(id) {
     puzzleTitle.textContent = currentPuzzle.title;
     puzzlePreview.src = currentPuzzle.image;
     shopLink.href = currentPuzzle.shopUrl;
-    shopLink.classList.remove('hidden');
     document.getElementById('completionShopLink').href = currentPuzzle.shopUrl;
     document.getElementById('hintImage').src = currentPuzzle.image;
     
     document.getElementById('dailyBadge').classList.add('hidden');
-    document.getElementById('customBadge').classList.add('hidden');
     document.getElementById('shuffleBtn').classList.remove('hidden');
     
     homeView.classList.add('hidden');
@@ -829,15 +792,7 @@ function puzzleComplete() {
     document.getElementById('completedImage').src = currentPuzzle.image;
     document.getElementById('finalTime').textContent = formatTime(seconds);
     document.getElementById('finalMoves').textContent = moves;
-    
-    // Show/hide shop CTA based on puzzle type
-    const completionCta = document.getElementById('completionCta');
-    if (isCustom) {
-        completionCta.classList.add('hidden');
-    } else {
-        completionCta.classList.remove('hidden');
-        document.getElementById('completionShopLink').href = currentPuzzle.shopUrl;
-    }
+    document.getElementById('completionShopLink').href = currentPuzzle.shopUrl;
     
     if (isDaily) {
         document.getElementById('shareSection').classList.remove('hidden');
@@ -864,7 +819,8 @@ function puzzleComplete() {
         
         saveStats();
         
-        if (!stats.hasSeenEmailPrompt && stats.played === 1) {
+        // Show promo after first completion
+        if (!stats.hasSeenPromo && stats.played === 1) {
             setTimeout(() => emailModal.classList.remove('hidden'), 2000);
         }
     } else {
