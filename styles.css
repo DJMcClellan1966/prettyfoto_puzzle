@@ -416,6 +416,26 @@ body {
     background: var(--border);
 }
 
+.nav-links {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.gallery-link {
+    padding: 8px 12px;
+    background: var(--bg-secondary);
+    color: var(--text);
+    text-decoration: none;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.gallery-link:active {
+    background: var(--border);
+}
+
 .shop-btn {
     padding: 10px 16px;
     background: var(--accent);
@@ -1080,6 +1100,24 @@ body {
     background: var(--bg);
     color: var(--text);
     border: 2px solid var(--border);
+}
+
+.cta-btn.gallery {
+    background: var(--bg-secondary);
+    color: var(--text);
+}
+
+.completion-links {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 8px;
+}
+
+.completion-links .cta-btn {
+    padding: 12px 18px;
+    font-size: 14px;
 }
 
 .completion-actions {

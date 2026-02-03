@@ -1,141 +1,151 @@
 // PrettyFoto Daily Puzzle - Streamlined for Sales
 // 20 unique PrettyFoto images - all driving to shop
 
-// ============ PUZZLE DATA (18 Unique Images with Direct Product Links) ============
+// ============ PUZZLE DATA (16 Verified Images) ============
+// Each puzzle has: shopUrl (direct product page) and galleryUrl (collection page)
 const puzzles = [
-    // Butterflies (3)
+    // Butterflies (2)
     { 
         id: 1, 
         title: "Whimsical Wings", 
         category: "butterflies", 
         image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1700942833/IMG_8687_vttrql.jpg", 
-        shopUrl: "https://www.prettyfoto.com/butterflies-in-nature" 
+        shopUrl: "https://www.prettyfoto.com/butterflies-in-nature",
+        galleryUrl: "https://www.prettyfoto.com/butterflies-in-nature"
     },
     { 
         id: 2, 
-        title: "Flutter By", 
-        category: "butterflies", 
-        image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1700943044/2264CA79-BD70-48AD-966D-DD9AF33E3D96_wsxgg7.jpg", 
-        shopUrl: "https://www.prettyfoto.com/butterflies-in-nature" 
-    },
-    { 
-        id: 3, 
         title: "Sitting Pretty", 
         category: "butterflies", 
         image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1700942834/IMG_8255_mvuquo.jpg", 
-        shopUrl: "https://www.prettyfoto.com/butterflies-in-nature" 
+        shopUrl: "https://www.prettyfoto.com/butterflies-in-nature",
+        galleryUrl: "https://www.prettyfoto.com/butterflies-in-nature"
     },
     
     // Flowers - Tulips (3)
     { 
-        id: 4, 
+        id: 3, 
         title: "Pink Paradise", 
         category: "flowers", 
         image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1700942939/IMG_8239_lxnueh.jpg", 
-        shopUrl: "https://www.prettyfoto.com/flowersqzw7qvx8g60" 
+        shopUrl: "https://www.prettyfoto.com/flowersqzw7qvx8g60",
+        galleryUrl: "https://www.prettyfoto.com/flowersqzw7qvx8g60"
     },
     { 
-        id: 5, 
+        id: 4, 
         title: "My One and Only", 
         category: "flowers", 
         image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1737159079/IMG_0594_yndoza.jpg", 
-        shopUrl: "https://www.prettyfoto.com/tulips" 
+        shopUrl: "https://www.prettyfoto.com/tulips",
+        galleryUrl: "https://www.prettyfoto.com/tulips"
     },
     { 
-        id: 6, 
+        id: 5, 
         title: "Love's Flame", 
         category: "flowers", 
         image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1737159079/IMG_0631_nuav1f.jpg", 
-        shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/img-0631?product_gallery=302625&product_id=7841103" 
+        shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/img-0631?product_gallery=302625&product_id=7841103",
+        galleryUrl: "https://www.prettyfoto.com/tulips"
     },
     
     // Flowers - Orchids (2)
     { 
-        id: 7, 
+        id: 6, 
         title: "On the Move", 
         category: "flowers", 
         image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1693521613/Jennifer_McClellan_Img_0261_giehor.jpg", 
-        shopUrl: "https://www.prettyfoto.com/orchids" 
+        shopUrl: "https://www.prettyfoto.com/orchids",
+        galleryUrl: "https://www.prettyfoto.com/orchids"
     },
     { 
-        id: 8, 
+        id: 7, 
         title: "Pretty on Point", 
         category: "flowers", 
         image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1719113391/2N4A5107_imfztx.jpg", 
-        shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/2n4a5107?product_gallery=302623&product_id=7331073" 
+        shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/2n4a5107?product_gallery=302623&product_id=7331073",
+        galleryUrl: "https://www.prettyfoto.com/orchids"
     },
     
     // Flowers - Water Lilies (2)
     { 
-        id: 9, 
+        id: 8, 
         title: "Water Lily Afternoon", 
         category: "flowers", 
         image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1714324985/IMG_1453_ypftdw.jpg", 
-        shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/img-1453?product_gallery=327276&product_id=7186902" 
+        shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/img-1453?product_gallery=327276&product_id=7186902",
+        galleryUrl: "https://www.prettyfoto.com/floating-gems-water-lilies"
     },
     { 
-        id: 10, 
+        id: 9, 
         title: "Best in Show", 
         category: "flowers", 
         image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1700958423/IMG_8345_maatlv.jpg", 
-        shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/img-8345?product_gallery=327276&product_id=6666746" 
+        shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/img-8345?product_gallery=327276&product_id=6666746",
+        galleryUrl: "https://www.prettyfoto.com/floating-gems-water-lilies"
     },
     
     // Flowers - Sunflowers (2)
     { 
-        id: 11, 
+        id: 10, 
         title: "Sunny Daze", 
         category: "flowers", 
         image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1719113429/2N4A5194_situp5.jpg", 
-        shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/2n4a5194?product_gallery=342700&product_id=7331079" 
+        shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/2n4a5194?product_gallery=342700&product_id=7331079",
+        galleryUrl: "https://www.prettyfoto.com/sun-kissed-sunflowers"
     },
     { 
-        id: 12, 
+        id: 11, 
         title: "Center Stage", 
         category: "flowers", 
         image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1719113491/2N4A5195_d6urme.jpg", 
-        shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/2n4a5195?product_gallery=342700&product_id=7331092" 
+        shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/2n4a5195?product_gallery=342700&product_id=7331092",
+        galleryUrl: "https://www.prettyfoto.com/sun-kissed-sunflowers"
     },
     
     // Flowers - Cherry Blossoms (1)
     { 
-        id: 13, 
+        id: 12, 
         title: "Cherry Swirl", 
         category: "flowers", 
         image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1737159084/IMG_1512_q9xltq.jpg", 
-        shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/img-1512?product_gallery=332734&product_id=7841125" 
+        shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/img-1512?product_gallery=332734&product_id=7841125",
+        galleryUrl: "https://www.prettyfoto.com/pretty-in-pink-cherry-blossoms"
     },
     
-    // Horses (3)
+    // Horses (2)
     { 
-        id: 14, 
+        id: 13, 
         title: "Golden Days", 
         category: "horses", 
         image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1719113644/2N4A4928_ugnovr.jpg", 
-        shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/2n4a4928?product_gallery=331150&product_id=7331108" 
+        shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/2n4a4928?product_gallery=331150&product_id=7331108",
+        galleryUrl: "https://www.prettyfoto.com/equine-beauties"
     },
     { 
-        id: 15, 
+        id: 14, 
         title: "Magic Moment", 
         category: "horses", 
         image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1708488576/IMG_2866_b8y05a.jpg", 
-        shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/img-2866?product_gallery=331150&product_id=6987885" 
+        shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/img-2866?product_gallery=331150&product_id=6987885",
+        galleryUrl: "https://www.prettyfoto.com/equine-beauties"
     },
     
     // Landscapes - Mountains (2)
     { 
-        id: 16, 
+        id: 15, 
         title: "Mountain Majesty", 
         category: "landscapes", 
         image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1701103309/IMG_7621_eonzfe.jpg", 
-        shopUrl: "https://www.prettyfoto.com/mountains" 
+        shopUrl: "https://www.prettyfoto.com/mountains",
+        galleryUrl: "https://www.prettyfoto.com/mountains"
     },
     { 
-        id: 17, 
+        id: 16, 
         title: "An Unexpected View", 
         category: "landscapes", 
         image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1719113577/IMG_2394_nbgkpf.jpg", 
-        shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/img-2394?product_gallery=303977&product_id=7331099" 
+        shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/img-2394?product_gallery=303977&product_id=7331099",
+        galleryUrl: "https://www.prettyfoto.com/mountains"
     },
 ];
 
@@ -484,7 +494,9 @@ function playDaily() {
     puzzleTitle.textContent = currentPuzzle.title;
     puzzlePreview.src = currentPuzzle.image;
     shopLink.href = currentPuzzle.shopUrl;
+    document.getElementById('galleryLink').href = currentPuzzle.galleryUrl;
     document.getElementById('completionShopLink').href = currentPuzzle.shopUrl;
+    document.getElementById('completionGalleryLink').href = currentPuzzle.galleryUrl;
     document.getElementById('hintImage').src = currentPuzzle.image;
     
     document.getElementById('dailyBadge').classList.remove('hidden');
@@ -547,7 +559,9 @@ function selectPuzzle(id) {
     puzzleTitle.textContent = currentPuzzle.title;
     puzzlePreview.src = currentPuzzle.image;
     shopLink.href = currentPuzzle.shopUrl;
+    document.getElementById('galleryLink').href = currentPuzzle.galleryUrl;
     document.getElementById('completionShopLink').href = currentPuzzle.shopUrl;
+    document.getElementById('completionGalleryLink').href = currentPuzzle.galleryUrl;
     document.getElementById('hintImage').src = currentPuzzle.image;
     
     document.getElementById('dailyBadge').classList.add('hidden');
