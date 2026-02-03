@@ -1,65 +1,78 @@
 // PrettyFoto Daily Puzzle - Enhanced Version
-// Features: 50+ puzzles, sounds, haptics, PWA, onboarding, email capture
+// Features: unique puzzles, sounds, haptics, PWA, onboarding, email capture
 
-// ============ PUZZLE DATA (50+ images) ============
+// ============ PUZZLE DATA (All Unique Images) ============
 const puzzles = [
-    // Butterflies
-    { id: 1, title: "Whimsical Wings", category: "butterflies", image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1700942833/IMG_8687_vttrql.jpg", shopUrl: "https://www.prettyfoto.com/butterflies-in-nature" },
-    { id: 2, title: "Magic Moment", category: "butterflies", image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1700943044/2264CA79-BD70-48AD-966D-DD9AF33E3D96_wsxgg7.jpg", shopUrl: "https://www.prettyfoto.com/butterflies-in-nature" },
-    { id: 3, title: "Sitting Pretty", category: "butterflies", image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1700942834/IMG_8255_mvuquo.jpg", shopUrl: "https://www.prettyfoto.com/butterflies-in-nature" },
-    { id: 4, title: "Cherry on Top", category: "butterflies", image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1700942833/IMG_8687_vttrql.jpg", shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/img-1842?product_gallery=303973&product_id=7351866" },
-    { id: 5, title: "Mountain Swallowtail", category: "butterflies", image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1700942834/IMG_8255_mvuquo.jpg", shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/img-1975-t0hbw6ubu-y?product_gallery=303973&product_id=7351867" },
-    { id: 6, title: "Nature's Moments", category: "butterflies", image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1700943044/2264CA79-BD70-48AD-966D-DD9AF33E3D96_wsxgg7.jpg", shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/img-1973?product_gallery=303973&product_id=7351871" },
-    { id: 7, title: "Plum Pretty", category: "butterflies", image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1700942833/IMG_8687_vttrql.jpg", shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/2n4a4349?product_gallery=303973&product_id=7186315" },
-    { id: 8, title: "Nature's Palette", category: "butterflies", image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1700942834/IMG_8255_mvuquo.jpg", shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/img-1846?product_gallery=303973&product_id=7186903" },
-    { id: 9, title: "Pure Magic", category: "butterflies", image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1700943044/2264CA79-BD70-48AD-966D-DD9AF33E3D96_wsxgg7.jpg", shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/img-1794?product_gallery=303973&product_id=7186916" },
-    { id: 10, title: "Nature's Jewel", category: "butterflies", image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1700942833/IMG_8687_vttrql.jpg", shopUrl: "https://www.prettyfoto.com/butterflies-in-nature" },
-    { id: 11, title: "Bold and Beautiful", category: "butterflies", image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1700942834/IMG_8255_mvuquo.jpg", shopUrl: "https://www.prettyfoto.com/butterflies-in-nature" },
-    { id: 12, title: "Divine Visitor", category: "butterflies", image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1700943044/2264CA79-BD70-48AD-966D-DD9AF33E3D96_wsxgg7.jpg", shopUrl: "https://www.prettyfoto.com/butterflies-in-nature" },
+    // Butterflies - Unique images
+    { 
+        id: 1, 
+        title: "Whimsical Wings", 
+        category: "butterflies", 
+        image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1700942833/IMG_8687_vttrql.jpg", 
+        shopUrl: "https://www.prettyfoto.com/butterflies-in-nature" 
+    },
+    { 
+        id: 2, 
+        title: "Magic Moment", 
+        category: "butterflies", 
+        image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1700943044/2264CA79-BD70-48AD-966D-DD9AF33E3D96_wsxgg7.jpg", 
+        shopUrl: "https://www.prettyfoto.com/butterflies-in-nature" 
+    },
+    { 
+        id: 3, 
+        title: "Sitting Pretty", 
+        category: "butterflies", 
+        image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1700942834/IMG_8255_mvuquo.jpg", 
+        shopUrl: "https://www.prettyfoto.com/butterflies-in-nature" 
+    },
     
-    // Flowers
-    { id: 13, title: "Pink Paradise", category: "flowers", image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1700942939/IMG_8239_lxnueh.jpg", shopUrl: "https://www.prettyfoto.com/flowersqzw7qvx8g60" },
-    { id: 14, title: "Star Burst", category: "flowers", image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1700942939/IMG_8239_lxnueh.jpg", shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/img-0654?product_gallery=302637&product_id=7841085" },
-    { id: 15, title: "Just for You", category: "flowers", image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1700942939/IMG_8239_lxnueh.jpg", shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/2n4a3727?product_gallery=302637&product_id=7841084" },
-    { id: 16, title: "Grace", category: "flowers", image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1700942939/IMG_8239_lxnueh.jpg", shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/2n4a4320?product_gallery=302637&product_id=7351863" },
-    { id: 17, title: "Pretty Towers", category: "flowers", image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1700942939/IMG_8239_lxnueh.jpg", shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/2n4a4415?product_gallery=302637&product_id=7351868" },
-    { id: 18, title: "The Forbidden Garden", category: "flowers", image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1700942939/IMG_8239_lxnueh.jpg", shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/2n4a5020?product_gallery=302637&product_id=7331074" },
-    { id: 19, title: "It's Pink!", category: "flowers", image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1700942939/IMG_8239_lxnueh.jpg", shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/2n4a4717?product_gallery=302637&product_id=7331087" },
-    { id: 20, title: "Happiness in a Garden", category: "flowers", image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1700942939/IMG_8239_lxnueh.jpg", shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/2n4a4987?product_gallery=302637&product_id=7331090" },
-    { id: 21, title: "Floating Meadow Glow", category: "flowers", image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1700942939/IMG_8239_lxnueh.jpg", shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/2n4a5131?product_gallery=302637&product_id=7331100" },
-    { id: 22, title: "Peace Out", category: "flowers", image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1700942939/IMG_8239_lxnueh.jpg", shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/img-2399?product_gallery=302637&product_id=7331111" },
-    { id: 23, title: "Bluebells Please", category: "flowers", image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1700942939/IMG_8239_lxnueh.jpg", shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/2n4a4327?product_gallery=302637&product_id=7351878" },
-    { id: 24, title: "The Queen's Garden", category: "flowers", image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1700942939/IMG_8239_lxnueh.jpg", shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/2n4a4719?product_gallery=302637&product_id=7331097" },
-    { id: 25, title: "I Dream in Purple", category: "flowers", image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1700942939/IMG_8239_lxnueh.jpg", shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/img-1324?product_gallery=302637&product_id=7186913" },
+    // Flowers - Unique images  
+    { 
+        id: 4, 
+        title: "Pink Paradise", 
+        category: "flowers", 
+        image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1700942939/IMG_8239_lxnueh.jpg", 
+        shopUrl: "https://www.prettyfoto.com/flowersqzw7qvx8g60" 
+    },
+    { 
+        id: 5, 
+        title: "My One and Only", 
+        category: "flowers", 
+        image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1737159079/IMG_0594_yndoza.jpg", 
+        shopUrl: "https://www.prettyfoto.com/tulips" 
+    },
+    { 
+        id: 6, 
+        title: "On the Move", 
+        category: "flowers", 
+        image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1693521613/Jennifer_McClellan_Img_0261_giehor.jpg", 
+        shopUrl: "https://www.prettyfoto.com/orchids" 
+    },
     
-    // Wildlife
-    { id: 26, title: "On The Move", category: "wildlife", image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1700942833/IMG_0261_kxgqjx.jpg", shopUrl: "https://www.prettyfoto.com/wildlifefcmiacr2jse" },
-    { id: 27, title: "Gentle Giant", category: "wildlife", image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1701103235/IMG_0726_dk7hqu.jpg", shopUrl: "https://www.prettyfoto.com/wildlifefcmiacr2jse" },
-    { id: 28, title: "Wild Spirit", category: "wildlife", image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1700942833/IMG_0261_kxgqjx.jpg", shopUrl: "https://www.prettyfoto.com/equine-beauties" },
-    { id: 29, title: "Counting Sheep", category: "wildlife", image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1701103235/IMG_0726_dk7hqu.jpg", shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/2n4a4750?product_gallery=303977&product_id=7331089" },
-    { id: 30, title: "Counting Sheep 2", category: "wildlife", image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1700942833/IMG_0261_kxgqjx.jpg", shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/2n4a4751?product_gallery=303977&product_id=7331096" },
-    { id: 31, title: "Equine Beauty", category: "wildlife", image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1701103235/IMG_0726_dk7hqu.jpg", shopUrl: "https://www.prettyfoto.com/equine-beauties" },
-    { id: 32, title: "Farm Friends", category: "wildlife", image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1700942833/IMG_0261_kxgqjx.jpg", shopUrl: "https://www.prettyfoto.com/blissful-spaces-farm-fields" },
+    // Wildlife - Unique images
+    { 
+        id: 7, 
+        title: "Gentle Giant", 
+        category: "wildlife", 
+        image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1701103235/IMG_0726_dk7hqu.jpg", 
+        shopUrl: "https://www.prettyfoto.com/wildlifefcmiacr2jse" 
+    },
+    { 
+        id: 8, 
+        title: "Wild Motion", 
+        category: "wildlife", 
+        image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1700942833/IMG_0261_kxgqjx.jpg", 
+        shopUrl: "https://www.prettyfoto.com/wildlifefcmiacr2jse" 
+    },
     
-    // Landscapes
-    { id: 33, title: "Mountain Majesty", category: "landscapes", image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1701103309/IMG_7621_eonzfe.jpg", shopUrl: "https://www.prettyfoto.com/mountains" },
-    { id: 34, title: "An Unexpected View", category: "landscapes", image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1701103309/IMG_7621_eonzfe.jpg", shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/img-2394?product_gallery=303977&product_id=7331099" },
-    { id: 35, title: "The Grand View", category: "landscapes", image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1701103309/IMG_7621_eonzfe.jpg", shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/2n4a5212?product_gallery=303977&product_id=7331103" },
-    { id: 36, title: "One Last Moment", category: "landscapes", image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1701103309/IMG_7621_eonzfe.jpg", shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/img-2396?product_gallery=303977&product_id=7331093" },
-    { id: 37, title: "In a Land Far Away", category: "landscapes", image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1701103309/IMG_7621_eonzfe.jpg", shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/img-2397?product_gallery=303977&product_id=7331094" },
-    { id: 38, title: "Painted Mountain", category: "landscapes", image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1701103309/IMG_7621_eonzfe.jpg", shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/img-2118?product_gallery=303977&product_id=7351870" },
-    { id: 39, title: "Nature's Frame", category: "landscapes", image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1701103309/IMG_7621_eonzfe.jpg", shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/img-2395?product_gallery=303977&product_id=7331110" },
-    { id: 40, title: "Blue Vista", category: "landscapes", image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1701103309/IMG_7621_eonzfe.jpg", shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/img-2113?product_gallery=303977&product_id=7188706" },
-    { id: 41, title: "A Fine Day", category: "landscapes", image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1701103309/IMG_7621_eonzfe.jpg", shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/img-2115?product_gallery=303977&product_id=7186884" },
-    { id: 42, title: "Adventure is in the Air", category: "landscapes", image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1701103309/IMG_7621_eonzfe.jpg", shopUrl: "https://www.prettyfoto.com/mountains" },
-    { id: 43, title: "Blue Hues", category: "landscapes", image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1701103309/IMG_7621_eonzfe.jpg", shopUrl: "https://www.prettyfoto.com/mountains" },
-    { id: 44, title: "Blue Mist", category: "landscapes", image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1701103309/IMG_7621_eonzfe.jpg", shopUrl: "https://www.prettyfoto.com/mountains" },
-    { id: 45, title: "Blue Valley", category: "landscapes", image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1701103309/IMG_7621_eonzfe.jpg", shopUrl: "https://www.prettyfoto.com/mountains" },
-    { id: 46, title: "Sunset Glow", category: "landscapes", image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1701103309/IMG_7621_eonzfe.jpg", shopUrl: "https://www.prettyfoto.com/shimmering-sunshine-sunsets" },
-    { id: 47, title: "Coastal Dreams", category: "landscapes", image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1701103309/IMG_7621_eonzfe.jpg", shopUrl: "https://www.prettyfoto.com/island-dreams-saint-simons-island" },
-    { id: 48, title: "Island Paradise", category: "landscapes", image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1701103309/IMG_7621_eonzfe.jpg", shopUrl: "https://www.prettyfoto.com/primary-colors-coastlines" },
-    { id: 49, title: "Golden Fields", category: "landscapes", image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1701103309/IMG_7621_eonzfe.jpg", shopUrl: "https://www.prettyfoto.com/blissful-spaces-farm-fields" },
-    { id: 50, title: "Harvest Time", category: "landscapes", image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1701103309/IMG_7621_eonzfe.jpg", shopUrl: "https://www.prettyfoto.com/harvest-pumpkins-and-hay-bales" },
+    // Landscapes - Unique images
+    { 
+        id: 9, 
+        title: "Mountain Majesty", 
+        category: "landscapes", 
+        image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1701103309/IMG_7621_eonzfe.jpg", 
+        shopUrl: "https://www.prettyfoto.com/mountains" 
+    },
 ];
 
 // ============ CONSTANTS ============
@@ -131,8 +144,7 @@ function playSound(type) {
                 break;
                 
             case 'win':
-                // Victory fanfare - ascending notes
-                const notes = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6
+                const notes = [523.25, 659.25, 783.99, 1046.50];
                 notes.forEach((freq, i) => {
                     const osc = ctx.createOscillator();
                     const gain = ctx.createGain();
@@ -662,7 +674,6 @@ function isAdjacentToEmpty(position) {
 function handleTileClick(position) {
     if (!isAdjacentToEmpty(position)) return;
     
-    // Sound and haptic feedback
     playSound('slide');
     vibrate(10);
     
@@ -737,11 +748,8 @@ function puzzleComplete() {
         timerInterval = null;
     }
     
-    // Play victory sound and vibrate
     playSound('win');
     vibrate([100, 50, 100, 50, 200]);
-    
-    // Show confetti
     showConfetti();
     
     document.getElementById('completedImage').src = currentPuzzle.image;
@@ -776,7 +784,6 @@ function puzzleComplete() {
         
         saveStats();
         
-        // Show email prompt after first daily completion
         if (!stats.hasSeenEmailPrompt && stats.played === 1) {
             setTimeout(() => {
                 emailModal.classList.remove('hidden');
@@ -874,7 +881,6 @@ function loadStats() {
         stats = { ...stats, ...JSON.parse(stored) };
     }
     
-    // Load sound preference
     const soundPref = localStorage.getItem('prettyfoto_sound');
     if (soundPref !== null) {
         soundEnabled = soundPref === 'true';
