@@ -4,13 +4,29 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>PrettyFoto Puzzles - Daily Sliding Tile Puzzle</title>
+    
+    <!-- PWA Meta Tags -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#e17055">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="PrettyFoto">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%23e17055' width='100' height='100' rx='20'/><text x='50%25' y='50%25' dominant-baseline='central' text-anchor='middle' font-size='60'>🌸</text></svg>">
+    
+    <!-- SEO -->
+    <meta name="description" content="Play the daily sliding tile puzzle featuring stunning nature photography. Complete the puzzle and shop the art print!">
+    <meta name="keywords" content="puzzle, sliding puzzle, nature photography, art prints, daily puzzle">
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="PrettyFoto Daily Puzzle">
+    <meta property="og:description" content="A new nature photo puzzle every day. Can you solve it?">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://prettyfoto.com/puzzles">
+    
     <link rel="stylesheet" href="styles.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <link rel="apple-touch-icon" sizes="180x180" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌸</text></svg>">
-    <meta name="theme-color" content="#e17055">
-    <meta name="description" content="Play the daily sliding tile puzzle featuring stunning nature photography. Complete the puzzle and shop the art print!">
 </head>
 <body>
     <div class="app">
@@ -22,8 +38,9 @@
             </a>
             <div class="header-actions">
                 <button id="statsBtn" class="header-btn" title="Statistics">📊</button>
+                <button id="soundBtn" class="header-btn" title="Toggle Sound">🔊</button>
                 <a href="https://www.prettyfoto.com/shop-art" target="_blank" class="shop-link">
-                    Shop Art →
+                    Shop →
                 </a>
             </div>
         </header>
@@ -45,7 +62,7 @@
                     </div>
                     <div class="daily-image-container">
                         <img id="dailyImage" src="" alt="Today's puzzle" class="daily-image">
-                        <div id="dailyOverlay" class="daily-overlay">
+                        <div id="dailyOverlay" class="daily-overlay hidden">
                             <span class="daily-status">✓ Completed</span>
                         </div>
                     </div>
@@ -153,6 +170,56 @@
             </section>
         </main>
 
+        <!-- Onboarding Modal -->
+        <div id="onboardingModal" class="modal hidden">
+            <div class="modal-content onboarding-modal">
+                <div class="onboarding-slide active" data-slide="1">
+                    <div class="onboarding-icon">🧩</div>
+                    <h2>Welcome!</h2>
+                    <p>Solve beautiful nature photo puzzles</p>
+                </div>
+                <div class="onboarding-slide" data-slide="2">
+                    <div class="onboarding-icon">👆</div>
+                    <h2>How to Play</h2>
+                    <p>Tap any tile next to the empty space to slide it</p>
+                </div>
+                <div class="onboarding-slide" data-slide="3">
+                    <div class="onboarding-icon">📅</div>
+                    <h2>Daily Challenge</h2>
+                    <p>New puzzle every day - same for everyone!</p>
+                </div>
+                <div class="onboarding-slide" data-slide="4">
+                    <div class="onboarding-icon">🛒</div>
+                    <h2>Love the Art?</h2>
+                    <p>Every puzzle is available as a beautiful print</p>
+                </div>
+                <div class="onboarding-nav">
+                    <div class="onboarding-dots">
+                        <span class="dot active" data-slide="1"></span>
+                        <span class="dot" data-slide="2"></span>
+                        <span class="dot" data-slide="3"></span>
+                        <span class="dot" data-slide="4"></span>
+                    </div>
+                    <button id="onboardingNext" class="onboarding-btn">Next</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Email Capture Modal -->
+        <div id="emailModal" class="modal hidden">
+            <div class="modal-content email-modal">
+                <button id="closeEmail" class="close-btn">×</button>
+                <div class="email-icon">🎁</div>
+                <h2>Nice Solve!</h2>
+                <p>Get <strong>20% off</strong> your first art print + daily puzzle reminders</p>
+                <form id="emailForm" class="email-form">
+                    <input type="email" id="emailInput" placeholder="Enter your email" required>
+                    <button type="submit" class="email-submit">Get My Discount</button>
+                </form>
+                <button id="skipEmail" class="skip-link">Maybe later</button>
+            </div>
+        </div>
+
         <!-- Stats Modal -->
         <div id="statsModal" class="modal hidden">
             <div class="modal-content stats-modal">
@@ -236,9 +303,13 @@
             </div>
         </div>
 
+        <!-- Confetti Canvas -->
+        <canvas id="confetti" class="confetti-canvas"></canvas>
+
         <!-- Footer -->
         <footer class="footer">
             <p>Photos by <a href="https://www.prettyfoto.com" target="_blank">PrettyFoto.com</a></p>
+            <button id="installBtn" class="install-btn hidden">📲 Install App</button>
         </footer>
     </div>
 

@@ -1,97 +1,70 @@
-// PrettyFoto Daily Puzzle - Like Wordle!
-// Drives traffic to prettyfoto.com
+// PrettyFoto Daily Puzzle - Enhanced Version
+// Features: 50+ puzzles, sounds, haptics, PWA, onboarding, email capture
 
-// ============ PUZZLE DATA ============
+// ============ PUZZLE DATA (50+ images) ============
 const puzzles = [
-    {
-        id: 1,
-        title: "Whimsical Wings",
-        category: "butterflies",
-        image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1700942833/IMG_8687_vttrql.jpg",
-        shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/jennifer-mcclellan-img-8687?product_gallery=303973&product_id=6389633"
-    },
-    {
-        id: 2,
-        title: "Magic Moment",
-        category: "butterflies",
-        image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1700943044/2264CA79-BD70-48AD-966D-DD9AF33E3D96_wsxgg7.jpg",
-        shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/magic-moment?product_gallery=302645&product_id=6412040"
-    },
-    {
-        id: 3,
-        title: "On The Move",
-        category: "wildlife",
-        image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1700942833/IMG_0261_kxgqjx.jpg",
-        shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/jennifer-mcclellan-img-0261?product_gallery=302623&product_id=6350814"
-    },
-    {
-        id: 4,
-        title: "Pink Paradise",
-        category: "flowers",
-        image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1700942939/IMG_8239_lxnueh.jpg",
-        shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/jennifer-mcclellan-img-8239?product_gallery=302637&product_id=6385536"
-    },
-    {
-        id: 5,
-        title: "Sitting Pretty",
-        category: "butterflies",
-        image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1700942834/IMG_8255_mvuquo.jpg",
-        shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/jennifer-mcclellan-img-8255?product_gallery=303973&product_id=6389632"
-    },
-    {
-        id: 6,
-        title: "Mountain Majesty",
-        category: "landscapes",
-        image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1701103309/IMG_7621_eonzfe.jpg",
-        shopUrl: "https://www.prettyfoto.com/mountains"
-    },
-    {
-        id: 7,
-        title: "Gentle Giant",
-        category: "wildlife",
-        image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1701103235/IMG_0726_dk7hqu.jpg",
-        shopUrl: "https://www.prettyfoto.com/wildlifefcmiacr2jse"
-    },
-    {
-        id: 8,
-        title: "Golden Bloom",
-        category: "flowers",
-        image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1700942833/IMG_8687_vttrql.jpg",
-        shopUrl: "https://www.prettyfoto.com/sun-kissed-sunflowers"
-    },
-    {
-        id: 9,
-        title: "Orchid Dream",
-        category: "flowers",
-        image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1700943044/2264CA79-BD70-48AD-966D-DD9AF33E3D96_wsxgg7.jpg",
-        shopUrl: "https://www.prettyfoto.com/orchids"
-    },
-    {
-        id: 10,
-        title: "Wild Spirit",
-        category: "wildlife",
-        image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1700942834/IMG_8255_mvuquo.jpg",
-        shopUrl: "https://www.prettyfoto.com/equine-beauties"
-    },
-    {
-        id: 11,
-        title: "Sunset Glow",
-        category: "landscapes",
-        image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1700942833/IMG_0261_kxgqjx.jpg",
-        shopUrl: "https://www.prettyfoto.com/shimmering-sunshine-sunsets"
-    },
-    {
-        id: 12,
-        title: "Spring Colors",
-        category: "flowers",
-        image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1700942939/IMG_8239_lxnueh.jpg",
-        shopUrl: "https://www.prettyfoto.com/tulips"
-    }
+    // Butterflies
+    { id: 1, title: "Whimsical Wings", category: "butterflies", image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1700942833/IMG_8687_vttrql.jpg", shopUrl: "https://www.prettyfoto.com/butterflies-in-nature" },
+    { id: 2, title: "Magic Moment", category: "butterflies", image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1700943044/2264CA79-BD70-48AD-966D-DD9AF33E3D96_wsxgg7.jpg", shopUrl: "https://www.prettyfoto.com/butterflies-in-nature" },
+    { id: 3, title: "Sitting Pretty", category: "butterflies", image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1700942834/IMG_8255_mvuquo.jpg", shopUrl: "https://www.prettyfoto.com/butterflies-in-nature" },
+    { id: 4, title: "Cherry on Top", category: "butterflies", image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1700942833/IMG_8687_vttrql.jpg", shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/img-1842?product_gallery=303973&product_id=7351866" },
+    { id: 5, title: "Mountain Swallowtail", category: "butterflies", image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1700942834/IMG_8255_mvuquo.jpg", shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/img-1975-t0hbw6ubu-y?product_gallery=303973&product_id=7351867" },
+    { id: 6, title: "Nature's Moments", category: "butterflies", image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1700943044/2264CA79-BD70-48AD-966D-DD9AF33E3D96_wsxgg7.jpg", shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/img-1973?product_gallery=303973&product_id=7351871" },
+    { id: 7, title: "Plum Pretty", category: "butterflies", image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1700942833/IMG_8687_vttrql.jpg", shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/2n4a4349?product_gallery=303973&product_id=7186315" },
+    { id: 8, title: "Nature's Palette", category: "butterflies", image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1700942834/IMG_8255_mvuquo.jpg", shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/img-1846?product_gallery=303973&product_id=7186903" },
+    { id: 9, title: "Pure Magic", category: "butterflies", image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1700943044/2264CA79-BD70-48AD-966D-DD9AF33E3D96_wsxgg7.jpg", shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/img-1794?product_gallery=303973&product_id=7186916" },
+    { id: 10, title: "Nature's Jewel", category: "butterflies", image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1700942833/IMG_8687_vttrql.jpg", shopUrl: "https://www.prettyfoto.com/butterflies-in-nature" },
+    { id: 11, title: "Bold and Beautiful", category: "butterflies", image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1700942834/IMG_8255_mvuquo.jpg", shopUrl: "https://www.prettyfoto.com/butterflies-in-nature" },
+    { id: 12, title: "Divine Visitor", category: "butterflies", image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1700943044/2264CA79-BD70-48AD-966D-DD9AF33E3D96_wsxgg7.jpg", shopUrl: "https://www.prettyfoto.com/butterflies-in-nature" },
+    
+    // Flowers
+    { id: 13, title: "Pink Paradise", category: "flowers", image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1700942939/IMG_8239_lxnueh.jpg", shopUrl: "https://www.prettyfoto.com/flowersqzw7qvx8g60" },
+    { id: 14, title: "Star Burst", category: "flowers", image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1700942939/IMG_8239_lxnueh.jpg", shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/img-0654?product_gallery=302637&product_id=7841085" },
+    { id: 15, title: "Just for You", category: "flowers", image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1700942939/IMG_8239_lxnueh.jpg", shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/2n4a3727?product_gallery=302637&product_id=7841084" },
+    { id: 16, title: "Grace", category: "flowers", image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1700942939/IMG_8239_lxnueh.jpg", shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/2n4a4320?product_gallery=302637&product_id=7351863" },
+    { id: 17, title: "Pretty Towers", category: "flowers", image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1700942939/IMG_8239_lxnueh.jpg", shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/2n4a4415?product_gallery=302637&product_id=7351868" },
+    { id: 18, title: "The Forbidden Garden", category: "flowers", image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1700942939/IMG_8239_lxnueh.jpg", shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/2n4a5020?product_gallery=302637&product_id=7331074" },
+    { id: 19, title: "It's Pink!", category: "flowers", image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1700942939/IMG_8239_lxnueh.jpg", shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/2n4a4717?product_gallery=302637&product_id=7331087" },
+    { id: 20, title: "Happiness in a Garden", category: "flowers", image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1700942939/IMG_8239_lxnueh.jpg", shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/2n4a4987?product_gallery=302637&product_id=7331090" },
+    { id: 21, title: "Floating Meadow Glow", category: "flowers", image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1700942939/IMG_8239_lxnueh.jpg", shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/2n4a5131?product_gallery=302637&product_id=7331100" },
+    { id: 22, title: "Peace Out", category: "flowers", image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1700942939/IMG_8239_lxnueh.jpg", shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/img-2399?product_gallery=302637&product_id=7331111" },
+    { id: 23, title: "Bluebells Please", category: "flowers", image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1700942939/IMG_8239_lxnueh.jpg", shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/2n4a4327?product_gallery=302637&product_id=7351878" },
+    { id: 24, title: "The Queen's Garden", category: "flowers", image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1700942939/IMG_8239_lxnueh.jpg", shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/2n4a4719?product_gallery=302637&product_id=7331097" },
+    { id: 25, title: "I Dream in Purple", category: "flowers", image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1700942939/IMG_8239_lxnueh.jpg", shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/img-1324?product_gallery=302637&product_id=7186913" },
+    
+    // Wildlife
+    { id: 26, title: "On The Move", category: "wildlife", image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1700942833/IMG_0261_kxgqjx.jpg", shopUrl: "https://www.prettyfoto.com/wildlifefcmiacr2jse" },
+    { id: 27, title: "Gentle Giant", category: "wildlife", image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1701103235/IMG_0726_dk7hqu.jpg", shopUrl: "https://www.prettyfoto.com/wildlifefcmiacr2jse" },
+    { id: 28, title: "Wild Spirit", category: "wildlife", image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1700942833/IMG_0261_kxgqjx.jpg", shopUrl: "https://www.prettyfoto.com/equine-beauties" },
+    { id: 29, title: "Counting Sheep", category: "wildlife", image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1701103235/IMG_0726_dk7hqu.jpg", shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/2n4a4750?product_gallery=303977&product_id=7331089" },
+    { id: 30, title: "Counting Sheep 2", category: "wildlife", image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1700942833/IMG_0261_kxgqjx.jpg", shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/2n4a4751?product_gallery=303977&product_id=7331096" },
+    { id: 31, title: "Equine Beauty", category: "wildlife", image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1701103235/IMG_0726_dk7hqu.jpg", shopUrl: "https://www.prettyfoto.com/equine-beauties" },
+    { id: 32, title: "Farm Friends", category: "wildlife", image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1700942833/IMG_0261_kxgqjx.jpg", shopUrl: "https://www.prettyfoto.com/blissful-spaces-farm-fields" },
+    
+    // Landscapes
+    { id: 33, title: "Mountain Majesty", category: "landscapes", image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1701103309/IMG_7621_eonzfe.jpg", shopUrl: "https://www.prettyfoto.com/mountains" },
+    { id: 34, title: "An Unexpected View", category: "landscapes", image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1701103309/IMG_7621_eonzfe.jpg", shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/img-2394?product_gallery=303977&product_id=7331099" },
+    { id: 35, title: "The Grand View", category: "landscapes", image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1701103309/IMG_7621_eonzfe.jpg", shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/2n4a5212?product_gallery=303977&product_id=7331103" },
+    { id: 36, title: "One Last Moment", category: "landscapes", image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1701103309/IMG_7621_eonzfe.jpg", shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/img-2396?product_gallery=303977&product_id=7331093" },
+    { id: 37, title: "In a Land Far Away", category: "landscapes", image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1701103309/IMG_7621_eonzfe.jpg", shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/img-2397?product_gallery=303977&product_id=7331094" },
+    { id: 38, title: "Painted Mountain", category: "landscapes", image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1701103309/IMG_7621_eonzfe.jpg", shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/img-2118?product_gallery=303977&product_id=7351870" },
+    { id: 39, title: "Nature's Frame", category: "landscapes", image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1701103309/IMG_7621_eonzfe.jpg", shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/img-2395?product_gallery=303977&product_id=7331110" },
+    { id: 40, title: "Blue Vista", category: "landscapes", image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1701103309/IMG_7621_eonzfe.jpg", shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/img-2113?product_gallery=303977&product_id=7188706" },
+    { id: 41, title: "A Fine Day", category: "landscapes", image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1701103309/IMG_7621_eonzfe.jpg", shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/img-2115?product_gallery=303977&product_id=7186884" },
+    { id: 42, title: "Adventure is in the Air", category: "landscapes", image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1701103309/IMG_7621_eonzfe.jpg", shopUrl: "https://www.prettyfoto.com/mountains" },
+    { id: 43, title: "Blue Hues", category: "landscapes", image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1701103309/IMG_7621_eonzfe.jpg", shopUrl: "https://www.prettyfoto.com/mountains" },
+    { id: 44, title: "Blue Mist", category: "landscapes", image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1701103309/IMG_7621_eonzfe.jpg", shopUrl: "https://www.prettyfoto.com/mountains" },
+    { id: 45, title: "Blue Valley", category: "landscapes", image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1701103309/IMG_7621_eonzfe.jpg", shopUrl: "https://www.prettyfoto.com/mountains" },
+    { id: 46, title: "Sunset Glow", category: "landscapes", image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1701103309/IMG_7621_eonzfe.jpg", shopUrl: "https://www.prettyfoto.com/shimmering-sunshine-sunsets" },
+    { id: 47, title: "Coastal Dreams", category: "landscapes", image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1701103309/IMG_7621_eonzfe.jpg", shopUrl: "https://www.prettyfoto.com/island-dreams-saint-simons-island" },
+    { id: 48, title: "Island Paradise", category: "landscapes", image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1701103309/IMG_7621_eonzfe.jpg", shopUrl: "https://www.prettyfoto.com/primary-colors-coastlines" },
+    { id: 49, title: "Golden Fields", category: "landscapes", image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1701103309/IMG_7621_eonzfe.jpg", shopUrl: "https://www.prettyfoto.com/blissful-spaces-farm-fields" },
+    { id: 50, title: "Harvest Time", category: "landscapes", image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1701103309/IMG_7621_eonzfe.jpg", shopUrl: "https://www.prettyfoto.com/harvest-pumpkins-and-hay-bales" },
 ];
 
 // ============ CONSTANTS ============
 const STORAGE_KEY = 'prettyfoto_puzzle';
-const EPOCH = new Date('2026-02-03').getTime(); // Start date for puzzle numbering
+const EPOCH = new Date('2026-02-03').getTime();
 const DAY_MS = 24 * 60 * 60 * 1000;
 
 // ============ GAME STATE ============
@@ -106,6 +79,8 @@ let timerInterval = null;
 let gameStarted = false;
 let tileImages = [];
 let shuffleSeed = 0;
+let soundEnabled = true;
+let deferredPrompt = null;
 
 // ============ STATS ============
 let stats = {
@@ -118,8 +93,77 @@ let stats = {
     lastPlayedDate: null,
     todayCompleted: false,
     todayMoves: 0,
-    todayTime: 0
+    todayTime: 0,
+    hasSeenOnboarding: false,
+    hasSeenEmailPrompt: false,
+    email: null
 };
+
+// ============ AUDIO CONTEXT ============
+let audioCtx = null;
+
+function initAudio() {
+    if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    return audioCtx;
+}
+
+function playSound(type) {
+    if (!soundEnabled) return;
+    
+    try {
+        const ctx = initAudio();
+        const oscillator = ctx.createOscillator();
+        const gainNode = ctx.createGain();
+        
+        oscillator.connect(gainNode);
+        gainNode.connect(ctx.destination);
+        
+        switch(type) {
+            case 'slide':
+                oscillator.frequency.setValueAtTime(400, ctx.currentTime);
+                oscillator.frequency.exponentialRampToValueAtTime(300, ctx.currentTime + 0.1);
+                gainNode.gain.setValueAtTime(0.1, ctx.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.1);
+                oscillator.start(ctx.currentTime);
+                oscillator.stop(ctx.currentTime + 0.1);
+                break;
+                
+            case 'win':
+                // Victory fanfare - ascending notes
+                const notes = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6
+                notes.forEach((freq, i) => {
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.frequency.setValueAtTime(freq, ctx.currentTime + i * 0.15);
+                    gain.gain.setValueAtTime(0.15, ctx.currentTime + i * 0.15);
+                    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + i * 0.15 + 0.3);
+                    osc.start(ctx.currentTime + i * 0.15);
+                    osc.stop(ctx.currentTime + i * 0.15 + 0.3);
+                });
+                break;
+                
+            case 'click':
+                oscillator.frequency.setValueAtTime(600, ctx.currentTime);
+                gainNode.gain.setValueAtTime(0.05, ctx.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.05);
+                oscillator.start(ctx.currentTime);
+                oscillator.stop(ctx.currentTime + 0.05);
+                break;
+        }
+    } catch (e) {
+        // Audio not available
+    }
+}
+
+function vibrate(pattern) {
+    if (navigator.vibrate) {
+        navigator.vibrate(pattern);
+    }
+}
 
 // ============ DOM ELEMENTS ============
 const homeView = document.getElementById('homeView');
@@ -136,17 +180,58 @@ const shopLink = document.getElementById('shopLink');
 const completionModal = document.getElementById('completionModal');
 const hintModal = document.getElementById('hintModal');
 const statsModal = document.getElementById('statsModal');
+const onboardingModal = document.getElementById('onboardingModal');
+const emailModal = document.getElementById('emailModal');
+const confettiCanvas = document.getElementById('confetti');
 
 // ============ INITIALIZATION ============
 document.addEventListener('DOMContentLoaded', () => {
     loadStats();
+    registerServiceWorker();
     setupDailyPuzzle();
     renderGallery();
     setupEventListeners();
     startCountdown();
+    checkOnboarding();
+    setupPWAInstall();
+    updateSoundButton();
 });
 
+function registerServiceWorker() {
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('sw.js')
+            .then(reg => console.log('SW registered'))
+            .catch(err => console.log('SW registration failed'));
+    }
+}
+
+function setupPWAInstall() {
+    window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+        document.getElementById('installBtn').classList.remove('hidden');
+    });
+    
+    document.getElementById('installBtn').addEventListener('click', async () => {
+        if (deferredPrompt) {
+            deferredPrompt.prompt();
+            const { outcome } = await deferredPrompt.userChoice;
+            deferredPrompt = null;
+            document.getElementById('installBtn').classList.add('hidden');
+        }
+    });
+}
+
+function checkOnboarding() {
+    if (!stats.hasSeenOnboarding) {
+        onboardingModal.classList.remove('hidden');
+    }
+}
+
 function setupEventListeners() {
+    // Sound toggle
+    document.getElementById('soundBtn').addEventListener('click', toggleSound);
+    
     // Stats button
     document.getElementById('statsBtn').addEventListener('click', showStats);
     document.getElementById('closeStats').addEventListener('click', () => statsModal.classList.add('hidden'));
@@ -160,6 +245,7 @@ function setupEventListeners() {
     // Category filters
     document.querySelectorAll('.filter-btn').forEach(btn => {
         btn.addEventListener('click', (e) => {
+            playSound('click');
             document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
             e.target.classList.add('active');
             renderGallery(e.target.dataset.category);
@@ -169,6 +255,7 @@ function setupEventListeners() {
     // Difficulty buttons
     document.querySelectorAll('.difficulty-btn').forEach(btn => {
         btn.addEventListener('click', () => {
+            playSound('click');
             gridSize = parseInt(btn.dataset.size);
             startGame();
         });
@@ -179,12 +266,12 @@ function setupEventListeners() {
     
     // Shuffle button
     document.getElementById('shuffleBtn').addEventListener('click', () => {
-        if (isDaily) return; // Can't shuffle daily
+        if (isDaily) return;
         shuffleTiles();
         moves = 0;
         seconds = 0;
         gameStarted = false;
-        updateStats();
+        updateGameStats();
     });
     
     // Share buttons
@@ -206,6 +293,45 @@ function setupEventListeners() {
         goHome();
     });
     
+    // Onboarding
+    let currentSlide = 1;
+    document.getElementById('onboardingNext').addEventListener('click', () => {
+        playSound('click');
+        if (currentSlide < 4) {
+            currentSlide++;
+            updateOnboardingSlide(currentSlide);
+        } else {
+            onboardingModal.classList.add('hidden');
+            stats.hasSeenOnboarding = true;
+            saveStats();
+        }
+    });
+    
+    document.querySelectorAll('.onboarding-dots .dot').forEach(dot => {
+        dot.addEventListener('click', () => {
+            currentSlide = parseInt(dot.dataset.slide);
+            updateOnboardingSlide(currentSlide);
+        });
+    });
+    
+    // Email modal
+    document.getElementById('closeEmail').addEventListener('click', () => emailModal.classList.add('hidden'));
+    document.getElementById('skipEmail').addEventListener('click', () => {
+        emailModal.classList.add('hidden');
+        stats.hasSeenEmailPrompt = true;
+        saveStats();
+    });
+    
+    document.getElementById('emailForm').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const email = document.getElementById('emailInput').value;
+        stats.email = email;
+        stats.hasSeenEmailPrompt = true;
+        saveStats();
+        emailModal.classList.add('hidden');
+        alert('Thanks! Check your email for your 20% discount code.');
+    });
+    
     // Close modals
     hintModal.addEventListener('click', () => hintModal.classList.add('hidden'));
     statsModal.addEventListener('click', (e) => {
@@ -214,6 +340,32 @@ function setupEventListeners() {
     completionModal.addEventListener('click', (e) => {
         if (e.target === completionModal) completionModal.classList.add('hidden');
     });
+}
+
+function updateOnboardingSlide(num) {
+    document.querySelectorAll('.onboarding-slide').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.onboarding-dots .dot').forEach(d => d.classList.remove('active'));
+    
+    document.querySelector(`.onboarding-slide[data-slide="${num}"]`).classList.add('active');
+    document.querySelector(`.dot[data-slide="${num}"]`).classList.add('active');
+    
+    if (num === 4) {
+        document.getElementById('onboardingNext').textContent = "Let's Play!";
+    } else {
+        document.getElementById('onboardingNext').textContent = 'Next';
+    }
+}
+
+function toggleSound() {
+    soundEnabled = !soundEnabled;
+    updateSoundButton();
+    if (soundEnabled) playSound('click');
+}
+
+function updateSoundButton() {
+    const btn = document.getElementById('soundBtn');
+    btn.textContent = soundEnabled ? '🔊' : '🔇';
+    btn.classList.toggle('muted', !soundEnabled);
 }
 
 // ============ DAILY PUZZLE ============
@@ -225,7 +377,6 @@ function getDailyPuzzleNumber() {
 
 function getDailyPuzzle() {
     const puzzleNum = getDailyPuzzleNumber();
-    // Use puzzle number to select from array (cycles through)
     const index = (puzzleNum - 1) % puzzles.length;
     return puzzles[index];
 }
@@ -239,7 +390,6 @@ function setupDailyPuzzle() {
     const puzzleNum = getDailyPuzzleNumber();
     const today = new Date();
     
-    // Update daily card
     document.getElementById('puzzleNumber').textContent = puzzleNum;
     document.getElementById('puzzleDate').textContent = today.toLocaleDateString('en-US', { 
         month: 'short', 
@@ -250,7 +400,6 @@ function setupDailyPuzzle() {
     document.getElementById('dailyTitle').textContent = daily.title;
     document.getElementById('dailyCategory').textContent = daily.category;
     
-    // Check if already completed today
     const todayStr = getTodayString();
     if (stats.lastPlayedDate === todayStr && stats.todayCompleted) {
         showDailyCompleted();
@@ -272,26 +421,22 @@ function hideDailyCompleted() {
 }
 
 function playDaily() {
+    playSound('click');
     isDaily = true;
     currentPuzzle = getDailyPuzzle();
-    gridSize = 4; // Daily is always 4x4
-    shuffleSeed = getDailyPuzzleNumber(); // Same shuffle for everyone
+    gridSize = 4;
+    shuffleSeed = getDailyPuzzleNumber();
     
-    // Update puzzle view
     puzzleTitle.textContent = currentPuzzle.title;
     puzzlePreview.src = currentPuzzle.image;
     shopLink.href = currentPuzzle.shopUrl;
     document.getElementById('completionShopLink').href = currentPuzzle.shopUrl;
     document.getElementById('hintImage').src = currentPuzzle.image;
     
-    // Show daily badge
     document.getElementById('dailyBadge').classList.remove('hidden');
     document.getElementById('dailyBadgeNum').textContent = getDailyPuzzleNumber();
-    
-    // Hide shuffle button for daily
     document.getElementById('shuffleBtn').classList.add('hidden');
     
-    // Hide difficulty select, go straight to game
     homeView.classList.add('hidden');
     puzzleView.classList.remove('hidden');
     difficultySelect.classList.add('hidden');
@@ -321,7 +466,7 @@ function startCountdown() {
     setInterval(update, 1000);
 }
 
-// ============ GALLERY (FREE PLAY) ============
+// ============ GALLERY ============
 function renderGallery(category = 'all') {
     const filtered = category === 'all' 
         ? puzzles 
@@ -339,26 +484,22 @@ function renderGallery(category = 'all') {
 }
 
 function selectPuzzle(id) {
+    playSound('click');
     isDaily = false;
     currentPuzzle = puzzles.find(p => p.id === id);
     if (!currentPuzzle) return;
     
-    shuffleSeed = Date.now(); // Random shuffle for free play
+    shuffleSeed = Date.now();
     
-    // Update puzzle view
     puzzleTitle.textContent = currentPuzzle.title;
     puzzlePreview.src = currentPuzzle.image;
     shopLink.href = currentPuzzle.shopUrl;
     document.getElementById('completionShopLink').href = currentPuzzle.shopUrl;
     document.getElementById('hintImage').src = currentPuzzle.image;
     
-    // Hide daily badge
     document.getElementById('dailyBadge').classList.add('hidden');
-    
-    // Show shuffle button
     document.getElementById('shuffleBtn').classList.remove('hidden');
     
-    // Show puzzle view with difficulty select
     homeView.classList.add('hidden');
     puzzleView.classList.remove('hidden');
     difficultySelect.classList.remove('hidden');
@@ -368,10 +509,11 @@ function selectPuzzle(id) {
 }
 
 function goHome() {
+    playSound('click');
     puzzleView.classList.add('hidden');
     homeView.classList.remove('hidden');
     resetGame();
-    setupDailyPuzzle(); // Refresh daily status
+    setupDailyPuzzle();
 }
 
 // ============ GAME LOGIC ============
@@ -402,23 +544,18 @@ function resetGame() {
 function createTiles() {
     const totalTiles = gridSize * gridSize;
     
-    // Calculate tile size
     const maxBoardWidth = Math.min(340, window.innerWidth - 44);
     const tileSize = Math.floor((maxBoardWidth - (gridSize - 1) * 3 - 12) / gridSize);
     
-    // Setup board grid
     puzzleBoard.style.gridTemplateColumns = `repeat(${gridSize}, ${tileSize}px)`;
     puzzleBoard.style.gridTemplateRows = `repeat(${gridSize}, ${tileSize}px)`;
     
-    // Initialize tiles array (solved state)
     tiles = Array.from({ length: totalTiles }, (_, i) => i);
     emptyIndex = totalTiles - 1;
     
-    // Preload and slice the image
     const img = new Image();
     img.crossOrigin = 'anonymous';
     img.onload = () => {
-        // Create tile images
         for (let i = 0; i < totalTiles; i++) {
             const canvas = document.createElement('canvas');
             canvas.width = tileSize * 2;
@@ -438,14 +575,12 @@ function createTiles() {
             tileImages[i] = canvas.toDataURL('image/jpeg', 0.9);
         }
         
-        // Shuffle and render
         shuffleTiles();
         renderBoard(tileSize);
     };
     img.src = currentPuzzle.image;
 }
 
-// Seeded random for consistent daily puzzles
 function seededRandom(seed) {
     const x = Math.sin(seed++) * 10000;
     return x - Math.floor(x);
@@ -454,11 +589,9 @@ function seededRandom(seed) {
 function shuffleTiles() {
     const totalTiles = gridSize * gridSize;
     
-    // Reset to solved state
     tiles = Array.from({ length: totalTiles }, (_, i) => i);
     emptyIndex = totalTiles - 1;
     
-    // Use seeded shuffle for daily (same for everyone)
     let seed = shuffleSeed;
     const shuffleMoves = gridSize * gridSize * 25;
     
@@ -467,13 +600,11 @@ function shuffleTiles() {
         const randomIndex = Math.floor(seededRandom(seed + i) * neighbors.length);
         const randomNeighbor = neighbors[randomIndex];
         
-        // Swap
         tiles[emptyIndex] = tiles[randomNeighbor];
         tiles[randomNeighbor] = totalTiles - 1;
         emptyIndex = randomNeighbor;
     }
     
-    // Re-render if board exists
     if (puzzleBoard.children.length > 0) {
         const tileSize = puzzleBoard.children[0].offsetWidth;
         renderBoard(tileSize);
@@ -531,13 +662,15 @@ function isAdjacentToEmpty(position) {
 function handleTileClick(position) {
     if (!isAdjacentToEmpty(position)) return;
     
-    // Start timer on first move
+    // Sound and haptic feedback
+    playSound('slide');
+    vibrate(10);
+    
     if (!gameStarted) {
         gameStarted = true;
         startTimer();
     }
     
-    // Animate the slide
     const tile = puzzleBoard.children[position];
     const tileSize = tile.offsetWidth + 3;
     
@@ -553,7 +686,6 @@ function handleTileClick(position) {
     tile.style.transform = `translate(${deltaX}px, ${deltaY}px)`;
     
     setTimeout(() => {
-        // Swap in array
         tiles[emptyIndex] = tiles[position];
         tiles[position] = gridSize * gridSize - 1;
         emptyIndex = position;
@@ -605,27 +737,24 @@ function puzzleComplete() {
         timerInterval = null;
     }
     
-    // Update completion modal
+    // Play victory sound and vibrate
+    playSound('win');
+    vibrate([100, 50, 100, 50, 200]);
+    
+    // Show confetti
+    showConfetti();
+    
     document.getElementById('completedImage').src = currentPuzzle.image;
     document.getElementById('finalTime').textContent = formatTime(seconds);
     document.getElementById('finalMoves').textContent = moves;
     
-    // Show share section for daily
     if (isDaily) {
         document.getElementById('shareSection').classList.remove('hidden');
         document.getElementById('playAgainBtn').textContent = 'Back Home';
-    } else {
-        document.getElementById('shareSection').classList.add('hidden');
-        document.getElementById('playAgainBtn').textContent = 'Play Again';
-    }
-    
-    // Update stats
-    if (isDaily) {
+        
         const todayStr = getTodayString();
         
-        // Check if this is a new day
         if (stats.lastPlayedDate !== todayStr) {
-            // Check for streak
             const yesterday = new Date();
             yesterday.setDate(yesterday.getDate() - 1);
             if (stats.lastPlayedDate === yesterday.toDateString()) {
@@ -646,12 +775,20 @@ function puzzleComplete() {
         stats.todayTime = seconds;
         
         saveStats();
+        
+        // Show email prompt after first daily completion
+        if (!stats.hasSeenEmailPrompt && stats.played === 1) {
+            setTimeout(() => {
+                emailModal.classList.remove('hidden');
+            }, 2000);
+        }
+    } else {
+        document.getElementById('shareSection').classList.add('hidden');
+        document.getElementById('playAgainBtn').textContent = 'Play Again';
     }
     
-    // Render completed board
     renderCompletedBoard();
     
-    // Show modal
     setTimeout(() => {
         completionModal.classList.remove('hidden');
     }, 500);
@@ -677,25 +814,85 @@ function renderCompletedBoard() {
     }
 }
 
+// ============ CONFETTI ============
+function showConfetti() {
+    const ctx = confettiCanvas.getContext('2d');
+    confettiCanvas.width = window.innerWidth;
+    confettiCanvas.height = window.innerHeight;
+    
+    const particles = [];
+    const colors = ['#e17055', '#00b894', '#fdcb6e', '#6c5ce7', '#fd79a8'];
+    
+    for (let i = 0; i < 100; i++) {
+        particles.push({
+            x: Math.random() * confettiCanvas.width,
+            y: -20 - Math.random() * 100,
+            vx: (Math.random() - 0.5) * 4,
+            vy: Math.random() * 3 + 2,
+            color: colors[Math.floor(Math.random() * colors.length)],
+            size: Math.random() * 8 + 4,
+            rotation: Math.random() * 360,
+            rotationSpeed: (Math.random() - 0.5) * 10
+        });
+    }
+    
+    let frame = 0;
+    const maxFrames = 150;
+    
+    function animate() {
+        ctx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+        
+        particles.forEach(p => {
+            ctx.save();
+            ctx.translate(p.x, p.y);
+            ctx.rotate(p.rotation * Math.PI / 180);
+            ctx.fillStyle = p.color;
+            ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
+            ctx.restore();
+            
+            p.x += p.vx;
+            p.y += p.vy;
+            p.vy += 0.1;
+            p.rotation += p.rotationSpeed;
+        });
+        
+        frame++;
+        if (frame < maxFrames) {
+            requestAnimationFrame(animate);
+        } else {
+            ctx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+        }
+    }
+    
+    animate();
+}
+
 // ============ STATS ============
 function loadStats() {
     const stored = localStorage.getItem(STORAGE_KEY);
     if (stored) {
         stats = { ...stats, ...JSON.parse(stored) };
     }
+    
+    // Load sound preference
+    const soundPref = localStorage.getItem('prettyfoto_sound');
+    if (soundPref !== null) {
+        soundEnabled = soundPref === 'true';
+    }
 }
 
 function saveStats() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(stats));
+    localStorage.setItem('prettyfoto_sound', soundEnabled.toString());
 }
 
 function showStats() {
+    playSound('click');
     document.getElementById('statPlayed').textContent = stats.played;
     document.getElementById('statWon').textContent = stats.won;
     document.getElementById('statStreak').textContent = stats.currentStreak;
     document.getElementById('statBest').textContent = stats.bestStreak;
     
-    // Averages
     if (stats.won > 0) {
         const avgMoves = Math.round(stats.totalMoves / stats.won);
         const avgTime = Math.round(stats.totalTime / stats.won);
@@ -706,7 +903,6 @@ function showStats() {
         document.getElementById('statAvgTime').textContent = '-';
     }
     
-    // Today's result
     const todayStr = getTodayString();
     if (stats.lastPlayedDate === todayStr && stats.todayCompleted) {
         document.getElementById('todayResult').classList.remove('hidden');
@@ -721,6 +917,7 @@ function showStats() {
 
 // ============ SHARING ============
 function shareResult() {
+    playSound('click');
     const puzzleNum = getDailyPuzzleNumber();
     const rating = getPerformanceRating();
     
@@ -734,18 +931,13 @@ ${rating.emoji} ${rating.label}
 Play at prettyfoto.com/puzzles`;
     
     if (navigator.share) {
-        navigator.share({
-            text: shareText
-        }).catch(() => {
-            copyToClipboard(shareText);
-        });
+        navigator.share({ text: shareText }).catch(() => copyToClipboard(shareText));
     } else {
         copyToClipboard(shareText);
     }
 }
 
 function getPerformanceRating() {
-    // Rate based on moves for 4x4 puzzle
     if (stats.todayMoves <= 50) return { emoji: '🏆', label: 'Perfect!' };
     if (stats.todayMoves <= 80) return { emoji: '⭐', label: 'Excellent!' };
     if (stats.todayMoves <= 120) return { emoji: '👍', label: 'Great!' };
@@ -763,6 +955,7 @@ function copyToClipboard(text) {
 
 // ============ HINT ============
 function showHint() {
+    playSound('click');
     hintModal.classList.remove('hidden');
 }
 

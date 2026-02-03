@@ -99,8 +99,12 @@ body {
     background: var(--border);
 }
 
+.header-btn.muted {
+    opacity: 0.5;
+}
+
 .shop-link {
-    padding: 8px 16px;
+    padding: 8px 14px;
     background: var(--accent);
     color: white;
     text-decoration: none;
@@ -679,6 +683,146 @@ body {
     color: var(--text-dim);
 }
 
+/* Onboarding Modal */
+.onboarding-modal {
+    padding: 32px 24px;
+}
+
+.onboarding-slide {
+    display: none;
+}
+
+.onboarding-slide.active {
+    display: block;
+    animation: fadeIn 0.3s ease;
+}
+
+.onboarding-icon {
+    font-size: 64px;
+    margin-bottom: 16px;
+}
+
+.onboarding-modal h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 24px;
+    margin-bottom: 8px;
+}
+
+.onboarding-modal p {
+    color: var(--text-dim);
+    font-size: 15px;
+    margin-bottom: 24px;
+}
+
+.onboarding-nav {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+}
+
+.onboarding-dots {
+    display: flex;
+    gap: 8px;
+}
+
+.dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--border);
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.dot.active {
+    background: var(--accent);
+    width: 24px;
+    border-radius: 4px;
+}
+
+.onboarding-btn {
+    width: 100%;
+    padding: 14px;
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: 25px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.onboarding-btn:active {
+    background: var(--accent-dark);
+}
+
+/* Email Modal */
+.email-modal {
+    padding: 32px 24px;
+}
+
+.email-icon {
+    font-size: 48px;
+    margin-bottom: 12px;
+}
+
+.email-modal h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 24px;
+    margin-bottom: 8px;
+}
+
+.email-modal p {
+    color: var(--text-dim);
+    font-size: 14px;
+    margin-bottom: 20px;
+}
+
+.email-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.email-form input {
+    padding: 14px 16px;
+    border: 2px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-size: 16px;
+    text-align: center;
+}
+
+.email-form input:focus {
+    outline: none;
+    border-color: var(--accent);
+}
+
+.email-submit {
+    padding: 14px;
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.email-submit:active {
+    background: var(--accent-dark);
+}
+
+.skip-link {
+    background: none;
+    border: none;
+    color: var(--text-dim);
+    font-size: 14px;
+    cursor: pointer;
+    text-decoration: underline;
+}
+
 /* Stats Modal */
 .stats-modal h2 {
     font-family: 'Playfair Display', serif;
@@ -892,6 +1036,17 @@ body {
     font-size: 13px;
 }
 
+/* ============ CONFETTI ============ */
+.confetti-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 9999;
+}
+
 /* ============ FOOTER ============ */
 .footer {
     padding: 20px 16px;
@@ -902,12 +1057,29 @@ body {
 .footer p {
     color: var(--text-dim);
     font-size: 13px;
+    margin-bottom: 8px;
 }
 
 .footer a {
     color: var(--accent);
     text-decoration: none;
     font-weight: 500;
+}
+
+.install-btn {
+    padding: 10px 20px;
+    background: var(--bg-card);
+    border: 2px solid var(--accent);
+    border-radius: 25px;
+    color: var(--accent);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.install-btn:active {
+    background: var(--accent);
+    color: white;
 }
 
 /* ============ RESPONSIVE ============ */
