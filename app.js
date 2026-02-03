@@ -1,7 +1,7 @@
 // PrettyFoto Daily Puzzle - Streamlined for Sales
 // 20 unique PrettyFoto images - all driving to shop
 
-// ============ PUZZLE DATA (20 Unique Images) ============
+// ============ PUZZLE DATA (18 Unique Images with Direct Product Links) ============
 const puzzles = [
     // Butterflies (3)
     { 
@@ -26,7 +26,7 @@ const puzzles = [
         shopUrl: "https://www.prettyfoto.com/butterflies-in-nature" 
     },
     
-    // Flowers - Tulips, Orchids, Water Lilies (9)
+    // Flowers - Tulips (3)
     { 
         id: 4, 
         title: "Pink Paradise", 
@@ -46,8 +46,10 @@ const puzzles = [
         title: "Love's Flame", 
         category: "flowers", 
         image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1737159079/IMG_0631_nuav1f.jpg", 
-        shopUrl: "https://www.prettyfoto.com/tulips" 
+        shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/img-0631?product_gallery=302625&product_id=7841103" 
     },
+    
+    // Flowers - Orchids (2)
     { 
         id: 7, 
         title: "On the Move", 
@@ -60,95 +62,80 @@ const puzzles = [
         title: "Pretty on Point", 
         category: "flowers", 
         image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1719113391/2N4A5107_imfztx.jpg", 
-        shopUrl: "https://www.prettyfoto.com/orchids" 
+        shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/2n4a5107?product_gallery=302623&product_id=7331073" 
     },
+    
+    // Flowers - Water Lilies (2)
     { 
         id: 9, 
         title: "Water Lily Afternoon", 
         category: "flowers", 
         image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1714324985/IMG_1453_ypftdw.jpg", 
-        shopUrl: "https://www.prettyfoto.com/floating-gems-water-lilies" 
+        shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/img-1453?product_gallery=327276&product_id=7186902" 
     },
     { 
         id: 10, 
         title: "Best in Show", 
         category: "flowers", 
         image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1700958423/IMG_8345_maatlv.jpg", 
-        shopUrl: "https://www.prettyfoto.com/floating-gems-water-lilies" 
+        shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/img-8345?product_gallery=327276&product_id=6666746" 
     },
+    
+    // Flowers - Sunflowers (2)
     { 
         id: 11, 
         title: "Sunny Daze", 
         category: "flowers", 
         image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1719113429/2N4A5194_situp5.jpg", 
-        shopUrl: "https://www.prettyfoto.com/sun-kissed-sunflowers" 
+        shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/2n4a5194?product_gallery=342700&product_id=7331079" 
     },
     { 
         id: 12, 
         title: "Center Stage", 
         category: "flowers", 
         image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1719113491/2N4A5195_d6urme.jpg", 
-        shopUrl: "https://www.prettyfoto.com/sun-kissed-sunflowers" 
+        shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/2n4a5195?product_gallery=342700&product_id=7331092" 
     },
+    
+    // Flowers - Cherry Blossoms (1)
     { 
         id: 13, 
         title: "Cherry Swirl", 
         category: "flowers", 
         image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1737159084/IMG_1512_q9xltq.jpg", 
-        shopUrl: "https://www.prettyfoto.com/pretty-in-pink-cherry-blossoms" 
+        shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/img-1512?product_gallery=332734&product_id=7841125" 
     },
     
-    // Horses (4)
+    // Horses (3)
     { 
         id: 14, 
         title: "Golden Days", 
         category: "horses", 
         image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1719113644/2N4A4928_ugnovr.jpg", 
-        shopUrl: "https://www.prettyfoto.com/equine-beauties" 
+        shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/2n4a4928?product_gallery=331150&product_id=7331108" 
     },
     { 
         id: 15, 
         title: "Magic Moment", 
         category: "horses", 
         image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1708488576/IMG_2866_b8y05a.jpg", 
-        shopUrl: "https://www.prettyfoto.com/equine-beauties" 
-    },
-    { 
-        id: 16, 
-        title: "Gentle Giant", 
-        category: "horses", 
-        image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1701103235/IMG_0726_dk7hqu.jpg", 
-        shopUrl: "https://www.prettyfoto.com/wildlifefcmiacr2jse" 
-    },
-    { 
-        id: 17, 
-        title: "Wild Motion", 
-        category: "horses", 
-        image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1700942833/IMG_0261_kxgqjx.jpg", 
-        shopUrl: "https://www.prettyfoto.com/wildlifefcmiacr2jse" 
+        shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/img-2866?product_gallery=331150&product_id=6987885" 
     },
     
-    // Landscapes - Mountains & Sunsets (3)
+    // Landscapes - Mountains (2)
     { 
-        id: 18, 
+        id: 16, 
         title: "Mountain Majesty", 
         category: "landscapes", 
         image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1701103309/IMG_7621_eonzfe.jpg", 
         shopUrl: "https://www.prettyfoto.com/mountains" 
     },
     { 
-        id: 19, 
+        id: 17, 
         title: "An Unexpected View", 
         category: "landscapes", 
         image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1719113577/IMG_2394_nbgkpf.jpg", 
-        shopUrl: "https://www.prettyfoto.com/mountains" 
-    },
-    { 
-        id: 20, 
-        title: "Golden Shimmer", 
-        category: "landscapes", 
-        image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1700942833/IMG_0261_kxgqjx.jpg", 
-        shopUrl: "https://www.prettyfoto.com/shimmering-sunshine-sunsets" 
+        shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/img-2394?product_gallery=303977&product_id=7331099" 
     },
 ];
 

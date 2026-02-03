@@ -11,12 +11,12 @@ A Wordle-style daily sliding tile puzzle game featuring beautiful nature photogr
 - **Shareable results** - share your score with emoji summary
 - **Countdown timer** to next puzzle
 
-### 50+ Puzzle Images
-- Butterflies & nature's jewels
-- Flowers & gardens  
-- Wildlife & horses
-- Mountains & landscapes
-- All images link to purchasable art prints
+### 17 Puzzle Images
+- 🦋 Butterflies (3 images)
+- 🌸 Flowers - tulips, orchids, water lilies, sunflowers, cherry blossoms (10 images)
+- 🐴 Horses (2 images)
+- 🏔️ Mountain landscapes (2 images)
+- All images link directly to purchasable art prints
 
 ### Sound Effects & Haptics
 - Satisfying tile slide sounds
@@ -29,15 +29,11 @@ A Wordle-style daily sliding tile puzzle game featuring beautiful nature photogr
 - **Offline support** - cached for offline play
 - **Fast loading** - service worker caching
 
-### Onboarding Tutorial
-- 4-slide welcome tutorial for new users
-- Explains how to play
-- Highlights daily challenge and shop
-
-### Email Capture
-- Appears after first puzzle completion
-- **20% discount offer** for email signup
-- Builds your marketing list
+### Shop Integration
+- Direct product page links (not gallery pages)
+- "Buy This Print" button during gameplay
+- "Shop This Print - 25% Off" on completion
+- Prominent discount code display (EVERYWHERE26)
 
 ### Gameplay
 - **Tap to slide** - mobile-optimized controls
@@ -82,7 +78,7 @@ Play at prettyfoto.com/puzzles
 puzzle/
 ├── index.html      # Main HTML with PWA support
 ├── styles.css      # Mobile-first styles
-├── app.js          # Game logic, 50+ puzzles, all features
+├── app.js          # Game logic & puzzle data
 ├── manifest.json   # PWA manifest
 ├── sw.js           # Service worker for offline
 └── README.md       # This file
@@ -111,34 +107,21 @@ Edit the `puzzles` array in `app.js`:
 
 ```javascript
 {
-    id: 51,
+    id: 18,
     title: "Your Title",
-    category: "flowers", // butterflies, flowers, wildlife, landscapes
-    image: "https://your-image-url.jpg",
-    shopUrl: "https://prettyfoto.com/your-product-page"
+    category: "flowers", // butterflies, flowers, horses, landscapes
+    image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/YOUR_IMAGE_ID.jpg",
+    shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/your-product?product_gallery=xxx&product_id=xxx"
 }
 ```
+
+**Note**: Use direct product URLs (with `product_gallery` and `product_id` parameters) for best user experience.
 
 ### Changing the Start Date
 Modify the `EPOCH` constant in `app.js`:
 
 ```javascript
 const EPOCH = new Date('2026-02-03').getTime();
-```
-
-### Email Integration
-The email form currently shows an alert. To integrate with your email service:
-
-```javascript
-document.getElementById('emailForm').addEventListener('submit', (e) => {
-    e.preventDefault();
-    const email = document.getElementById('emailInput').value;
-    // Send to your email service (Mailchimp, ConvertKit, etc.)
-    fetch('https://your-email-api.com/subscribe', {
-        method: 'POST',
-        body: JSON.stringify({ email })
-    });
-});
 ```
 
 ## 📱 Browser Support
@@ -157,6 +140,5 @@ Images © [PrettyFoto.com](https://www.prettyfoto.com) - Jennifer McClellan
 
 - 🌐 [PrettyFoto.com](https://www.prettyfoto.com)
 - 🛒 [Shop Art](https://www.prettyfoto.com/shop-art)
-- 📧 [Contact](mailto:jennifer@prettyfoto.com)
 - 📘 [Facebook](https://www.facebook.com/profile.php?id=61550723549342)
 - 📸 [Instagram](https://www.instagram.com/jennifer_at_prettyfoto/)
