@@ -1,0 +1,947 @@
+/* PrettyFoto Daily Puzzle - Mobile-First Styles */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+}
+
+:root {
+    --bg: #faf8f5;
+    --bg-card: #ffffff;
+    --text: #2d3436;
+    --text-dim: #636e72;
+    --accent: #e17055;
+    --accent-dark: #d63031;
+    --accent-light: #fab1a0;
+    --success: #00b894;
+    --gold: #fdcb6e;
+    --border: #dfe6e9;
+    --shadow: 0 2px 12px rgba(0,0,0,0.08);
+    --shadow-lg: 0 8px 30px rgba(0,0,0,0.12);
+    --radius: 16px;
+    --radius-sm: 10px;
+}
+
+html, body {
+    height: 100%;
+    overflow-x: hidden;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.5;
+}
+
+.app {
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+/* ============ HEADER ============ */
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    background: var(--bg-card);
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+    color: var(--text);
+}
+
+.logo-icon {
+    font-size: 24px;
+}
+
+.logo-text {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--accent);
+}
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.header-btn {
+    width: 40px;
+    height: 40px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    font-size: 18px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.header-btn:active {
+    background: var(--border);
+}
+
+.shop-link {
+    padding: 8px 16px;
+    background: var(--accent);
+    color: white;
+    text-decoration: none;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+/* ============ MAIN ============ */
+.main {
+    flex: 1;
+    padding: 16px;
+}
+
+.view {
+    animation: fadeIn 0.3s ease;
+}
+
+.hidden {
+    display: none !important;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* ============ HOME VIEW ============ */
+.home-header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.home-header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 32px;
+    font-weight: 700;
+    margin-bottom: 4px;
+}
+
+.home-header p {
+    color: var(--text-dim);
+    font-size: 14px;
+}
+
+/* Daily Puzzle Card */
+.daily-card {
+    background: var(--bg-card);
+    border-radius: var(--radius);
+    padding: 20px;
+    margin-bottom: 32px;
+    box-shadow: var(--shadow-lg);
+    text-align: center;
+}
+
+.daily-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: linear-gradient(135deg, var(--accent) 0%, var(--accent-dark) 100%);
+    color: white;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 16px;
+}
+
+.daily-number {
+    font-weight: 700;
+}
+
+.daily-date {
+    opacity: 0.9;
+}
+
+.daily-image-container {
+    position: relative;
+    margin-bottom: 16px;
+}
+
+.daily-image {
+    width: 100%;
+    max-width: 280px;
+    aspect-ratio: 1;
+    object-fit: cover;
+    border-radius: var(--radius-sm);
+}
+
+.daily-overlay {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: 280px;
+    height: 100%;
+    background: rgba(0, 184, 148, 0.85);
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.daily-status {
+    color: white;
+    font-size: 24px;
+    font-weight: 700;
+}
+
+.daily-info h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    margin-bottom: 4px;
+}
+
+.daily-category {
+    color: var(--accent);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 16px;
+}
+
+.play-daily-btn {
+    width: 100%;
+    padding: 16px;
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.play-daily-btn:active {
+    background: var(--accent-dark);
+}
+
+.daily-completed {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+}
+
+.daily-completed p {
+    color: var(--text-dim);
+    font-size: 14px;
+    margin-bottom: 12px;
+}
+
+.countdown {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+
+.countdown-label {
+    font-size: 12px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.countdown-time {
+    font-size: 28px;
+    font-weight: 700;
+    font-family: 'Inter', monospace;
+    color: var(--accent);
+}
+
+/* Free Play Section */
+.free-play-section {
+    margin-top: 16px;
+}
+
+.free-play-section h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    text-align: center;
+    margin-bottom: 4px;
+}
+
+.free-play-section > p {
+    text-align: center;
+    color: var(--text-dim);
+    font-size: 14px;
+    margin-bottom: 16px;
+}
+
+/* Category Filter */
+.category-filter {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+}
+
+.filter-btn {
+    padding: 10px 16px;
+    border: 2px solid var(--border);
+    border-radius: 25px;
+    background: var(--bg-card);
+    color: var(--text-dim);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.filter-btn:active {
+    transform: scale(0.95);
+}
+
+.filter-btn.active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: white;
+}
+
+/* Puzzle Gallery Grid */
+.puzzle-gallery {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+}
+
+.puzzle-card {
+    background: var(--bg-card);
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    cursor: pointer;
+    transition: transform 0.2s ease;
+    position: relative;
+}
+
+.puzzle-card:active {
+    transform: scale(0.97);
+}
+
+.puzzle-card-image {
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+    display: block;
+}
+
+.puzzle-card-info {
+    padding: 10px 12px;
+}
+
+.puzzle-card-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.puzzle-card-category {
+    font-size: 11px;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.puzzle-card::after {
+    content: '▶';
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 28px;
+    height: 28px;
+    background: rgba(255,255,255,0.9);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    color: var(--accent);
+    box-shadow: var(--shadow);
+}
+
+/* ============ PUZZLE VIEW ============ */
+.puzzle-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.icon-btn {
+    padding: 10px 16px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 25px;
+    color: var(--text-dim);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.icon-btn:active {
+    background: var(--border);
+}
+
+.shop-btn {
+    padding: 10px 16px;
+    background: var(--accent);
+    color: white;
+    text-decoration: none;
+    border-radius: 25px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.shop-btn:active {
+    background: var(--accent-dark);
+}
+
+.puzzle-title-bar {
+    text-align: center;
+    margin-bottom: 16px;
+}
+
+.puzzle-title-bar h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    margin-bottom: 4px;
+}
+
+.daily-badge-small {
+    display: inline-block;
+    background: linear-gradient(135deg, var(--accent) 0%, var(--accent-dark) 100%);
+    color: white;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+/* Difficulty Selection */
+.difficulty-select {
+    text-align: center;
+}
+
+.preview-container {
+    margin-bottom: 20px;
+}
+
+.preview-container img {
+    width: 100%;
+    max-width: 250px;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-lg);
+}
+
+.preview-hint {
+    margin-top: 12px;
+    color: var(--text-dim);
+    font-size: 13px;
+}
+
+.difficulty-options {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+}
+
+.difficulty-btn {
+    padding: 14px 20px;
+    background: var(--bg-card);
+    border: 2px solid var(--border);
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    min-width: 85px;
+    position: relative;
+}
+
+.difficulty-btn:active {
+    transform: scale(0.95);
+    border-color: var(--accent);
+}
+
+.difficulty-btn.recommended {
+    border-color: var(--gold);
+    background: linear-gradient(135deg, #fffdf5 0%, #fff9e6 100%);
+}
+
+.diff-label {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+}
+
+.diff-grid {
+    font-size: 12px;
+    color: var(--text-dim);
+}
+
+.diff-rec {
+    font-size: 10px;
+    color: var(--gold);
+    font-weight: 600;
+}
+
+/* ============ GAME AREA ============ */
+.game-area {
+    animation: fadeIn 0.3s ease;
+}
+
+.stats-bar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 24px;
+    padding: 12px 16px;
+    background: var(--bg-card);
+    border-radius: var(--radius);
+    margin-bottom: 16px;
+    box-shadow: var(--shadow);
+}
+
+.stat {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.stat-icon {
+    font-size: 18px;
+}
+
+.stat-value {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text);
+    min-width: 45px;
+}
+
+.hint-btn {
+    width: 44px;
+    height: 44px;
+    background: var(--bg);
+    border: 2px solid var(--border);
+    border-radius: 50%;
+    font-size: 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.hint-btn:active {
+    background: var(--accent-light);
+    border-color: var(--accent);
+}
+
+/* Puzzle Board */
+.puzzle-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 16px;
+}
+
+.puzzle-board {
+    display: grid;
+    gap: 3px;
+    background: var(--border);
+    padding: 6px;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-lg);
+    touch-action: manipulation;
+}
+
+.tile {
+    background: var(--bg-card);
+    border-radius: 6px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.15s ease;
+}
+
+.tile:active:not(.empty) {
+    transform: scale(0.95);
+}
+
+.tile.empty {
+    background: rgba(0,0,0,0.05);
+    cursor: default;
+}
+
+.tile.movable {
+    box-shadow: 0 0 0 2px var(--accent-light);
+}
+
+.tile img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    pointer-events: none;
+}
+
+.tile.sliding {
+    z-index: 10;
+    transition: transform 0.12s ease-out;
+}
+
+/* Shuffle Button */
+.shuffle-btn {
+    display: block;
+    width: 100%;
+    padding: 14px;
+    background: var(--bg-card);
+    border: 2px solid var(--border);
+    border-radius: var(--radius);
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--text-dim);
+    cursor: pointer;
+}
+
+.shuffle-btn:active {
+    background: var(--border);
+}
+
+/* ============ MODALS ============ */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 20px;
+    animation: fadeIn 0.2s ease;
+}
+
+.modal-content {
+    background: var(--bg-card);
+    border-radius: var(--radius);
+    max-width: 340px;
+    width: 100%;
+    padding: 28px 24px;
+    text-align: center;
+    position: relative;
+}
+
+.close-btn {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 32px;
+    height: 32px;
+    background: var(--bg);
+    border: none;
+    border-radius: 50%;
+    font-size: 20px;
+    cursor: pointer;
+    color: var(--text-dim);
+}
+
+/* Stats Modal */
+.stats-modal h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
+.stat-box {
+    background: var(--bg);
+    padding: 12px 8px;
+    border-radius: var(--radius-sm);
+}
+
+.stat-box-value {
+    display: block;
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--accent);
+}
+
+.stat-box-label {
+    font-size: 11px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+}
+
+.stats-detail {
+    padding: 16px;
+    background: var(--bg);
+    border-radius: var(--radius-sm);
+    margin-bottom: 20px;
+}
+
+.stats-detail p {
+    font-size: 14px;
+    color: var(--text-dim);
+    margin: 4px 0;
+}
+
+.stats-detail strong {
+    color: var(--text);
+}
+
+.today-result {
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+}
+
+.today-result h3 {
+    font-size: 16px;
+    margin-bottom: 8px;
+}
+
+.today-result p {
+    font-size: 14px;
+    color: var(--text-dim);
+    margin-bottom: 12px;
+}
+
+.share-btn {
+    padding: 12px 24px;
+    background: var(--success);
+    color: white;
+    border: none;
+    border-radius: 25px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.share-btn:active {
+    opacity: 0.9;
+}
+
+.share-btn.large {
+    width: 100%;
+    padding: 14px;
+    font-size: 16px;
+}
+
+/* Completion Modal */
+.completion-header {
+    margin-bottom: 20px;
+}
+
+.completion-icon {
+    font-size: 48px;
+    display: block;
+    margin-bottom: 8px;
+}
+
+.completion-header h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    color: var(--success);
+}
+
+.completion-image {
+    margin-bottom: 20px;
+}
+
+.completion-image img {
+    width: 100%;
+    max-width: 200px;
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow);
+}
+
+.completion-stats {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    margin-bottom: 20px;
+}
+
+.comp-stat {
+    text-align: center;
+}
+
+.comp-stat-value {
+    display: block;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--accent);
+}
+
+.comp-stat-label {
+    font-size: 12px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.share-section {
+    margin-bottom: 20px;
+}
+
+.copied-msg {
+    margin-top: 8px;
+    color: var(--success);
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.completion-cta {
+    background: linear-gradient(135deg, #fff9f0 0%, #ffe4d6 100%);
+    padding: 20px;
+    border-radius: var(--radius-sm);
+    margin-bottom: 20px;
+}
+
+.completion-cta p {
+    margin-bottom: 12px;
+    color: var(--text-dim);
+    font-size: 14px;
+}
+
+.cta-btn {
+    display: inline-block;
+    padding: 14px 24px;
+    border-radius: 25px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    border: none;
+    transition: transform 0.2s ease;
+}
+
+.cta-btn:active {
+    transform: scale(0.95);
+}
+
+.cta-btn.primary {
+    background: var(--accent);
+    color: white;
+}
+
+.cta-btn.secondary {
+    background: var(--bg);
+    color: var(--text);
+    border: 2px solid var(--border);
+}
+
+.completion-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+}
+
+/* Hint Modal */
+.hint-modal {
+    padding: 16px;
+}
+
+.hint-modal img {
+    width: 100%;
+    border-radius: var(--radius-sm);
+    margin-bottom: 12px;
+}
+
+.hint-modal p {
+    color: var(--text-dim);
+    font-size: 13px;
+}
+
+/* ============ FOOTER ============ */
+.footer {
+    padding: 20px 16px;
+    text-align: center;
+    margin-top: auto;
+}
+
+.footer p {
+    color: var(--text-dim);
+    font-size: 13px;
+}
+
+.footer a {
+    color: var(--accent);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+/* ============ RESPONSIVE ============ */
+@media (min-width: 400px) {
+    .puzzle-gallery {
+        gap: 16px;
+    }
+    
+    .stats-grid {
+        gap: 12px;
+    }
+    
+    .stat-box-value {
+        font-size: 28px;
+    }
+}
+
+@media (min-width: 500px) {
+    .main {
+        padding: 24px;
+    }
+    
+    .home-header h1 {
+        font-size: 36px;
+    }
+}
+
+/* Safe area for notched phones */
+@supports (padding: max(0px)) {
+    .header {
+        padding-top: max(12px, env(safe-area-inset-top));
+    }
+    
+    .footer {
+        padding-bottom: max(20px, env(safe-area-inset-bottom));
+    }
+}

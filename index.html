@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>PrettyFoto Puzzles - Daily Sliding Tile Puzzle</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="apple-touch-icon" sizes="180x180" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌸</text></svg>">
+    <meta name="theme-color" content="#e17055">
+    <meta name="description" content="Play the daily sliding tile puzzle featuring stunning nature photography. Complete the puzzle and shop the art print!">
+</head>
+<body>
+    <div class="app">
+        <!-- Header -->
+        <header class="header">
+            <a href="https://www.prettyfoto.com" target="_blank" class="logo">
+                <span class="logo-icon">🌸</span>
+                <span class="logo-text">PrettyFoto</span>
+            </a>
+            <div class="header-actions">
+                <button id="statsBtn" class="header-btn" title="Statistics">📊</button>
+                <a href="https://www.prettyfoto.com/shop-art" target="_blank" class="shop-link">
+                    Shop Art →
+                </a>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main">
+            <!-- Home View -->
+            <section id="homeView" class="view">
+                <div class="home-header">
+                    <h1>Daily Puzzle</h1>
+                    <p>A new puzzle every day at midnight</p>
+                </div>
+
+                <!-- Daily Puzzle Card -->
+                <div id="dailyCard" class="daily-card">
+                    <div class="daily-badge">
+                        <span class="daily-number">#<span id="puzzleNumber">1</span></span>
+                        <span class="daily-date" id="puzzleDate">Feb 3, 2026</span>
+                    </div>
+                    <div class="daily-image-container">
+                        <img id="dailyImage" src="" alt="Today's puzzle" class="daily-image">
+                        <div id="dailyOverlay" class="daily-overlay">
+                            <span class="daily-status">✓ Completed</span>
+                        </div>
+                    </div>
+                    <div class="daily-info">
+                        <h3 id="dailyTitle">Loading...</h3>
+                        <p id="dailyCategory" class="daily-category">Nature</p>
+                    </div>
+                    <button id="playDailyBtn" class="play-daily-btn">
+                        Play Today's Puzzle
+                    </button>
+                    <div id="dailyCompleted" class="daily-completed hidden">
+                        <p>Come back tomorrow for a new puzzle!</p>
+                        <div class="countdown">
+                            <span class="countdown-label">Next puzzle in</span>
+                            <span id="countdown" class="countdown-time">00:00:00</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Free Play Section -->
+                <div class="free-play-section">
+                    <h2>Free Play</h2>
+                    <p>Practice with any puzzle, anytime</p>
+                    
+                    <!-- Category Filter -->
+                    <div class="category-filter">
+                        <button class="filter-btn active" data-category="all">All</button>
+                        <button class="filter-btn" data-category="butterflies">🦋</button>
+                        <button class="filter-btn" data-category="flowers">🌸</button>
+                        <button class="filter-btn" data-category="wildlife">🦌</button>
+                        <button class="filter-btn" data-category="landscapes">🏔️</button>
+                    </div>
+
+                    <!-- Puzzle Gallery Grid -->
+                    <div id="puzzleGallery" class="puzzle-gallery">
+                        <!-- Puzzles loaded via JavaScript -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Puzzle View -->
+            <section id="puzzleView" class="view hidden">
+                <!-- Back & Shop buttons -->
+                <div class="puzzle-nav">
+                    <button id="backBtn" class="icon-btn">← Back</button>
+                    <a id="shopLink" href="#" target="_blank" class="shop-btn">
+                        🛒 Shop Print
+                    </a>
+                </div>
+
+                <!-- Puzzle Title -->
+                <div class="puzzle-title-bar">
+                    <h2 id="puzzleTitle">Puzzle</h2>
+                    <span id="dailyBadge" class="daily-badge-small hidden">Daily #<span id="dailyBadgeNum">1</span></span>
+                </div>
+
+                <!-- Difficulty Selection -->
+                <div id="difficultySelect" class="difficulty-select">
+                    <div class="preview-container">
+                        <img id="puzzlePreview" src="" alt="Puzzle preview">
+                        <p class="preview-hint">Study the image, then choose difficulty</p>
+                    </div>
+                    <div class="difficulty-options">
+                        <button class="difficulty-btn" data-size="3">
+                            <span class="diff-label">Easy</span>
+                            <span class="diff-grid">3×3</span>
+                        </button>
+                        <button class="difficulty-btn recommended" data-size="4">
+                            <span class="diff-label">Medium</span>
+                            <span class="diff-grid">4×4</span>
+                            <span class="diff-rec">★ Daily</span>
+                        </button>
+                        <button class="difficulty-btn" data-size="5">
+                            <span class="diff-label">Hard</span>
+                            <span class="diff-grid">5×5</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Game Area -->
+                <div id="gameArea" class="game-area hidden">
+                    <!-- Stats Bar -->
+                    <div class="stats-bar">
+                        <div class="stat">
+                            <span class="stat-icon">⏱️</span>
+                            <span id="timer" class="stat-value">0:00</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-icon">👆</span>
+                            <span id="moves" class="stat-value">0</span>
+                        </div>
+                        <button id="hintBtn" class="hint-btn">👁️</button>
+                    </div>
+
+                    <!-- Puzzle Board -->
+                    <div class="puzzle-container">
+                        <div id="puzzleBoard" class="puzzle-board">
+                            <!-- Tiles generated here -->
+                        </div>
+                    </div>
+
+                    <!-- Shuffle button (hidden for daily) -->
+                    <button id="shuffleBtn" class="shuffle-btn">🔀 Shuffle Again</button>
+                </div>
+            </section>
+        </main>
+
+        <!-- Stats Modal -->
+        <div id="statsModal" class="modal hidden">
+            <div class="modal-content stats-modal">
+                <button id="closeStats" class="close-btn">×</button>
+                <h2>Statistics</h2>
+                <div class="stats-grid">
+                    <div class="stat-box">
+                        <span class="stat-box-value" id="statPlayed">0</span>
+                        <span class="stat-box-label">Played</span>
+                    </div>
+                    <div class="stat-box">
+                        <span class="stat-box-value" id="statWon">0</span>
+                        <span class="stat-box-label">Won</span>
+                    </div>
+                    <div class="stat-box">
+                        <span class="stat-box-value" id="statStreak">0</span>
+                        <span class="stat-box-label">Streak</span>
+                    </div>
+                    <div class="stat-box">
+                        <span class="stat-box-value" id="statBest">0</span>
+                        <span class="stat-box-label">Best</span>
+                    </div>
+                </div>
+                <div class="stats-detail">
+                    <p>Average moves: <strong id="statAvgMoves">-</strong></p>
+                    <p>Average time: <strong id="statAvgTime">-</strong></p>
+                </div>
+                <div id="todayResult" class="today-result hidden">
+                    <h3>Today's Result</h3>
+                    <p id="todayResultText"></p>
+                    <button id="shareBtn" class="share-btn">📤 Share Result</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Completion Modal -->
+        <div id="completionModal" class="modal hidden">
+            <div class="modal-content">
+                <div class="completion-header">
+                    <span class="completion-icon">🎉</span>
+                    <h2>Solved!</h2>
+                </div>
+                <div class="completion-image">
+                    <img id="completedImage" src="" alt="Completed puzzle">
+                </div>
+                <div class="completion-stats">
+                    <div class="comp-stat">
+                        <span class="comp-stat-value" id="finalTime">0:00</span>
+                        <span class="comp-stat-label">Time</span>
+                    </div>
+                    <div class="comp-stat">
+                        <span class="comp-stat-value" id="finalMoves">0</span>
+                        <span class="comp-stat-label">Moves</span>
+                    </div>
+                </div>
+                
+                <!-- Share Section (daily only) -->
+                <div id="shareSection" class="share-section hidden">
+                    <button id="shareResultBtn" class="share-btn large">📤 Share Result</button>
+                    <p id="copiedMsg" class="copied-msg hidden">Copied to clipboard!</p>
+                </div>
+
+                <div class="completion-cta">
+                    <p>Love this image?</p>
+                    <a id="completionShopLink" href="#" target="_blank" class="cta-btn primary">
+                        🛒 Shop This Print
+                    </a>
+                </div>
+                <div class="completion-actions">
+                    <button id="playAgainBtn" class="cta-btn secondary">Play Again</button>
+                    <button id="newPuzzleBtn" class="cta-btn secondary">New Puzzle</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Hint Modal -->
+        <div id="hintModal" class="modal hidden">
+            <div class="modal-content hint-modal">
+                <img id="hintImage" src="" alt="Reference">
+                <p>Tap anywhere to close</p>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>Photos by <a href="https://www.prettyfoto.com" target="_blank">PrettyFoto.com</a></p>
+        </footer>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
