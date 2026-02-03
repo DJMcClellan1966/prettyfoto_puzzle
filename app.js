@@ -1,35 +1,35 @@
 // PrettyFoto Daily Puzzle - Streamlined for Sales
 // 20 unique PrettyFoto images - all driving to shop
 
-// ============ PUZZLE DATA (16 Verified Images) ============
+// ============ PUZZLE DATA (16 Verified Images - All Direct Links) ============
 // Each puzzle has: shopUrl (direct product page) and galleryUrl (collection page)
 const puzzles = [
     // Butterflies (2)
     { 
         id: 1, 
-        title: "Whimsical Wings", 
+        title: "Cherry on Top", 
         category: "butterflies", 
-        image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1700942833/IMG_8687_vttrql.jpg", 
-        shopUrl: "https://www.prettyfoto.com/butterflies-in-nature",
+        image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1719947771/IMG_1842_z7mzjy.jpg", 
+        shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/img-1842?product_gallery=303973&product_id=7351866",
         galleryUrl: "https://www.prettyfoto.com/butterflies-in-nature"
     },
     { 
         id: 2, 
-        title: "Sitting Pretty", 
+        title: "Nature's Jewel", 
         category: "butterflies", 
-        image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1700942834/IMG_8255_mvuquo.jpg", 
-        shopUrl: "https://www.prettyfoto.com/butterflies-in-nature",
+        image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1694475326/Jennifer_McClellan_008Cfc2f-1102-42Ba-Afef-D728dcafa2b5_o6h4nh.jpg", 
+        shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/jennifer-mcclellan-008cfc2f-1102-42ba-afef-d728dcafa2b5?product_gallery=303973&product_id=6389616",
         galleryUrl: "https://www.prettyfoto.com/butterflies-in-nature"
     },
     
     // Flowers - Tulips (3)
     { 
         id: 3, 
-        title: "Pink Paradise", 
+        title: "Love Blooms", 
         category: "flowers", 
-        image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1700942939/IMG_8239_lxnueh.jpg", 
-        shopUrl: "https://www.prettyfoto.com/flowersqzw7qvx8g60",
-        galleryUrl: "https://www.prettyfoto.com/flowersqzw7qvx8g60"
+        image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1737159071/2N4A4426_o4lj30.jpg", 
+        shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/2n4a4426?product_gallery=302625&product_id=7841076",
+        galleryUrl: "https://www.prettyfoto.com/tulips"
     },
     { 
         id: 4, 
@@ -133,10 +133,10 @@ const puzzles = [
     // Landscapes - Mountains (2)
     { 
         id: 15, 
-        title: "Mountain Majesty", 
+        title: "Counting Sheep 2", 
         category: "landscapes", 
-        image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1701103309/IMG_7621_eonzfe.jpg", 
-        shopUrl: "https://www.prettyfoto.com/mountains",
+        image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1719113554/2N4A4751_ugqv2k.jpg", 
+        shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/2n4a4751?product_gallery=303977&product_id=7331096",
         galleryUrl: "https://www.prettyfoto.com/mountains"
     },
     { 
