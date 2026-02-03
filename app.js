@@ -36,7 +36,7 @@ const puzzles = [
         title: "My One and Only", 
         category: "flowers", 
         image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1737159079/IMG_0594_yndoza.jpg", 
-        shopUrl: "https://www.prettyfoto.com/tulips",
+        shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/img-0594?product_gallery=302625&product_id=7841105",
         galleryUrl: "https://www.prettyfoto.com/tulips"
     },
     { 
@@ -54,7 +54,7 @@ const puzzles = [
         title: "On the Move", 
         category: "flowers", 
         image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1693521613/Jennifer_McClellan_Img_0261_giehor.jpg", 
-        shopUrl: "https://www.prettyfoto.com/orchids",
+        shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/jennifer-mcclellan-img-0261?product_gallery=302623&product_id=6350814",
         galleryUrl: "https://www.prettyfoto.com/orchids"
     },
     { 
