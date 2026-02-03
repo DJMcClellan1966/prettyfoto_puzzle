@@ -182,7 +182,22 @@ let stats = {
     todayMoves: 0,
     todayTime: 0,
     hasSeenOnboarding: false,
-    hasSeenPromo: false
+    hasSeenPromo: false,
+    // Behavior tracking
+    dailyFirstCount: 0,      // Sessions where user played daily first
+    galleryFirstCount: 0,    // Sessions where user played gallery first  
+    dailySkippedCount: 0,    // Sessions where user never played daily
+    galleryPlays: 0,         // Total gallery puzzles completed
+    dailyPlays: 0,           // Total daily puzzles completed
+    shopClicks: 0            // Track shop link clicks
+};
+
+// Session tracking (resets on page reload)
+let sessionState = {
+    dailyStarted: false,
+    galleryStarted: false,
+    firstAction: null,       // 'daily' or 'gallery'
+    sessionRecorded: false   // Whether we've recorded this session's behavior
 };
 
 // ============ AUDIO ============
@@ -402,6 +417,14 @@ function setupEventListeners() {
         saveStats();
     });
     
+    // Track shop link clicks
+    document.querySelectorAll('a[href*="prettyfoto.com"]').forEach(link => {
+        link.addEventListener('click', () => {
+            stats.shopClicks = (stats.shopClicks || 0) + 1;
+            saveStats();
+        });
+    });
+    
     // Close modals
     hintModal.addEventListener('click', () => hintModal.classList.add('hidden'));
     statsModal.addEventListener('click', (e) => {
@@ -491,6 +514,14 @@ function playDaily() {
     gridSize = 4;
     shuffleSeed = getDailyPuzzleNumber();
     
+    // Track behavior - daily started
+    if (!sessionState.dailyStarted) {
+        sessionState.dailyStarted = true;
+        if (!sessionState.firstAction) {
+            sessionState.firstAction = 'daily';
+        }
+    }
+    
     puzzleTitle.textContent = currentPuzzle.title;
     puzzlePreview.src = currentPuzzle.image;
     shopLink.href = currentPuzzle.shopUrl;
@@ -553,6 +584,14 @@ function selectPuzzle(id) {
     isDaily = false;
     currentPuzzle = puzzles.find(p => p.id === id);
     if (!currentPuzzle) return;
+    
+    // Track behavior - gallery started
+    if (!sessionState.galleryStarted) {
+        sessionState.galleryStarted = true;
+        if (!sessionState.firstAction) {
+            sessionState.firstAction = 'gallery';
+        }
+    }
     
     shuffleSeed = Date.now();
     
@@ -795,6 +834,16 @@ function puzzleComplete() {
     document.getElementById('finalMoves').textContent = moves;
     document.getElementById('completionShopLink').href = currentPuzzle.shopUrl;
     
+    // Record session behavior on first completion
+    if (!sessionState.sessionRecorded) {
+        sessionState.sessionRecorded = true;
+        if (sessionState.firstAction === 'daily') {
+            stats.dailyFirstCount++;
+        } else if (sessionState.firstAction === 'gallery') {
+            stats.galleryFirstCount++;
+        }
+    }
+    
     if (isDaily) {
         document.getElementById('shareSection').classList.remove('hidden');
         document.getElementById('playAgainBtn').textContent = 'Back Home';
@@ -817,6 +866,7 @@ function puzzleComplete() {
         stats.todayCompleted = true;
         stats.todayMoves = moves;
         stats.todayTime = seconds;
+        stats.dailyPlays++; // Track daily completions
         
         saveStats();
         
@@ -827,6 +877,8 @@ function puzzleComplete() {
     } else {
         document.getElementById('shareSection').classList.add('hidden');
         document.getElementById('playAgainBtn').textContent = 'Play Again';
+        stats.galleryPlays++; // Track gallery completions
+        saveStats();
     }
     
     renderCompletedBoard();
@@ -900,7 +952,17 @@ function showConfetti() {
 // ============ STATS ============
 function loadStats() {
     const stored = localStorage.getItem(STORAGE_KEY);
-    if (stored) stats = { ...stats, ...JSON.parse(stored) };
+    if (stored) {
+        const loaded = JSON.parse(stored);
+        stats = { ...stats, ...loaded };
+        // Ensure new tracking fields have defaults
+        stats.dailyFirstCount = stats.dailyFirstCount || 0;
+        stats.galleryFirstCount = stats.galleryFirstCount || 0;
+        stats.dailySkippedCount = stats.dailySkippedCount || 0;
+        stats.galleryPlays = stats.galleryPlays || 0;
+        stats.dailyPlays = stats.dailyPlays || 0;
+        stats.shopClicks = stats.shopClicks || 0;
+    }
     
     const soundPref = localStorage.getItem('prettyfoto_sound');
     if (soundPref !== null) soundEnabled = soundPref === 'true';
@@ -931,6 +993,29 @@ function showStats() {
     } else {
         document.getElementById('todayResult').classList.add('hidden');
     }
+    
+    // Populate analytics
+    document.getElementById('statDailyFirst').textContent = stats.dailyFirstCount || 0;
+    document.getElementById('statGalleryFirst').textContent = stats.galleryFirstCount || 0;
+    document.getElementById('statDailyPlays').textContent = stats.dailyPlays || 0;
+    document.getElementById('statGalleryPlays').textContent = stats.galleryPlays || 0;
+    
+    // Generate insight
+    const totalSessions = (stats.dailyFirstCount || 0) + (stats.galleryFirstCount || 0);
+    const dailyPct = totalSessions > 0 ? Math.round((stats.dailyFirstCount || 0) / totalSessions * 100) : 0;
+    const galleryPct = totalSessions > 0 ? Math.round((stats.galleryFirstCount || 0) / totalSessions * 100) : 0;
+    
+    let insight = '';
+    if (totalSessions === 0) {
+        insight = '🎮 Complete puzzles to see your play patterns!';
+    } else if (dailyPct > galleryPct) {
+        insight = `📅 ${dailyPct}% of sessions start with Daily - habit forming!`;
+    } else if (galleryPct > dailyPct) {
+        insight = `🖼️ ${galleryPct}% of sessions start with Gallery - browsing works!`;
+    } else {
+        insight = `⚖️ Equal mix of Daily & Gallery starts - variety is key!`;
+    }
+    document.getElementById('analyticsInsight').textContent = insight;
     
     statsModal.classList.remove('hidden');
 }
