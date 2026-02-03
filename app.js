@@ -1,9 +1,9 @@
-// PrettyFoto Daily Puzzle - Enhanced Version
-// Features: unique puzzles, sounds, haptics, PWA, onboarding, email capture
+// PrettyFoto Daily Puzzle - With Custom Upload Feature
+// 12 unique PrettyFoto images + user uploaded photos
 
-// ============ PUZZLE DATA (All Unique Images) ============
+// ============ PUZZLE DATA (12 Unique Images) ============
 const puzzles = [
-    // Butterflies - Unique images
+    // Butterflies
     { 
         id: 1, 
         title: "Whimsical Wings", 
@@ -26,7 +26,7 @@ const puzzles = [
         shopUrl: "https://www.prettyfoto.com/butterflies-in-nature" 
     },
     
-    // Flowers - Unique images  
+    // Flowers  
     { 
         id: 4, 
         title: "Pink Paradise", 
@@ -43,34 +43,55 @@ const puzzles = [
     },
     { 
         id: 6, 
+        title: "Love's Flame", 
+        category: "flowers", 
+        image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1737159079/IMG_0631_nuav1f.jpg", 
+        shopUrl: "https://www.prettyfoto.com/tulips" 
+    },
+    { 
+        id: 7, 
         title: "On the Move", 
         category: "flowers", 
         image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1693521613/Jennifer_McClellan_Img_0261_giehor.jpg", 
         shopUrl: "https://www.prettyfoto.com/orchids" 
     },
-    
-    // Wildlife - Unique images
     { 
-        id: 7, 
+        id: 8, 
+        title: "Pretty on Point", 
+        category: "flowers", 
+        image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1719113391/2N4A5107_imfztx.jpg", 
+        shopUrl: "https://www.prettyfoto.com/orchids" 
+    },
+    
+    // Wildlife
+    { 
+        id: 9, 
         title: "Gentle Giant", 
         category: "wildlife", 
         image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1701103235/IMG_0726_dk7hqu.jpg", 
         shopUrl: "https://www.prettyfoto.com/wildlifefcmiacr2jse" 
     },
     { 
-        id: 8, 
+        id: 10, 
         title: "Wild Motion", 
         category: "wildlife", 
         image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1700942833/IMG_0261_kxgqjx.jpg", 
         shopUrl: "https://www.prettyfoto.com/wildlifefcmiacr2jse" 
     },
     
-    // Landscapes - Unique images
+    // Landscapes
     { 
-        id: 9, 
+        id: 11, 
         title: "Mountain Majesty", 
         category: "landscapes", 
         image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1701103309/IMG_7621_eonzfe.jpg", 
+        shopUrl: "https://www.prettyfoto.com/mountains" 
+    },
+    { 
+        id: 12, 
+        title: "An Unexpected View", 
+        category: "landscapes", 
+        image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1719113577/IMG_2394_nbgkpf.jpg", 
         shopUrl: "https://www.prettyfoto.com/mountains" 
     },
 ];
@@ -83,6 +104,7 @@ const DAY_MS = 24 * 60 * 60 * 1000;
 // ============ GAME STATE ============
 let currentPuzzle = null;
 let isDaily = false;
+let isCustom = false;
 let gridSize = 4;
 let tiles = [];
 let emptyIndex = 0;
@@ -94,6 +116,7 @@ let tileImages = [];
 let shuffleSeed = 0;
 let soundEnabled = true;
 let deferredPrompt = null;
+let customImageData = null;
 
 // ============ STATS ============
 let stats = {
@@ -112,7 +135,7 @@ let stats = {
     email: null
 };
 
-// ============ AUDIO CONTEXT ============
+// ============ AUDIO ============
 let audioCtx = null;
 
 function initAudio() {
@@ -166,15 +189,11 @@ function playSound(type) {
                 oscillator.stop(ctx.currentTime + 0.05);
                 break;
         }
-    } catch (e) {
-        // Audio not available
-    }
+    } catch (e) {}
 }
 
 function vibrate(pattern) {
-    if (navigator.vibrate) {
-        navigator.vibrate(pattern);
-    }
+    if (navigator.vibrate) navigator.vibrate(pattern);
 }
 
 // ============ DOM ELEMENTS ============
@@ -211,9 +230,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 function registerServiceWorker() {
     if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('sw.js')
-            .then(reg => console.log('SW registered'))
-            .catch(err => console.log('SW registration failed'));
+        navigator.serviceWorker.register('sw.js').catch(() => {});
     }
 }
 
@@ -227,7 +244,7 @@ function setupPWAInstall() {
     document.getElementById('installBtn').addEventListener('click', async () => {
         if (deferredPrompt) {
             deferredPrompt.prompt();
-            const { outcome } = await deferredPrompt.userChoice;
+            await deferredPrompt.userChoice;
             deferredPrompt = null;
             document.getElementById('installBtn').classList.add('hidden');
         }
@@ -279,6 +296,7 @@ function setupEventListeners() {
     // Shuffle button
     document.getElementById('shuffleBtn').addEventListener('click', () => {
         if (isDaily) return;
+        shuffleSeed = Date.now();
         shuffleTiles();
         moves = 0;
         seconds = 0;
@@ -344,6 +362,16 @@ function setupEventListeners() {
         alert('Thanks! Check your email for your 20% discount code.');
     });
     
+    // Custom puzzle upload
+    document.getElementById('uploadInput').addEventListener('change', handleImageUpload);
+    document.getElementById('cameraBtn').addEventListener('click', () => {
+        // Trigger file input with camera on mobile
+        const input = document.getElementById('uploadInput');
+        input.setAttribute('capture', 'environment');
+        input.click();
+        input.removeAttribute('capture');
+    });
+    
     // Close modals
     hintModal.addEventListener('click', () => hintModal.classList.add('hidden'));
     statsModal.addEventListener('click', (e) => {
@@ -354,6 +382,70 @@ function setupEventListeners() {
     });
 }
 
+// ============ CUSTOM PUZZLE UPLOAD ============
+function handleImageUpload(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    
+    playSound('click');
+    
+    const reader = new FileReader();
+    reader.onload = (event) => {
+        // Create square cropped version
+        const img = new Image();
+        img.onload = () => {
+            const canvas = document.createElement('canvas');
+            const size = Math.min(img.width, img.height);
+            canvas.width = 600;
+            canvas.height = 600;
+            const ctx = canvas.getContext('2d');
+            
+            // Center crop to square
+            const sx = (img.width - size) / 2;
+            const sy = (img.height - size) / 2;
+            ctx.drawImage(img, sx, sy, size, size, 0, 0, 600, 600);
+            
+            customImageData = canvas.toDataURL('image/jpeg', 0.9);
+            startCustomPuzzle();
+        };
+        img.src = event.target.result;
+    };
+    reader.readAsDataURL(file);
+    
+    // Reset input so same file can be selected again
+    e.target.value = '';
+}
+
+function startCustomPuzzle() {
+    isDaily = false;
+    isCustom = true;
+    currentPuzzle = {
+        title: "Your Photo",
+        category: "custom",
+        image: customImageData,
+        shopUrl: null
+    };
+    
+    shuffleSeed = Date.now();
+    
+    puzzleTitle.textContent = "Your Photo";
+    puzzlePreview.src = customImageData;
+    document.getElementById('hintImage').src = customImageData;
+    
+    // Hide shop button for custom puzzles
+    shopLink.classList.add('hidden');
+    document.getElementById('dailyBadge').classList.add('hidden');
+    document.getElementById('customBadge').classList.remove('hidden');
+    document.getElementById('shuffleBtn').classList.remove('hidden');
+    
+    homeView.classList.add('hidden');
+    puzzleView.classList.remove('hidden');
+    difficultySelect.classList.remove('hidden');
+    gameArea.classList.add('hidden');
+    
+    resetGame();
+}
+
 function updateOnboardingSlide(num) {
     document.querySelectorAll('.onboarding-slide').forEach(s => s.classList.remove('active'));
     document.querySelectorAll('.onboarding-dots .dot').forEach(d => d.classList.remove('active'));
@@ -361,11 +453,7 @@ function updateOnboardingSlide(num) {
     document.querySelector(`.onboarding-slide[data-slide="${num}"]`).classList.add('active');
     document.querySelector(`.dot[data-slide="${num}"]`).classList.add('active');
     
-    if (num === 4) {
-        document.getElementById('onboardingNext').textContent = "Let's Play!";
-    } else {
-        document.getElementById('onboardingNext').textContent = 'Next';
-    }
+    document.getElementById('onboardingNext').textContent = num === 4 ? "Let's Play!" : 'Next';
 }
 
 function toggleSound() {
@@ -404,9 +492,7 @@ function setupDailyPuzzle() {
     
     document.getElementById('puzzleNumber').textContent = puzzleNum;
     document.getElementById('puzzleDate').textContent = today.toLocaleDateString('en-US', { 
-        month: 'short', 
-        day: 'numeric', 
-        year: 'numeric' 
+        month: 'short', day: 'numeric', year: 'numeric' 
     });
     document.getElementById('dailyImage').src = daily.image;
     document.getElementById('dailyTitle').textContent = daily.title;
@@ -435,6 +521,7 @@ function hideDailyCompleted() {
 function playDaily() {
     playSound('click');
     isDaily = true;
+    isCustom = false;
     currentPuzzle = getDailyPuzzle();
     gridSize = 4;
     shuffleSeed = getDailyPuzzleNumber();
@@ -442,11 +529,13 @@ function playDaily() {
     puzzleTitle.textContent = currentPuzzle.title;
     puzzlePreview.src = currentPuzzle.image;
     shopLink.href = currentPuzzle.shopUrl;
+    shopLink.classList.remove('hidden');
     document.getElementById('completionShopLink').href = currentPuzzle.shopUrl;
     document.getElementById('hintImage').src = currentPuzzle.image;
     
     document.getElementById('dailyBadge').classList.remove('hidden');
     document.getElementById('dailyBadgeNum').textContent = getDailyPuzzleNumber();
+    document.getElementById('customBadge').classList.add('hidden');
     document.getElementById('shuffleBtn').classList.add('hidden');
     
     homeView.classList.add('hidden');
@@ -473,7 +562,6 @@ function startCountdown() {
         document.getElementById('countdown').textContent = 
             `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
     }
-    
     update();
     setInterval(update, 1000);
 }
@@ -498,6 +586,7 @@ function renderGallery(category = 'all') {
 function selectPuzzle(id) {
     playSound('click');
     isDaily = false;
+    isCustom = false;
     currentPuzzle = puzzles.find(p => p.id === id);
     if (!currentPuzzle) return;
     
@@ -506,10 +595,12 @@ function selectPuzzle(id) {
     puzzleTitle.textContent = currentPuzzle.title;
     puzzlePreview.src = currentPuzzle.image;
     shopLink.href = currentPuzzle.shopUrl;
+    shopLink.classList.remove('hidden');
     document.getElementById('completionShopLink').href = currentPuzzle.shopUrl;
     document.getElementById('hintImage').src = currentPuzzle.image;
     
     document.getElementById('dailyBadge').classList.add('hidden');
+    document.getElementById('customBadge').classList.add('hidden');
     document.getElementById('shuffleBtn').classList.remove('hidden');
     
     homeView.classList.add('hidden');
@@ -578,12 +669,7 @@ function createTiles() {
             const col = i % gridSize;
             const srcSize = img.width / gridSize;
             
-            ctx.drawImage(
-                img,
-                col * srcSize, row * srcSize, srcSize, srcSize,
-                0, 0, canvas.width, canvas.height
-            );
-            
+            ctx.drawImage(img, col * srcSize, row * srcSize, srcSize, srcSize, 0, 0, canvas.width, canvas.height);
             tileImages[i] = canvas.toDataURL('image/jpeg', 0.9);
         }
         
@@ -600,7 +686,6 @@ function seededRandom(seed) {
 
 function shuffleTiles() {
     const totalTiles = gridSize * gridSize;
-    
     tiles = Array.from({ length: totalTiles }, (_, i) => i);
     emptyIndex = totalTiles - 1;
     
@@ -653,13 +738,9 @@ function renderBoard(tileSize) {
         } else {
             const img = document.createElement('img');
             img.src = tileImages[tileValue];
-            img.alt = `Tile ${tileValue + 1}`;
             tile.appendChild(img);
             
-            if (isAdjacentToEmpty(i)) {
-                tile.classList.add('movable');
-            }
-            
+            if (isAdjacentToEmpty(i)) tile.classList.add('movable');
             tile.addEventListener('click', () => handleTileClick(i));
         }
         
@@ -690,11 +771,8 @@ function handleTileClick(position) {
     const emptyRow = Math.floor(emptyIndex / gridSize);
     const emptyCol = emptyIndex % gridSize;
     
-    const deltaX = (emptyCol - posCol) * tileSize;
-    const deltaY = (emptyRow - posRow) * tileSize;
-    
     tile.classList.add('sliding');
-    tile.style.transform = `translate(${deltaX}px, ${deltaY}px)`;
+    tile.style.transform = `translate(${(emptyCol - posCol) * tileSize}px, ${(emptyRow - posRow) * tileSize}px)`;
     
     setTimeout(() => {
         tiles[emptyIndex] = tiles[position];
@@ -704,12 +782,9 @@ function handleTileClick(position) {
         moves++;
         updateGameStats();
         
-        const tileSize = tile.offsetWidth;
-        renderBoard(tileSize);
+        renderBoard(tile.offsetWidth);
         
-        if (checkWin()) {
-            setTimeout(puzzleComplete, 300);
-        }
+        if (checkWin()) setTimeout(puzzleComplete, 300);
     }, 120);
 }
 
@@ -732,8 +807,7 @@ function startTimer() {
 
 function formatTime(secs) {
     const mins = Math.floor(secs / 60);
-    const remainingSecs = secs % 60;
-    return `${mins}:${remainingSecs.toString().padStart(2, '0')}`;
+    return `${mins}:${(secs % 60).toString().padStart(2, '0')}`;
 }
 
 function updateGameStats() {
@@ -756,6 +830,15 @@ function puzzleComplete() {
     document.getElementById('finalTime').textContent = formatTime(seconds);
     document.getElementById('finalMoves').textContent = moves;
     
+    // Show/hide shop CTA based on puzzle type
+    const completionCta = document.getElementById('completionCta');
+    if (isCustom) {
+        completionCta.classList.add('hidden');
+    } else {
+        completionCta.classList.remove('hidden');
+        document.getElementById('completionShopLink').href = currentPuzzle.shopUrl;
+    }
+    
     if (isDaily) {
         document.getElementById('shareSection').classList.remove('hidden');
         document.getElementById('playAgainBtn').textContent = 'Back Home';
@@ -765,11 +848,8 @@ function puzzleComplete() {
         if (stats.lastPlayedDate !== todayStr) {
             const yesterday = new Date();
             yesterday.setDate(yesterday.getDate() - 1);
-            if (stats.lastPlayedDate === yesterday.toDateString()) {
-                stats.currentStreak++;
-            } else {
-                stats.currentStreak = 1;
-            }
+            stats.currentStreak = stats.lastPlayedDate === yesterday.toDateString() 
+                ? stats.currentStreak + 1 : 1;
         }
         
         stats.played++;
@@ -785,9 +865,7 @@ function puzzleComplete() {
         saveStats();
         
         if (!stats.hasSeenEmailPrompt && stats.played === 1) {
-            setTimeout(() => {
-                emailModal.classList.remove('hidden');
-            }, 2000);
+            setTimeout(() => emailModal.classList.remove('hidden'), 2000);
         }
     } else {
         document.getElementById('shareSection').classList.add('hidden');
@@ -795,10 +873,7 @@ function puzzleComplete() {
     }
     
     renderCompletedBoard();
-    
-    setTimeout(() => {
-        completionModal.classList.remove('hidden');
-    }, 500);
+    setTimeout(() => completionModal.classList.remove('hidden'), 500);
 }
 
 function renderCompletedBoard() {
@@ -806,7 +881,6 @@ function renderCompletedBoard() {
     const tileSize = puzzleBoard.children[0].offsetWidth;
     
     puzzleBoard.innerHTML = '';
-    
     for (let i = 0; i < totalTiles; i++) {
         const tile = document.createElement('div');
         tile.className = 'tile';
@@ -816,7 +890,6 @@ function renderCompletedBoard() {
         const img = document.createElement('img');
         img.src = tileImages[i];
         tile.appendChild(img);
-        
         puzzleBoard.appendChild(tile);
     }
 }
@@ -844,8 +917,6 @@ function showConfetti() {
     }
     
     let frame = 0;
-    const maxFrames = 150;
-    
     function animate() {
         ctx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
         
@@ -863,28 +934,19 @@ function showConfetti() {
             p.rotation += p.rotationSpeed;
         });
         
-        frame++;
-        if (frame < maxFrames) {
-            requestAnimationFrame(animate);
-        } else {
-            ctx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
-        }
+        if (++frame < 150) requestAnimationFrame(animate);
+        else ctx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
     }
-    
     animate();
 }
 
 // ============ STATS ============
 function loadStats() {
     const stored = localStorage.getItem(STORAGE_KEY);
-    if (stored) {
-        stats = { ...stats, ...JSON.parse(stored) };
-    }
+    if (stored) stats = { ...stats, ...JSON.parse(stored) };
     
     const soundPref = localStorage.getItem('prettyfoto_sound');
-    if (soundPref !== null) {
-        soundEnabled = soundPref === 'true';
-    }
+    if (soundPref !== null) soundEnabled = soundPref === 'true';
 }
 
 function saveStats() {
@@ -900,13 +962,8 @@ function showStats() {
     document.getElementById('statBest').textContent = stats.bestStreak;
     
     if (stats.won > 0) {
-        const avgMoves = Math.round(stats.totalMoves / stats.won);
-        const avgTime = Math.round(stats.totalTime / stats.won);
-        document.getElementById('statAvgMoves').textContent = avgMoves;
-        document.getElementById('statAvgTime').textContent = formatTime(avgTime);
-    } else {
-        document.getElementById('statAvgMoves').textContent = '-';
-        document.getElementById('statAvgTime').textContent = '-';
+        document.getElementById('statAvgMoves').textContent = Math.round(stats.totalMoves / stats.won);
+        document.getElementById('statAvgTime').textContent = formatTime(Math.round(stats.totalTime / stats.won));
     }
     
     const todayStr = getTodayString();
@@ -925,30 +982,18 @@ function showStats() {
 function shareResult() {
     playSound('click');
     const puzzleNum = getDailyPuzzleNumber();
-    const rating = getPerformanceRating();
+    const rating = stats.todayMoves <= 50 ? '🏆 Perfect!' :
+                   stats.todayMoves <= 80 ? '⭐ Excellent!' :
+                   stats.todayMoves <= 120 ? '👍 Great!' :
+                   stats.todayMoves <= 180 ? '✅ Good!' : '🎉 Solved!';
     
-    const shareText = `🌸 PrettyFoto Puzzle #${puzzleNum}
-
-${rating.emoji} ${rating.label}
-⏱️ ${formatTime(stats.todayTime)}
-👆 ${stats.todayMoves} moves
-🔥 ${stats.currentStreak} day streak
-
-Play at prettyfoto.com/puzzles`;
+    const shareText = `🌸 PrettyFoto Puzzle #${puzzleNum}\n\n${rating}\n⏱️ ${formatTime(stats.todayTime)}\n👆 ${stats.todayMoves} moves\n🔥 ${stats.currentStreak} day streak\n\nPlay at prettyfoto.com/puzzles`;
     
     if (navigator.share) {
         navigator.share({ text: shareText }).catch(() => copyToClipboard(shareText));
     } else {
         copyToClipboard(shareText);
     }
-}
-
-function getPerformanceRating() {
-    if (stats.todayMoves <= 50) return { emoji: '🏆', label: 'Perfect!' };
-    if (stats.todayMoves <= 80) return { emoji: '⭐', label: 'Excellent!' };
-    if (stats.todayMoves <= 120) return { emoji: '👍', label: 'Great!' };
-    if (stats.todayMoves <= 180) return { emoji: '✅', label: 'Good!' };
-    return { emoji: '🎉', label: 'Solved!' };
 }
 
 function copyToClipboard(text) {
@@ -959,13 +1004,12 @@ function copyToClipboard(text) {
     });
 }
 
-// ============ HINT ============
 function showHint() {
     playSound('click');
     hintModal.classList.remove('hidden');
 }
 
-// ============ WINDOW RESIZE ============
+// ============ RESIZE ============
 window.addEventListener('resize', () => {
     if (currentPuzzle && !gameArea.classList.contains('hidden') && tileImages.length > 0) {
         const maxBoardWidth = Math.min(340, window.innerWidth - 44);
@@ -973,7 +1017,6 @@ window.addEventListener('resize', () => {
         
         puzzleBoard.style.gridTemplateColumns = `repeat(${gridSize}, ${tileSize}px)`;
         puzzleBoard.style.gridTemplateRows = `repeat(${gridSize}, ${tileSize}px)`;
-        
         renderBoard(tileSize);
     }
 });

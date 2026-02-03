@@ -11,17 +11,9 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="PrettyFoto">
-    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%23e17055' width='100' height='100' rx='20'/><text x='50%25' y='50%25' dominant-baseline='central' text-anchor='middle' font-size='60'>🌸</text></svg>">
     
     <!-- SEO -->
-    <meta name="description" content="Play the daily sliding tile puzzle featuring stunning nature photography. Complete the puzzle and shop the art print!">
-    <meta name="keywords" content="puzzle, sliding puzzle, nature photography, art prints, daily puzzle">
-    
-    <!-- Open Graph -->
-    <meta property="og:title" content="PrettyFoto Daily Puzzle">
-    <meta property="og:description" content="A new nature photo puzzle every day. Can you solve it?">
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://prettyfoto.com/puzzles">
+    <meta name="description" content="Play daily sliding tile puzzles with beautiful nature photography. Create your own puzzle with any photo!">
     
     <link rel="stylesheet" href="styles.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -82,10 +74,26 @@
                     </div>
                 </div>
 
-                <!-- Free Play Section -->
+                <!-- Create Your Own Section -->
+                <div class="create-section">
+                    <h2>🎨 Create Your Own</h2>
+                    <p>Upload any photo to make a puzzle</p>
+                    <div class="create-options">
+                        <label class="create-btn" for="uploadInput">
+                            📷 Upload Photo
+                            <input type="file" id="uploadInput" accept="image/*" hidden>
+                        </label>
+                        <button id="cameraBtn" class="create-btn camera-btn">
+                            📱 Take Photo
+                        </button>
+                    </div>
+                    <p class="create-note">Free to play • No account needed</p>
+                </div>
+
+                <!-- Gallery Section -->
                 <div class="free-play-section">
-                    <h2>Free Play</h2>
-                    <p>Practice with any puzzle, anytime</p>
+                    <h2>PrettyFoto Gallery</h2>
+                    <p>Play with beautiful nature photography</p>
                     
                     <!-- Category Filter -->
                     <div class="category-filter">
@@ -99,6 +107,14 @@
                     <!-- Puzzle Gallery Grid -->
                     <div id="puzzleGallery" class="puzzle-gallery">
                         <!-- Puzzles loaded via JavaScript -->
+                    </div>
+                    
+                    <!-- Shop CTA -->
+                    <div class="gallery-cta">
+                        <p>❤️ Love these images?</p>
+                        <a href="https://www.prettyfoto.com/shop-art" target="_blank" class="gallery-shop-btn">
+                            Shop Art Prints at PrettyFoto.com
+                        </a>
                     </div>
                 </div>
             </section>
@@ -117,6 +133,7 @@
                 <div class="puzzle-title-bar">
                     <h2 id="puzzleTitle">Puzzle</h2>
                     <span id="dailyBadge" class="daily-badge-small hidden">Daily #<span id="dailyBadgeNum">1</span></span>
+                    <span id="customBadge" class="custom-badge hidden">Your Photo</span>
                 </div>
 
                 <!-- Difficulty Selection -->
@@ -133,7 +150,6 @@
                         <button class="difficulty-btn recommended" data-size="4">
                             <span class="diff-label">Medium</span>
                             <span class="diff-grid">4×4</span>
-                            <span class="diff-rec">★ Daily</span>
                         </button>
                         <button class="difficulty-btn" data-size="5">
                             <span class="diff-label">Hard</span>
@@ -164,7 +180,7 @@
                         </div>
                     </div>
 
-                    <!-- Shuffle button (hidden for daily) -->
+                    <!-- Shuffle button -->
                     <button id="shuffleBtn" class="shuffle-btn">🔀 Shuffle Again</button>
                 </div>
             </section>
@@ -189,9 +205,9 @@
                     <p>New puzzle every day - same for everyone!</p>
                 </div>
                 <div class="onboarding-slide" data-slide="4">
-                    <div class="onboarding-icon">🛒</div>
-                    <h2>Love the Art?</h2>
-                    <p>Every puzzle is available as a beautiful print</p>
+                    <div class="onboarding-icon">📷</div>
+                    <h2>Create Your Own</h2>
+                    <p>Upload any photo to make your own puzzle!</p>
                 </div>
                 <div class="onboarding-nav">
                     <div class="onboarding-dots">
@@ -276,18 +292,20 @@
                     </div>
                 </div>
                 
-                <!-- Share Section (daily only) -->
+                <!-- Share Section -->
                 <div id="shareSection" class="share-section hidden">
                     <button id="shareResultBtn" class="share-btn large">📤 Share Result</button>
                     <p id="copiedMsg" class="copied-msg hidden">Copied to clipboard!</p>
                 </div>
 
-                <div class="completion-cta">
+                <!-- Shop CTA (PrettyFoto images only) -->
+                <div id="completionCta" class="completion-cta">
                     <p>Love this image?</p>
                     <a id="completionShopLink" href="#" target="_blank" class="cta-btn primary">
                         🛒 Shop This Print
                     </a>
                 </div>
+                
                 <div class="completion-actions">
                     <button id="playAgainBtn" class="cta-btn secondary">Play Again</button>
                     <button id="newPuzzleBtn" class="cta-btn secondary">New Puzzle</button>
