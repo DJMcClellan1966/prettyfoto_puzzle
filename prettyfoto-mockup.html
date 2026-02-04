@@ -1,0 +1,1181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PrettyFoto - Redesign Mockup</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #e17055;
+            --primary-dark: #d35400;
+            --text: #2d3436;
+            --text-light: #636e72;
+            --bg: #fafafa;
+            --white: #ffffff;
+            --border: #eee;
+            --shadow: 0 4px 20px rgba(0,0,0,0.08);
+            --radius: 12px;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            color: var(--text);
+            background: var(--white);
+            line-height: 1.6;
+        }
+
+        /* ============ ANNOUNCEMENT BAR ============ */
+        .announcement-bar {
+            background: linear-gradient(135deg, var(--primary) 0%, #e74c3c 100%);
+            color: white;
+            text-align: center;
+            padding: 10px 20px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .announcement-bar strong {
+            background: rgba(255,255,255,0.2);
+            padding: 2px 8px;
+            border-radius: 4px;
+            margin-left: 8px;
+        }
+
+        /* ============ HEADER ============ */
+        header {
+            background: var(--white);
+            padding: 16px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 28px;
+            font-weight: 600;
+            color: var(--text);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .logo-icon {
+            font-size: 32px;
+        }
+
+        nav {
+            display: flex;
+            gap: 32px;
+            align-items: center;
+        }
+
+        nav a {
+            color: var(--text);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 15px;
+            transition: color 0.2s;
+        }
+
+        nav a:hover {
+            color: var(--primary);
+        }
+
+        .nav-cta {
+            background: var(--primary);
+            color: white !important;
+            padding: 10px 24px;
+            border-radius: 25px;
+            transition: background 0.2s, transform 0.2s;
+        }
+
+        .nav-cta:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+        }
+
+        /* ============ HERO ============ */
+        .hero {
+            position: relative;
+            height: 80vh;
+            min-height: 500px;
+            max-height: 700px;
+            overflow: hidden;
+        }
+
+        .hero-image {
+            position: absolute;
+            inset: 0;
+            background: url('https://images.discerningassets.com/image/upload/c_fill,w_1920,h_1080,q_auto:best/v1719947771/IMG_1842_z7mzjy.jpg') center/cover;
+        }
+
+        .hero-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.2) 100%);
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: white;
+            padding: 40px;
+        }
+
+        .hero h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 56px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            text-shadow: 0 2px 20px rgba(0,0,0,0.3);
+        }
+
+        .hero p {
+            font-size: 20px;
+            opacity: 0.95;
+            margin-bottom: 32px;
+            max-width: 500px;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 16px;
+        }
+
+        .btn {
+            padding: 16px 32px;
+            border-radius: 30px;
+            font-size: 16px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(225, 112, 85, 0.4);
+        }
+
+        .btn-secondary {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255,255,255,0.5);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        /* ============ TRUST BAR ============ */
+        .trust-bar {
+            background: var(--bg);
+            padding: 20px 40px;
+            display: flex;
+            justify-content: center;
+            gap: 48px;
+            flex-wrap: wrap;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .trust-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            color: var(--text-light);
+        }
+
+        .trust-item span:first-child {
+            font-size: 20px;
+        }
+
+        /* ============ SECTIONS ============ */
+        section {
+            padding: 80px 40px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 48px;
+        }
+
+        .section-header h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 36px;
+            margin-bottom: 12px;
+        }
+
+        .section-header p {
+            color: var(--text-light);
+            font-size: 16px;
+        }
+
+        /* ============ BEST SELLERS ============ */
+        .best-sellers-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
+        }
+
+        .product-card {
+            background: var(--white);
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+        }
+
+        .product-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.15);
+        }
+
+        .product-image {
+            aspect-ratio: 1;
+            overflow: hidden;
+        }
+
+        .product-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s;
+        }
+
+        .product-card:hover .product-image img {
+            transform: scale(1.05);
+        }
+
+        .product-info {
+            padding: 16px;
+        }
+
+        .product-title {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .product-price {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .product-badge {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            background: var(--primary);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .product-card {
+            position: relative;
+        }
+
+        /* ============ AR SECTION ============ */
+        .ar-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 80px 40px;
+            margin: 0;
+            max-width: 100%;
+        }
+
+        .ar-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+        }
+
+        .ar-text {
+            color: white;
+        }
+
+        .ar-text h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 42px;
+            margin-bottom: 20px;
+        }
+
+        .ar-text p {
+            font-size: 18px;
+            opacity: 0.9;
+            margin-bottom: 24px;
+            line-height: 1.7;
+        }
+
+        .ar-features {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 32px;
+        }
+
+        .ar-feature {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 16px;
+        }
+
+        .ar-feature span:first-child {
+            font-size: 24px;
+        }
+
+        .ar-demo {
+            background: rgba(255,255,255,0.1);
+            border-radius: 20px;
+            padding: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        .ar-demo-image {
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .ar-demo-image img {
+            width: 100%;
+            display: block;
+        }
+
+        .ar-phone-overlay {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0,0,0,0.3);
+            font-size: 80px;
+        }
+
+        /* ============ CATEGORIES ============ */
+        .categories-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
+        }
+
+        .category-card {
+            position: relative;
+            aspect-ratio: 1;
+            border-radius: var(--radius);
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .category-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s;
+        }
+
+        .category-card:hover img {
+            transform: scale(1.1);
+        }
+
+        .category-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 60%);
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 20px;
+            color: white;
+        }
+
+        .category-name {
+            font-family: 'Playfair Display', serif;
+            font-size: 22px;
+            font-weight: 600;
+        }
+
+        .category-count {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        /* ============ ABOUT ARTIST ============ */
+        .about-section {
+            background: var(--bg);
+            margin: 0;
+            max-width: 100%;
+        }
+
+        .about-content {
+            max-width: 1000px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: 60px;
+            align-items: center;
+        }
+
+        .about-photo {
+            width: 250px;
+            height: 250px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary) 0%, #e74c3c 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 100px;
+            box-shadow: 0 20px 60px rgba(225, 112, 85, 0.3);
+        }
+
+        .about-text h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 36px;
+            margin-bottom: 8px;
+        }
+
+        .about-text .tagline {
+            color: var(--primary);
+            font-weight: 500;
+            margin-bottom: 20px;
+        }
+
+        .about-text p {
+            color: var(--text-light);
+            margin-bottom: 16px;
+            font-size: 16px;
+            line-height: 1.8;
+        }
+
+        .about-stats {
+            display: flex;
+            gap: 40px;
+            margin: 24px 0;
+            padding: 24px 0;
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .about-stat {
+            text-align: center;
+        }
+
+        .about-stat-number {
+            font-family: 'Playfair Display', serif;
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .about-stat-label {
+            font-size: 13px;
+            color: var(--text-light);
+        }
+
+        /* ============ TESTIMONIALS ============ */
+        .testimonials-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+
+        .testimonial-card {
+            background: var(--white);
+            padding: 32px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+        }
+
+        .testimonial-stars {
+            color: #f1c40f;
+            font-size: 20px;
+            margin-bottom: 16px;
+        }
+
+        .testimonial-text {
+            font-size: 15px;
+            line-height: 1.7;
+            margin-bottom: 20px;
+            color: var(--text);
+        }
+
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .testimonial-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: var(--bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .testimonial-name {
+            font-weight: 600;
+        }
+
+        .testimonial-location {
+            font-size: 13px;
+            color: var(--text-light);
+        }
+
+        /* ============ PUZZLE PROMO ============ */
+        .puzzle-promo {
+            background: linear-gradient(135deg, #00b894 0%, #00cec9 100%);
+            padding: 60px 40px;
+            margin: 0;
+            max-width: 100%;
+            text-align: center;
+            color: white;
+        }
+
+        .puzzle-promo h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 36px;
+            margin-bottom: 12px;
+        }
+
+        .puzzle-promo p {
+            font-size: 18px;
+            opacity: 0.95;
+            margin-bottom: 24px;
+        }
+
+        .puzzle-promo .btn {
+            background: white;
+            color: #00b894;
+        }
+
+        .puzzle-promo .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+        }
+
+        /* ============ EMAIL SIGNUP ============ */
+        .email-section {
+            background: var(--text);
+            padding: 80px 40px;
+            margin: 0;
+            max-width: 100%;
+            text-align: center;
+            color: white;
+        }
+
+        .email-content {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .email-content h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 36px;
+            margin-bottom: 12px;
+        }
+
+        .email-content p {
+            opacity: 0.8;
+            margin-bottom: 32px;
+        }
+
+        .email-benefits {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            margin-bottom: 32px;
+            flex-wrap: wrap;
+        }
+
+        .email-benefit {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+        }
+
+        .email-form {
+            display: flex;
+            gap: 12px;
+            max-width: 450px;
+            margin: 0 auto;
+        }
+
+        .email-form input {
+            flex: 1;
+            padding: 16px 24px;
+            border: none;
+            border-radius: 30px;
+            font-size: 16px;
+        }
+
+        .email-form button {
+            padding: 16px 32px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 30px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .email-form button:hover {
+            background: var(--primary-dark);
+        }
+
+        /* ============ FOOTER ============ */
+        footer {
+            background: #1a1a1a;
+            color: white;
+            padding: 60px 40px 30px;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 48px;
+            margin-bottom: 48px;
+        }
+
+        .footer-brand .logo {
+            color: white;
+            margin-bottom: 16px;
+        }
+
+        .footer-brand p {
+            color: rgba(255,255,255,0.6);
+            font-size: 14px;
+            line-height: 1.7;
+        }
+
+        .footer-links h4 {
+            margin-bottom: 20px;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .footer-links a {
+            display: block;
+            color: rgba(255,255,255,0.6);
+            text-decoration: none;
+            margin-bottom: 12px;
+            font-size: 14px;
+            transition: color 0.2s;
+        }
+
+        .footer-links a:hover {
+            color: white;
+        }
+
+        .footer-social {
+            display: flex;
+            gap: 16px;
+            margin-top: 20px;
+        }
+
+        .footer-social a {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            text-decoration: none;
+            transition: background 0.2s;
+        }
+
+        .footer-social a:hover {
+            background: var(--primary);
+        }
+
+        .footer-bottom {
+            border-top: 1px solid rgba(255,255,255,0.1);
+            padding-top: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            font-size: 13px;
+            color: rgba(255,255,255,0.5);
+        }
+
+        .footer-badges {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+        }
+
+        .footer-badges img {
+            height: 40px;
+            opacity: 0.7;
+        }
+
+        /* ============ RESPONSIVE ============ */
+        @media (max-width: 1024px) {
+            .best-sellers-grid,
+            .categories-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .ar-content,
+            .about-content {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+
+            .about-photo {
+                margin: 0 auto;
+            }
+
+            .testimonials-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .footer-content {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 36px;
+            }
+
+            .hero p {
+                font-size: 16px;
+            }
+
+            .hero-buttons {
+                flex-direction: column;
+            }
+
+            header {
+                padding: 12px 20px;
+            }
+
+            nav {
+                display: none;
+            }
+
+            section {
+                padding: 48px 20px;
+            }
+
+            .trust-bar {
+                gap: 24px;
+                padding: 16px 20px;
+            }
+
+            .best-sellers-grid,
+            .categories-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .about-stats {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .email-form {
+                flex-direction: column;
+            }
+
+            .footer-content {
+                grid-template-columns: 1fr;
+            }
+
+            .footer-bottom {
+                flex-direction: column;
+                gap: 20px;
+                text-align: center;
+            }
+        }
+
+        /* Mobile menu button (placeholder) */
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        @media (max-width: 768px) {
+            .mobile-menu-btn {
+                display: block;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Announcement Bar -->
+    <div class="announcement-bar">
+        🖼️ The Art Everywhere Sale — 25% off everything! <strong>EVERYWHERE26</strong>
+    </div>
+
+    <!-- Header -->
+    <header>
+        <a href="#" class="logo">
+            <span class="logo-icon">🌸</span>
+            <span>PrettyFoto</span>
+        </a>
+        <nav>
+            <a href="#">Shop All</a>
+            <a href="#">Collections</a>
+            <a href="#">Best Sellers</a>
+            <a href="#">About</a>
+            <a href="#" class="nav-cta">🛒 Cart</a>
+        </nav>
+        <button class="mobile-menu-btn">☰</button>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-image"></div>
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+            <h1>Bringing Nature's Beauty<br>Into Your Home</h1>
+            <p>Fine art photography prints that transform your space into a sanctuary of natural wonder</p>
+            <div class="hero-buttons">
+                <a href="#" class="btn btn-primary">Shop Collections</a>
+                <a href="#" class="btn btn-secondary">📱 Try AR Preview</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Trust Bar -->
+    <div class="trust-bar">
+        <div class="trust-item">
+            <span>⭐</span>
+            <span>500+ Happy Collectors</span>
+        </div>
+        <div class="trust-item">
+            <span>🚚</span>
+            <span>Free Shipping Over $99</span>
+        </div>
+        <div class="trust-item">
+            <span>✓</span>
+            <span>Satisfaction Guaranteed</span>
+        </div>
+        <div class="trust-item">
+            <span>🔒</span>
+            <span>Secure Checkout</span>
+        </div>
+    </div>
+
+    <!-- Best Sellers -->
+    <section>
+        <div class="section-header">
+            <h2>🏆 Customer Favorites</h2>
+            <p>Our most loved prints, chosen by collectors like you</p>
+        </div>
+        <div class="best-sellers-grid">
+            <div class="product-card">
+                <span class="product-badge">Best Seller</span>
+                <div class="product-image">
+                    <img src="https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1714324985/IMG_1453_ypftdw.jpg" alt="Water Lily">
+                </div>
+                <div class="product-info">
+                    <div class="product-title">Water Lily Afternoon</div>
+                    <div class="product-price">From $89</div>
+                </div>
+            </div>
+            <div class="product-card">
+                <div class="product-image">
+                    <img src="https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1719947771/IMG_1842_z7mzjy.jpg" alt="Butterfly">
+                </div>
+                <div class="product-info">
+                    <div class="product-title">Cherry on Top</div>
+                    <div class="product-price">From $79</div>
+                </div>
+            </div>
+            <div class="product-card">
+                <div class="product-image">
+                    <img src="https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1719113644/2N4A4928_ugnovr.jpg" alt="Horse">
+                </div>
+                <div class="product-info">
+                    <div class="product-title">Golden Days</div>
+                    <div class="product-price">From $99</div>
+                </div>
+            </div>
+            <div class="product-card">
+                <span class="product-badge">New</span>
+                <div class="product-image">
+                    <img src="https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1737159071/2N4A4426_o4lj30.jpg" alt="Tulip">
+                </div>
+                <div class="product-info">
+                    <div class="product-title">Love Blooms</div>
+                    <div class="product-price">From $69</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- AR Section -->
+    <section class="ar-section">
+        <div class="ar-content">
+            <div class="ar-text">
+                <h2>📱 See It In Your Space</h2>
+                <p>Use augmented reality to preview any print on YOUR wall before you buy. No guessing, no returns—just confidence.</p>
+                <div class="ar-features">
+                    <div class="ar-feature">
+                        <span>✓</span>
+                        <span>Works on any iPhone or Android</span>
+                    </div>
+                    <div class="ar-feature">
+                        <span>✓</span>
+                        <span>See actual size on your wall</span>
+                    </div>
+                    <div class="ar-feature">
+                        <span>✓</span>
+                        <span>Try different sizes instantly</span>
+                    </div>
+                </div>
+                <a href="#" class="btn btn-primary">Try AR Preview Now</a>
+            </div>
+            <div class="ar-demo">
+                <div class="ar-demo-image">
+                    <img src="https://images.discerningassets.com/image/upload/c_fill,w_600,h_400,q_auto:best/v1719113429/2N4A5194_situp5.jpg" alt="AR Demo">
+                    <div class="ar-phone-overlay">📱</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Categories -->
+    <section>
+        <div class="section-header">
+            <h2>Shop by Collection</h2>
+            <p>Find the perfect piece for your style</p>
+        </div>
+        <div class="categories-grid">
+            <div class="category-card">
+                <img src="https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1737159079/IMG_0594_yndoza.jpg" alt="Flowers">
+                <div class="category-overlay">
+                    <div class="category-name">🌸 Flowers</div>
+                    <div class="category-count">50+ prints</div>
+                </div>
+            </div>
+            <div class="category-card">
+                <img src="https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1694475326/Jennifer_McClellan_008Cfc2f-1102-42Ba-Afef-D728dcafa2b5_o6h4nh.jpg" alt="Butterflies">
+                <div class="category-overlay">
+                    <div class="category-name">🦋 Butterflies</div>
+                    <div class="category-count">30+ prints</div>
+                </div>
+            </div>
+            <div class="category-card">
+                <img src="https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1719113644/2N4A4928_ugnovr.jpg" alt="Horses">
+                <div class="category-overlay">
+                    <div class="category-name">🐴 Horses</div>
+                    <div class="category-count">20+ prints</div>
+                </div>
+            </div>
+            <div class="category-card">
+                <img src="https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1719114051/2N4A5331_t6yzzm.jpg" alt="Landscapes">
+                <div class="category-overlay">
+                    <div class="category-name">🏔️ Landscapes</div>
+                    <div class="category-count">40+ prints</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Artist -->
+    <section class="about-section">
+        <div class="about-content">
+            <div class="about-photo">📷</div>
+            <div class="about-text">
+                <h2>Hi, I'm Jennifer</h2>
+                <p class="tagline">Nature & Fine Art Photographer</p>
+                <p>For over 15 years, I've been capturing the fleeting beauty of nature—from the delicate wings of butterflies to the majestic spirit of wild horses.</p>
+                <p>Every image tells a story of patience, wonder, and the deep connection I feel with the natural world. My goal is to help you bring that same sense of peace and beauty into your home.</p>
+                <div class="about-stats">
+                    <div class="about-stat">
+                        <div class="about-stat-number">15+</div>
+                        <div class="about-stat-label">Years</div>
+                    </div>
+                    <div class="about-stat">
+                        <div class="about-stat-number">1,000+</div>
+                        <div class="about-stat-label">Images</div>
+                    </div>
+                    <div class="about-stat">
+                        <div class="about-stat-number">500+</div>
+                        <div class="about-stat-label">Happy Collectors</div>
+                    </div>
+                </div>
+                <a href="#" class="btn btn-primary">Learn My Story →</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section>
+        <div class="section-header">
+            <h2>What Collectors Say</h2>
+            <p>Real reviews from real customers</p>
+        </div>
+        <div class="testimonials-grid">
+            <div class="testimonial-card">
+                <div class="testimonial-stars">⭐⭐⭐⭐⭐</div>
+                <p class="testimonial-text">"The print quality exceeded my expectations! The colors are vibrant and the detail is incredible. It's now the centerpiece of my living room."</p>
+                <div class="testimonial-author">
+                    <div class="testimonial-avatar">👩</div>
+                    <div>
+                        <div class="testimonial-name">Sarah M.</div>
+                        <div class="testimonial-location">Austin, TX</div>
+                    </div>
+                </div>
+            </div>
+            <div class="testimonial-card">
+                <div class="testimonial-stars">⭐⭐⭐⭐⭐</div>
+                <p class="testimonial-text">"The AR preview feature sold me—I could see exactly how the print would look above my fireplace. Arrived beautifully packaged and ready to hang."</p>
+                <div class="testimonial-author">
+                    <div class="testimonial-avatar">👨</div>
+                    <div>
+                        <div class="testimonial-name">Michael R.</div>
+                        <div class="testimonial-location">Denver, CO</div>
+                    </div>
+                </div>
+            </div>
+            <div class="testimonial-card">
+                <div class="testimonial-stars">⭐⭐⭐⭐⭐</div>
+                <p class="testimonial-text">"I've ordered three prints now—each one is stunning. Jennifer's photography brings such peace to my home office. Highly recommend!"</p>
+                <div class="testimonial-author">
+                    <div class="testimonial-avatar">👩</div>
+                    <div>
+                        <div class="testimonial-name">Lisa K.</div>
+                        <div class="testimonial-location">Seattle, WA</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Puzzle Game Promo -->
+    <section class="puzzle-promo">
+        <h2>🧩 Play Our Free Daily Puzzle Game</h2>
+        <p>Solve beautiful nature photo puzzles and discover art you'll love!</p>
+        <a href="index.html" class="btn">Play Now →</a>
+    </section>
+
+    <!-- Email Signup -->
+    <section class="email-section">
+        <div class="email-content">
+            <h2>Join the PrettyFoto Family</h2>
+            <p>Get exclusive access to new collections, behind-the-scenes stories, and special offers</p>
+            <div class="email-benefits">
+                <div class="email-benefit">
+                    <span>🎁</span>
+                    <span>20% off first order</span>
+                </div>
+                <div class="email-benefit">
+                    <span>📸</span>
+                    <span>Early access</span>
+                </div>
+                <div class="email-benefit">
+                    <span>💌</span>
+                    <span>Photo stories</span>
+                </div>
+            </div>
+            <form class="email-form">
+                <input type="email" placeholder="Enter your email">
+                <button type="submit">Join Now</button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-brand">
+                <a href="#" class="logo">
+                    <span class="logo-icon">🌸</span>
+                    <span>PrettyFoto</span>
+                </a>
+                <p>Fine art nature photography that brings peace and beauty into your home. Each print is crafted with love in North Carolina.</p>
+                <div class="footer-social">
+                    <a href="#">📘</a>
+                    <a href="#">📷</a>
+                    <a href="#">📌</a>
+                </div>
+            </div>
+            <div class="footer-links">
+                <h4>Shop</h4>
+                <a href="#">All Collections</a>
+                <a href="#">Best Sellers</a>
+                <a href="#">New Arrivals</a>
+                <a href="#">Gift Cards</a>
+            </div>
+            <div class="footer-links">
+                <h4>Help</h4>
+                <a href="#">FAQ</a>
+                <a href="#">Shipping</a>
+                <a href="#">Returns</a>
+                <a href="#">Contact</a>
+            </div>
+            <div class="footer-links">
+                <h4>About</h4>
+                <a href="#">Our Story</a>
+                <a href="#">The Artist</a>
+                <a href="#">Reviews</a>
+                <a href="#">Blog</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <span>© 2026 PrettyFoto. All rights reserved.</span>
+            <div class="footer-badges">
+                <span>🔒 Secure Checkout</span>
+                <span>✓ Trusted Seller</span>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
