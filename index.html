@@ -52,10 +52,19 @@
             <section id="homeView" class="view">
                 <!-- ========== SLIDER GAME HOME ========== -->
                 <div id="sliderHome" class="game-home">
+                    <!-- Live Activity Feed -->
+                    <div id="liveActivityFeed" class="live-activity-feed">
+                        <span class="live-dot"></span>
+                        <span id="activityText" class="activity-text">Loading...</span>
+                    </div>
+
                     <!-- Personalized Welcome -->
                     <div class="personalized-welcome">
                         <h1 id="welcomeTitle">Welcome!</h1>
                         <p id="welcomeSubtitle">Discover beautiful nature photography</p>
+                        <button id="spinWheelBtn" class="spin-trigger-btn hidden">
+                            🎡 Daily Spin Available!
+                        </button>
                     </div>
                     
                     <!-- For You Section (personalized) -->
@@ -97,6 +106,17 @@
                             <span class="countdown-label">Next puzzle in</span>
                             <span id="countdown" class="countdown-time">00:00:00</span>
                         </div>
+                    </div>
+                </div>
+
+                <!-- Collections Section -->
+                <div class="collections-section">
+                    <div class="collections-header">
+                        <h2>🏆 Collections</h2>
+                        <p>Complete sets to unlock rewards!</p>
+                    </div>
+                    <div id="collectionsGrid" class="collections-grid">
+                        <!-- Collections loaded via JavaScript -->
                     </div>
                 </div>
 
@@ -523,6 +543,45 @@
                     <button id="switchCameraBtn" class="icon-btn">🔄</button>
                     <button id="captureBtn" class="capture-btn">📸</button>
                     <div class="spacer"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Spin Wheel Modal -->
+        <div id="spinModal" class="modal hidden">
+            <div class="modal-content spin-modal">
+                <button id="closeSpinModal" class="close-btn">×</button>
+                <h2>🎡 Daily Spin!</h2>
+                <p class="spin-subtitle">Spin to win a prize!</p>
+                
+                <div class="wheel-container">
+                    <div class="wheel-pointer">▼</div>
+                    <div id="spinWheel" class="spin-wheel">
+                        <div class="wheel-segment" data-prize="10%" style="--i:0">10% OFF</div>
+                        <div class="wheel-segment" data-prize="try" style="--i:1">Try Again</div>
+                        <div class="wheel-segment" data-prize="15%" style="--i:2">15% OFF</div>
+                        <div class="wheel-segment" data-prize="xp" style="--i:3">+50 XP</div>
+                        <div class="wheel-segment" data-prize="20%" style="--i:4">20% OFF</div>
+                        <div class="wheel-segment" data-prize="frame" style="--i:5">Free Frame</div>
+                        <div class="wheel-segment" data-prize="25%" style="--i:6">25% OFF</div>
+                        <div class="wheel-segment" data-prize="xp" style="--i:7">+100 XP</div>
+                    </div>
+                </div>
+                
+                <button id="spinBtn" class="play-daily-btn spin-btn">
+                    🎰 SPIN NOW!
+                </button>
+                
+                <div id="spinResult" class="spin-result hidden">
+                    <div class="result-emoji" id="resultEmoji">🎉</div>
+                    <h3 id="resultTitle">You Won!</h3>
+                    <p id="resultText">Your prize details here</p>
+                    <div id="prizeCode" class="prize-code hidden">
+                        <span>Use code:</span>
+                        <strong id="codeText">SPIN15</strong>
+                        <button id="copyCodeBtn" class="copy-code-btn">📋</button>
+                    </div>
+                    <button id="spinDoneBtn" class="play-daily-btn">Awesome!</button>
                 </div>
             </div>
         </div>

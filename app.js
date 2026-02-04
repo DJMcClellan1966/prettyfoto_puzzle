@@ -396,6 +396,301 @@ function isFavorite(puzzleId) {
     return userPrefs.favoriteImages.includes(puzzleId);
 }
 
+// ============ LIVE ACTIVITY FEED ============
+const ACTIVITY_MESSAGES = [
+    { template: "{{name}} in {{city}} just solved the daily puzzle! 🎉", type: "solve" },
+    { template: "{{name}} completed the {{category}} collection! 🏆", type: "collection" },
+    { template: "{{count}} people are playing right now 🎮", type: "count" },
+    { template: "{{name}} got a perfect score on Zoom! ⭐", type: "zoom" },
+    { template: "{{name}} discovered they're a {{soul}}! ✨", type: "soul" },
+    { template: "{{name}} just won {{prize}} on the spin wheel! 🎡", type: "spin" },
+    { template: "{{name}} shared their {{category}} frame! 📸", type: "frame" }
+];
+
+const FAKE_NAMES = ["Emma", "Liam", "Olivia", "Noah", "Ava", "Oliver", "Sophia", "James", "Isabella", "William", "Mia", "Benjamin", "Charlotte", "Lucas", "Amelia", "Henry", "Harper", "Alexander", "Evelyn", "Michael"];
+const FAKE_CITIES = ["London", "New York", "Sydney", "Toronto", "Dublin", "Austin", "Seattle", "Denver", "Miami", "Chicago", "Portland", "Boston", "Paris", "Berlin", "Tokyo"];
+const SOUL_TYPES = ["Dreamer 🦋", "Explorer 🏔️", "Nurturer 🌸", "Free Spirit 🐴"];
+const PRIZES = ["15% off", "20% off", "a free frame", "bonus XP"];
+
+function startLiveActivityFeed() {
+    updateActivityFeed();
+    setInterval(updateActivityFeed, 5000 + Math.random() * 5000);
+}
+
+function updateActivityFeed() {
+    const textEl = document.getElementById('activityText');
+    if (!textEl) return;
+    
+    const msg = ACTIVITY_MESSAGES[Math.floor(Math.random() * ACTIVITY_MESSAGES.length)];
+    let text = msg.template;
+    
+    text = text.replace('{{name}}', FAKE_NAMES[Math.floor(Math.random() * FAKE_NAMES.length)]);
+    text = text.replace('{{city}}', FAKE_CITIES[Math.floor(Math.random() * FAKE_CITIES.length)]);
+    text = text.replace('{{category}}', ['Butterfly', 'Flower', 'Horse', 'Landscape'][Math.floor(Math.random() * 4)]);
+    text = text.replace('{{count}}', Math.floor(Math.random() * 200 + 50));
+    text = text.replace('{{soul}}', SOUL_TYPES[Math.floor(Math.random() * SOUL_TYPES.length)]);
+    text = text.replace('{{prize}}', PRIZES[Math.floor(Math.random() * PRIZES.length)]);
+    
+    textEl.style.animation = 'none';
+    textEl.offsetHeight; // Trigger reflow
+    textEl.style.animation = 'slideIn 0.5s ease';
+    textEl.textContent = text;
+}
+
+// ============ COLLECTIONS ============
+const COLLECTIONS = {
+    butterflies: {
+        emoji: '🦋',
+        name: 'Butterfly Dreams',
+        reward: '20% off butterfly prints',
+        rewardCode: 'BUTTERFLY20'
+    },
+    flowers: {
+        emoji: '🌸',
+        name: 'Garden Glory',
+        reward: '20% off flower prints',
+        rewardCode: 'FLOWER20'
+    },
+    horses: {
+        emoji: '🐴',
+        name: 'Wild & Free',
+        reward: '20% off horse prints',
+        rewardCode: 'HORSE20'
+    },
+    landscapes: {
+        emoji: '🏔️',
+        name: 'Horizon Hunter',
+        reward: '20% off landscape prints',
+        rewardCode: 'LANDSCAPE20'
+    }
+};
+
+function getCollectionProgress() {
+    const progress = {};
+    
+    for (const category of Object.keys(COLLECTIONS)) {
+        const totalInCategory = puzzles.filter(p => p.category === category).length;
+        const completed = userPrefs.completedPuzzles ? 
+            userPrefs.completedPuzzles.filter(id => {
+                const puzzle = puzzles.find(p => p.id === id);
+                return puzzle && puzzle.category === category;
+            }).length : 0;
+        
+        progress[category] = {
+            completed,
+            total: totalInCategory,
+            percent: totalInCategory > 0 ? Math.round((completed / totalInCategory) * 100) : 0
+        };
+    }
+    
+    return progress;
+}
+
+function renderCollections() {
+    const grid = document.getElementById('collectionsGrid');
+    if (!grid) return;
+    
+    const progress = getCollectionProgress();
+    
+    grid.innerHTML = Object.entries(COLLECTIONS).map(([category, data]) => {
+        const p = progress[category];
+        const isComplete = p.completed >= p.total && p.total > 0;
+        
+        return `
+            <div class="collection-card ${isComplete ? 'completed' : ''}" onclick="showCollectionDetail('${category}')">
+                ${isComplete ? '<span class="collection-badge">✓ Complete</span>' : ''}
+                <div class="collection-emoji">${data.emoji}</div>
+                <div class="collection-name">${data.name}</div>
+                <div class="collection-progress">${p.completed}/${p.total} solved</div>
+                <div class="collection-bar">
+                    <div class="collection-bar-fill" style="width: ${p.percent}%"></div>
+                </div>
+                <div class="collection-reward">
+                    ${isComplete ? `🎁 Use code: ${data.rewardCode}` : `🎁 ${data.reward}`}
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+function markPuzzleCompleted(puzzleId) {
+    if (!userPrefs.completedPuzzles) {
+        userPrefs.completedPuzzles = [];
+    }
+    if (!userPrefs.completedPuzzles.includes(puzzleId)) {
+        userPrefs.completedPuzzles.push(puzzleId);
+        savePrefs();
+        renderCollections();
+    }
+}
+
+function showCollectionDetail(category) {
+    playSound('click');
+    // Filter gallery to show only this category
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.category === category);
+    });
+    renderGallery(category);
+    
+    // Scroll to gallery
+    document.querySelector('.free-play-section').scrollIntoView({ behavior: 'smooth' });
+}
+
+// ============ SPIN WHEEL ============
+const SPIN_PRIZES = [
+    { id: '10%', label: '10% OFF', emoji: '🎟️', code: 'SPIN10', message: 'Use code SPIN10 at checkout!' },
+    { id: 'try', label: 'Try Again', emoji: '🔄', code: null, message: 'Better luck next time! Come back tomorrow.' },
+    { id: '15%', label: '15% OFF', emoji: '🎟️', code: 'SPIN15', message: 'Use code SPIN15 at checkout!' },
+    { id: 'xp', label: '+50 XP', emoji: '⭐', code: null, message: 'Bonus XP added to your account!' },
+    { id: '20%', label: '20% OFF', emoji: '🎉', code: 'SPIN20', message: 'Use code SPIN20 at checkout!' },
+    { id: 'frame', label: 'Free Frame', emoji: '🖼️', code: null, message: 'Premium Gold frame unlocked!' },
+    { id: '25%', label: '25% OFF', emoji: '🏆', code: 'SPIN25', message: 'Amazing! Use code SPIN25 at checkout!' },
+    { id: 'xp2', label: '+100 XP', emoji: '🌟', code: null, message: 'Big XP bonus added!' }
+];
+
+let spinState = {
+    canSpin: false,
+    spinning: false,
+    lastSpinDate: null
+};
+
+function setupSpinWheel() {
+    // Load spin state
+    const savedSpin = localStorage.getItem('prettyfoto_spin');
+    if (savedSpin) {
+        spinState = JSON.parse(savedSpin);
+    }
+    
+    // Check if can spin today
+    const today = getTodayString();
+    spinState.canSpin = spinState.lastSpinDate !== today;
+    
+    // Show spin button if available
+    const spinBtn = document.getElementById('spinWheelBtn');
+    if (spinBtn) {
+        spinBtn.classList.toggle('hidden', !spinState.canSpin);
+        spinBtn.onclick = openSpinModal;
+    }
+    
+    // Setup modal
+    document.getElementById('closeSpinModal').onclick = closeSpinModal;
+    document.getElementById('spinBtn').onclick = doSpin;
+    document.getElementById('spinDoneBtn').onclick = closeSpinModal;
+    document.getElementById('copyCodeBtn').onclick = copyPrizeCode;
+    
+    // Close on backdrop click
+    document.getElementById('spinModal').onclick = (e) => {
+        if (e.target.id === 'spinModal') closeSpinModal();
+    };
+}
+
+function openSpinModal() {
+    playSound('click');
+    document.getElementById('spinModal').classList.remove('hidden');
+    document.getElementById('spinResult').classList.add('hidden');
+    document.getElementById('spinBtn').classList.remove('hidden');
+    document.getElementById('spinBtn').disabled = false;
+    document.getElementById('spinWheel').style.transform = 'rotate(0deg)';
+}
+
+function closeSpinModal() {
+    document.getElementById('spinModal').classList.add('hidden');
+}
+
+function doSpin() {
+    if (spinState.spinning || !spinState.canSpin) return;
+    
+    playSound('click');
+    spinState.spinning = true;
+    
+    const spinBtn = document.getElementById('spinBtn');
+    spinBtn.disabled = true;
+    spinBtn.textContent = 'Spinning...';
+    
+    // Weighted random - make discounts less common
+    const weights = [15, 20, 12, 18, 8, 5, 3, 19]; // Total 100
+    let random = Math.random() * 100;
+    let prizeIndex = 0;
+    for (let i = 0; i < weights.length; i++) {
+        random -= weights[i];
+        if (random <= 0) {
+            prizeIndex = i;
+            break;
+        }
+    }
+    
+    const prize = SPIN_PRIZES[prizeIndex];
+    
+    // Calculate rotation
+    const segmentAngle = 360 / 8;
+    const prizeAngle = prizeIndex * segmentAngle + segmentAngle / 2;
+    const spins = 5 + Math.random() * 3; // 5-8 full spins
+    const finalRotation = spins * 360 + (360 - prizeAngle);
+    
+    const wheel = document.getElementById('spinWheel');
+    wheel.style.transform = `rotate(${finalRotation}deg)`;
+    
+    // Show result after spin
+    setTimeout(() => {
+        spinState.spinning = false;
+        spinState.canSpin = false;
+        spinState.lastSpinDate = getTodayString();
+        localStorage.setItem('prettyfoto_spin', JSON.stringify(spinState));
+        
+        showSpinResult(prize);
+        
+        // Hide spin button
+        document.getElementById('spinWheelBtn').classList.add('hidden');
+    }, 4500);
+}
+
+function showSpinResult(prize) {
+    playSound('win');
+    
+    document.getElementById('spinBtn').classList.add('hidden');
+    document.getElementById('spinResult').classList.remove('hidden');
+    
+    document.getElementById('resultEmoji').textContent = prize.emoji;
+    document.getElementById('resultTitle').textContent = prize.label + '!';
+    document.getElementById('resultText').textContent = prize.message;
+    
+    if (prize.code) {
+        document.getElementById('prizeCode').classList.remove('hidden');
+        document.getElementById('codeText').textContent = prize.code;
+    } else {
+        document.getElementById('prizeCode').classList.add('hidden');
+    }
+    
+    // Apply bonus XP if applicable
+    if (prize.id === 'xp' || prize.id === 'xp2') {
+        const xpAmount = prize.id === 'xp' ? 50 : 100;
+        userPrefs.bonusXP = (userPrefs.bonusXP || 0) + xpAmount;
+        savePrefs();
+    }
+    
+    // Unlock frame if won
+    if (prize.id === 'frame') {
+        userPrefs.unlockedFrames = userPrefs.unlockedFrames || [];
+        if (!userPrefs.unlockedFrames.includes('gold')) {
+            userPrefs.unlockedFrames.push('gold');
+            savePrefs();
+        }
+    }
+    
+    showConfetti();
+}
+
+function copyPrizeCode() {
+    playSound('click');
+    const code = document.getElementById('codeText').textContent;
+    navigator.clipboard.writeText(code).then(() => {
+        document.getElementById('copyCodeBtn').textContent = '✓';
+        setTimeout(() => {
+            document.getElementById('copyCodeBtn').textContent = '📋';
+        }, 2000);
+    });
+}
+
 // ============ AUDIO ============
 let audioCtx = null;
 
@@ -484,11 +779,14 @@ document.addEventListener('DOMContentLoaded', () => {
     applyPersonalization();
     setupDailyPuzzle();
     renderGallery();
+    renderCollections();
     setupEventListeners();
     startCountdown();
     checkOnboarding();
     setupPWAInstall();
     updateSoundButton();
+    startLiveActivityFeed();
+    setupSpinWheel();
 });
 
 function applyPersonalization() {
@@ -1085,6 +1383,9 @@ function puzzleComplete() {
     if (currentPuzzle.category) {
         trackCategoryPlay(currentPuzzle.category);
     }
+    
+    // Track for collections
+    markPuzzleCompleted(currentPuzzle.id);
     
     document.getElementById('completedImage').src = currentPuzzle.image;
     document.getElementById('finalTime').textContent = formatTime(seconds);
@@ -1945,6 +2246,9 @@ function zoomComplete() {
     if (zoomState.puzzle && zoomState.puzzle.category) {
         trackCategoryPlay(zoomState.puzzle.category);
     }
+    
+    // Track for collections
+    markPuzzleCompleted(zoomState.puzzle.id);
     
     // Calculate score based on zoom level when guessed
     const score = zoomState.maxZoom - zoomState.currentZoom + 1;
