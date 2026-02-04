@@ -1272,6 +1272,19 @@ function setupNonogramHome() {
     document.getElementById('nonogramFillBtn').onclick = () => setNonogramMode('fill');
     document.getElementById('nonogramMarkBtn').onclick = () => setNonogramMode('mark');
     
+    // Help button
+    document.getElementById('nonogramHelpBtn').onclick = () => {
+        document.getElementById('nonogramHelpModal').classList.remove('hidden');
+    };
+    document.getElementById('closeNonogramHelp').onclick = () => {
+        document.getElementById('nonogramHelpModal').classList.add('hidden');
+    };
+    document.getElementById('nonogramHelpModal').onclick = (e) => {
+        if (e.target.id === 'nonogramHelpModal') {
+            document.getElementById('nonogramHelpModal').classList.add('hidden');
+        }
+    };
+    
     // Render gallery
     const gallery = document.getElementById('nonogramGallery');
     gallery.innerHTML = puzzles.slice(0, 8).map(p => `

@@ -122,6 +122,12 @@
                         <p>Reveal the hidden image with logic!</p>
                     </div>
                     
+                    <div class="game-intro-tip">
+                        <strong>New to Nonogram?</strong> Use the number clues to fill in cells. 
+                        Numbers show how many consecutive cells to fill in each row/column. 
+                        Tap ❓ during play for full instructions!
+                    </div>
+                    
                     <div id="nonogramDailyCard" class="daily-card">
                         <div class="daily-badge">
                             <span class="daily-number">#<span id="nonogramNumber">1</span></span>
@@ -297,6 +303,7 @@
             <section id="nonogramView" class="view hidden">
                 <div class="puzzle-nav">
                     <button id="nonogramBackBtn" class="icon-btn">← Back</button>
+                    <button id="nonogramHelpBtn" class="hint-btn">❓</button>
                     <span id="nonogramDailyBadge" class="daily-badge-small hidden">Daily #<span id="nonogramBadgeNum">1</span></span>
                 </div>
                 
@@ -534,6 +541,42 @@
             <div class="modal-content hint-modal">
                 <img id="hintImage" src="" alt="Reference">
                 <p>Tap anywhere to close</p>
+            </div>
+        </div>
+
+        <!-- Nonogram Help Modal -->
+        <div id="nonogramHelpModal" class="modal hidden">
+            <div class="modal-content help-modal">
+                <button id="closeNonogramHelp" class="close-btn">×</button>
+                <h2>How to Play Nonogram</h2>
+                <div class="help-content">
+                    <div class="help-section">
+                        <h3>🎯 Goal</h3>
+                        <p>Fill in cells to reveal a hidden picture!</p>
+                    </div>
+                    <div class="help-section">
+                        <h3>🔢 The Numbers</h3>
+                        <p><strong>Left numbers</strong> = cells to fill in that ROW</p>
+                        <p><strong>Top numbers</strong> = cells to fill in that COLUMN</p>
+                    </div>
+                    <div class="help-section">
+                        <h3>📖 Reading Clues</h3>
+                        <p><code>5</code> = fill 5 cells in a row</p>
+                        <p><code>2 3</code> = fill 2, gap, then 3</p>
+                        <p><code>0</code> = no cells in this line</p>
+                    </div>
+                    <div class="help-section">
+                        <h3>✓ Controls</h3>
+                        <p><strong>Fill mode (✓)</strong> - tap to fill cells black</p>
+                        <p><strong>Mark mode (✗)</strong> - tap to mark empty cells</p>
+                    </div>
+                    <div class="help-section">
+                        <h3>💡 Tips</h3>
+                        <p>• Start with large numbers first</p>
+                        <p>• Mark cells you know are empty</p>
+                        <p>• Look where rows and columns overlap</p>
+                    </div>
+                </div>
             </div>
         </div>
 

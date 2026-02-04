@@ -1239,6 +1239,55 @@ body {
     color: white;
 }
 
+/* ============ HELP MODAL ============ */
+.help-modal {
+    max-width: 340px;
+    text-align: left;
+}
+
+.help-modal h2 {
+    text-align: center;
+    margin-bottom: 16px;
+    font-size: 20px;
+}
+
+.help-content {
+    max-height: 60vh;
+    overflow-y: auto;
+}
+
+.help-section {
+    margin-bottom: 16px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+}
+
+.help-section:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+}
+
+.help-section h3 {
+    font-size: 14px;
+    margin-bottom: 8px;
+    color: var(--accent);
+}
+
+.help-section p {
+    font-size: 13px;
+    color: var(--text);
+    margin: 4px 0;
+    line-height: 1.5;
+}
+
+.help-section code {
+    background: var(--bg);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: monospace;
+    font-weight: 600;
+}
+
 /* ============ GAME MODE TABS ============ */
 .game-mode-tabs {
     display: flex;
@@ -1281,6 +1330,21 @@ body {
 
 .game-home.hidden {
     display: none;
+}
+
+.game-intro-tip {
+    background: linear-gradient(135deg, #e8f4f8 0%, #f0f9ff 100%);
+    border-left: 4px solid #0ea5e9;
+    padding: 12px 16px;
+    border-radius: 8px;
+    font-size: 13px;
+    color: var(--text);
+    margin-bottom: 16px;
+    line-height: 1.5;
+}
+
+.game-intro-tip strong {
+    color: #0369a1;
 }
 
 /* ============ NONOGRAM STYLES ============ */
