@@ -2380,26 +2380,59 @@ function startPersonality() {
 
 function generatePersonalityPairs() {
     const pairs = [];
+    const usedImages = new Set();
     const categories = ['butterflies', 'flowers', 'horses', 'landscapes'];
     
-    // Generate pairs that compare different categories
+    // Create pools of available images per category
+    const pools = {};
+    for (const cat of categories) {
+        pools[cat] = puzzles.filter(p => p.category === cat).sort(() => Math.random() - 0.5);
+    }
+    
+    // Generate 10 pairs, each comparing different categories
+    // Ensure no image is repeated
     for (let i = 0; i < 10; i++) {
-        const shuffledCats = [...categories].sort(() => Math.random() - 0.5);
-        const cat1 = shuffledCats[0];
-        const cat2 = shuffledCats[1];
+        // Shuffle category pairs for variety
+        const catPairs = [
+            ['butterflies', 'flowers'],
+            ['butterflies', 'horses'],
+            ['butterflies', 'landscapes'],
+            ['flowers', 'horses'],
+            ['flowers', 'landscapes'],
+            ['horses', 'landscapes']
+        ];
         
-        const imgs1 = puzzles.filter(p => p.category === cat1);
-        const imgs2 = puzzles.filter(p => p.category === cat2);
+        // Pick a category pair we haven't exhausted
+        const shuffledCatPairs = catPairs.sort(() => Math.random() - 0.5);
+        let foundPair = false;
         
-        if (imgs1.length && imgs2.length) {
-            pairs.push([
-                imgs1[Math.floor(Math.random() * imgs1.length)],
-                imgs2[Math.floor(Math.random() * imgs2.length)]
-            ]);
-        } else {
-            // Fallback to random images
+        for (const [cat1, cat2] of shuffledCatPairs) {
+            // Find unused images from each category
+            const available1 = pools[cat1].filter(p => !usedImages.has(p.id));
+            const available2 = pools[cat2].filter(p => !usedImages.has(p.id));
+            
+            if (available1.length > 0 && available2.length > 0) {
+                const img1 = available1[0];
+                const img2 = available2[0];
+                
+                usedImages.add(img1.id);
+                usedImages.add(img2.id);
+                
+                pairs.push([img1, img2]);
+                foundPair = true;
+                break;
+            }
+        }
+        
+        // Fallback if we've used all images - reset and allow reuse
+        if (!foundPair) {
+            usedImages.clear();
             const shuffled = [...puzzles].sort(() => Math.random() - 0.5);
-            pairs.push([shuffled[0], shuffled[1]]);
+            const img1 = shuffled[0];
+            const img2 = shuffled[1];
+            usedImages.add(img1.id);
+            usedImages.add(img2.id);
+            pairs.push([img1, img2]);
         }
     }
     
