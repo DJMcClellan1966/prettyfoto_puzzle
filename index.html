@@ -109,6 +109,18 @@
                         </button>
                     </div>
                     
+                    <!-- Zen Mode & Artist Profile Bar -->
+                    <div class="zen-artist-bar">
+                        <button id="zenModeBtn" class="zen-btn">
+                            <span class="zen-icon">🧘</span>
+                            <span class="zen-text">Zen Mode</span>
+                        </button>
+                        <button id="artistBtn" class="artist-btn">
+                            <span class="artist-icon">📸</span>
+                            <span class="artist-text">Meet the Artist</span>
+                        </button>
+                    </div>
+                    
                     <!-- For You Section (personalized) -->
                     <div id="forYouSection" class="for-you-section hidden">
                         <div class="for-you-header">
@@ -585,6 +597,116 @@
                     <button id="switchCameraBtn" class="icon-btn">🔄</button>
                     <button id="captureBtn" class="capture-btn">📸</button>
                     <div class="spacer"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Zen Mode Modal -->
+        <div id="zenModal" class="modal hidden">
+            <div class="modal-content zen-modal">
+                <button id="closeZenModal" class="close-btn">×</button>
+                <div class="zen-header">
+                    <span class="zen-lotus">🧘</span>
+                    <h2>Zen Mode</h2>
+                    <p>A peaceful puzzling experience</p>
+                </div>
+                
+                <div class="zen-options">
+                    <div class="zen-option">
+                        <div class="zen-option-info">
+                            <span class="option-title">Hide Timer & Moves</span>
+                            <span class="option-desc">No pressure, just enjoy</span>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="zenHideStats" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    
+                    <div class="zen-option">
+                        <div class="zen-option-info">
+                            <span class="option-title">Softer Colors</span>
+                            <span class="option-desc">Calming visual palette</span>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="zenSoftColors" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    
+                    <div class="zen-divider"></div>
+                    
+                    <div class="zen-sound-section">
+                        <span class="option-title">Ambient Sounds</span>
+                        <div class="ambient-sounds">
+                            <button class="ambient-btn" data-sound="none">🔇 None</button>
+                            <button class="ambient-btn active" data-sound="rain">🌧️ Rain</button>
+                            <button class="ambient-btn" data-sound="forest">🌲 Forest</button>
+                            <button class="ambient-btn" data-sound="ocean">🌊 Ocean</button>
+                            <button class="ambient-btn" data-sound="fireplace">🔥 Fire</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <button id="startZenBtn" class="play-daily-btn">🧘 Enter Zen Mode</button>
+                
+                <p class="zen-tip">Perfect for unwinding after a long day</p>
+            </div>
+        </div>
+
+        <!-- Artist Profile Modal -->
+        <div id="artistModal" class="modal hidden">
+            <div class="modal-content artist-modal">
+                <button id="closeArtistModal" class="close-btn">×</button>
+                
+                <div class="artist-header">
+                    <div class="artist-photo">
+                        <span class="artist-photo-placeholder">📷</span>
+                    </div>
+                    <div class="artist-intro">
+                        <h2>Jennifer McClellan</h2>
+                        <p class="artist-tagline">Nature & Fine Art Photographer</p>
+                        <p class="artist-location">📍 North Carolina, USA</p>
+                    </div>
+                </div>
+                
+                <div class="artist-bio">
+                    <h3>Behind the Lens</h3>
+                    <p>For over 15 years, I've been capturing the fleeting beauty of nature—from the delicate wings of butterflies to the majestic spirit of wild horses.</p>
+                    <p>Every image tells a story of patience, wonder, and the deep connection I feel with the natural world. My goal is to help you bring that same sense of peace and beauty into your home.</p>
+                </div>
+                
+                <div class="artist-stats">
+                    <div class="artist-stat">
+                        <span class="stat-number">15+</span>
+                        <span class="stat-label">Years</span>
+                    </div>
+                    <div class="artist-stat">
+                        <span class="stat-number">1000+</span>
+                        <span class="stat-label">Images</span>
+                    </div>
+                    <div class="artist-stat">
+                        <span class="stat-number">500+</span>
+                        <span class="stat-label">Happy Collectors</span>
+                    </div>
+                </div>
+                
+                <div class="artist-equipment">
+                    <h3>Equipment</h3>
+                    <div class="equipment-list">
+                        <span class="equipment-item">📷 Canon EOS R5</span>
+                        <span class="equipment-item">🔭 100-400mm Lens</span>
+                        <span class="equipment-item">🌸 100mm Macro</span>
+                    </div>
+                </div>
+                
+                <div class="artist-quote">
+                    <blockquote>"I believe every home deserves a window to nature's beauty."</blockquote>
+                </div>
+                
+                <div class="artist-cta">
+                    <a href="https://www.prettyfoto.com/about" target="_blank" class="play-daily-btn">Learn More About Me</a>
+                    <a href="https://www.prettyfoto.com/shop-art" target="_blank" class="play-daily-btn secondary">Browse My Collections</a>
                 </div>
             </div>
         </div>

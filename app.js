@@ -703,6 +703,150 @@ function copyPrizeCode() {
     });
 }
 
+// ============ ZEN MODE ============
+let zenState = {
+    active: false,
+    hideStats: true,
+    softColors: true,
+    ambientSound: 'rain',
+    audioElement: null
+};
+
+const AMBIENT_SOUNDS = {
+    none: null,
+    rain: 'https://assets.mixkit.co/active_storage/sfx/2515/2515-preview.mp3',
+    forest: 'https://assets.mixkit.co/active_storage/sfx/2517/2517-preview.mp3',
+    ocean: 'https://assets.mixkit.co/active_storage/sfx/2516/2516-preview.mp3',
+    fireplace: 'https://assets.mixkit.co/active_storage/sfx/2512/2512-preview.mp3'
+};
+
+function setupZenMode() {
+    // Load saved preferences
+    const saved = localStorage.getItem('prettyfoto_zen');
+    if (saved) {
+        zenState = { ...zenState, ...JSON.parse(saved) };
+    }
+    
+    // Zen Mode button
+    document.getElementById('zenModeBtn').onclick = openZenModal;
+    document.getElementById('closeZenModal').onclick = closeZenModal;
+    document.getElementById('zenModal').onclick = (e) => {
+        if (e.target.id === 'zenModal') closeZenModal();
+    };
+    
+    // Toggle switches
+    document.getElementById('zenHideStats').checked = zenState.hideStats;
+    document.getElementById('zenSoftColors').checked = zenState.softColors;
+    
+    document.getElementById('zenHideStats').onchange = (e) => {
+        zenState.hideStats = e.target.checked;
+        saveZenState();
+    };
+    
+    document.getElementById('zenSoftColors').onchange = (e) => {
+        zenState.softColors = e.target.checked;
+        saveZenState();
+    };
+    
+    // Ambient sound buttons
+    document.querySelectorAll('.ambient-btn').forEach(btn => {
+        if (btn.dataset.sound === zenState.ambientSound) {
+            btn.classList.add('active');
+        }
+        btn.onclick = () => selectAmbientSound(btn.dataset.sound);
+    });
+    
+    // Start Zen button
+    document.getElementById('startZenBtn').onclick = enterZenMode;
+}
+
+function openZenModal() {
+    playSound('click');
+    document.getElementById('zenModal').classList.remove('hidden');
+}
+
+function closeZenModal() {
+    document.getElementById('zenModal').classList.add('hidden');
+}
+
+function selectAmbientSound(sound) {
+    playSound('click');
+    zenState.ambientSound = sound;
+    saveZenState();
+    
+    document.querySelectorAll('.ambient-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.sound === sound);
+    });
+}
+
+function saveZenState() {
+    localStorage.setItem('prettyfoto_zen', JSON.stringify(zenState));
+}
+
+function enterZenMode() {
+    playSound('click');
+    zenState.active = true;
+    
+    // Apply visual changes
+    if (zenState.softColors) {
+        document.querySelector('.app').classList.add('zen-active');
+    }
+    
+    // Start ambient sound
+    if (zenState.ambientSound !== 'none' && AMBIENT_SOUNDS[zenState.ambientSound]) {
+        startAmbientSound(zenState.ambientSound);
+    }
+    
+    closeZenModal();
+    
+    // Start a puzzle
+    playDaily();
+}
+
+function startAmbientSound(sound) {
+    stopAmbientSound();
+    
+    if (!AMBIENT_SOUNDS[sound]) return;
+    
+    zenState.audioElement = new Audio(AMBIENT_SOUNDS[sound]);
+    zenState.audioElement.loop = true;
+    zenState.audioElement.volume = 0.3;
+    zenState.audioElement.play().catch(() => {
+        // Autoplay blocked - that's okay
+    });
+}
+
+function stopAmbientSound() {
+    if (zenState.audioElement) {
+        zenState.audioElement.pause();
+        zenState.audioElement = null;
+    }
+}
+
+function exitZenMode() {
+    zenState.active = false;
+    document.querySelector('.app').classList.remove('zen-active');
+    stopAmbientSound();
+}
+
+// ============ ARTIST PROFILE ============
+function setupArtistProfile() {
+    document.getElementById('artistBtn').onclick = openArtistModal;
+    document.getElementById('closeArtistModal').onclick = closeArtistModal;
+    document.getElementById('artistModal').onclick = (e) => {
+        if (e.target.id === 'artistModal') closeArtistModal();
+    };
+}
+
+function openArtistModal() {
+    playSound('click');
+    document.getElementById('artistModal').classList.remove('hidden');
+}
+
+function closeArtistModal() {
+    document.getElementById('artistModal').classList.add('hidden');
+}
+
 // ============ STORY MODE ============
 const DEFAULT_STORIES = {
     butterflies: {
@@ -1146,6 +1290,8 @@ document.addEventListener('DOMContentLoaded', () => {
     setupSpinWheel();
     setupStoryModal();
     setupVideoModal();
+    setupZenMode();
+    setupArtistProfile();
 });
 
 function applyPersonalization() {
@@ -1531,6 +1677,11 @@ function goHome() {
     homeView.classList.remove('hidden');
     resetGame();
     setupDailyPuzzle();
+    
+    // Exit Zen Mode when going home
+    if (zenState.active) {
+        exitZenMode();
+    }
 }
 
 // ============ GAME LOGIC ============

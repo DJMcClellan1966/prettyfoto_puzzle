@@ -2855,6 +2855,359 @@ body {
     padding: 4px;
 }
 
+/* ============ ZEN MODE & ARTIST BAR ============ */
+.zen-artist-bar {
+    display: flex;
+    gap: 10px;
+    margin: 16px 0;
+}
+
+.zen-btn, .artist-btn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 16px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: white;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.zen-btn:hover {
+    border-color: #9b59b6;
+    background: linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%);
+    color: #7c3aed;
+}
+
+.artist-btn:hover {
+    border-color: var(--accent);
+    background: linear-gradient(135deg, #fff5f5 0%, #fef2f2 100%);
+    color: var(--accent);
+}
+
+.zen-icon, .artist-icon {
+    font-size: 18px;
+}
+
+/* Zen Mode Active State */
+.app.zen-active {
+    --bg: #faf5ff;
+    --card-bg: #fefcff;
+    --text: #581c87;
+    --text-dim: #7c3aed;
+    --accent: #9b59b6;
+    --border: #e9d5ff;
+}
+
+.app.zen-active .puzzle-stats {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.app.zen-active .puzzle-board {
+    box-shadow: 0 8px 40px rgba(147, 51, 234, 0.15);
+}
+
+/* ============ ZEN MODAL ============ */
+.zen-modal {
+    max-width: 380px;
+    text-align: center;
+}
+
+.zen-header {
+    margin-bottom: 24px;
+}
+
+.zen-lotus {
+    font-size: 48px;
+    display: block;
+    margin-bottom: 12px;
+}
+
+.zen-header h2 {
+    margin-bottom: 4px;
+}
+
+.zen-header p {
+    color: var(--text-dim);
+    font-size: 14px;
+}
+
+.zen-options {
+    text-align: left;
+    margin-bottom: 20px;
+}
+
+.zen-option {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+}
+
+.zen-option-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.option-title {
+    font-weight: 500;
+    font-size: 14px;
+}
+
+.option-desc {
+    font-size: 12px;
+    color: var(--text-dim);
+}
+
+.toggle-switch {
+    position: relative;
+    width: 48px;
+    height: 26px;
+}
+
+.toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.toggle-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: #e2e8f0;
+    transition: 0.3s;
+    border-radius: 26px;
+}
+
+.toggle-slider:before {
+    position: absolute;
+    content: "";
+    height: 20px;
+    width: 20px;
+    left: 3px;
+    bottom: 3px;
+    background: white;
+    transition: 0.3s;
+    border-radius: 50%;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.toggle-switch input:checked + .toggle-slider {
+    background: #9b59b6;
+}
+
+.toggle-switch input:checked + .toggle-slider:before {
+    transform: translateX(22px);
+}
+
+.zen-divider {
+    height: 1px;
+    background: var(--border);
+    margin: 16px 0;
+}
+
+.zen-sound-section {
+    padding: 12px 0;
+}
+
+.zen-sound-section .option-title {
+    display: block;
+    margin-bottom: 12px;
+}
+
+.ambient-sounds {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.ambient-btn {
+    padding: 8px 12px;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    background: white;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.ambient-btn:hover {
+    border-color: #9b59b6;
+}
+
+.ambient-btn.active {
+    background: #9b59b6;
+    color: white;
+    border-color: #9b59b6;
+}
+
+.zen-tip {
+    font-size: 12px;
+    color: var(--text-dim);
+    margin-top: 12px;
+    font-style: italic;
+}
+
+/* ============ ARTIST MODAL ============ */
+.artist-modal {
+    max-width: 420px;
+    text-align: center;
+}
+
+.artist-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.artist-photo {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent) 0%, #e17055 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 16px;
+    box-shadow: 0 4px 20px rgba(225, 112, 85, 0.3);
+}
+
+.artist-photo-placeholder {
+    font-size: 40px;
+    filter: grayscale(1) brightness(2);
+}
+
+.artist-intro h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 24px;
+    margin-bottom: 4px;
+}
+
+.artist-tagline {
+    color: var(--accent);
+    font-weight: 500;
+    font-size: 14px;
+    margin-bottom: 4px;
+}
+
+.artist-location {
+    font-size: 13px;
+    color: var(--text-dim);
+}
+
+.artist-bio {
+    text-align: left;
+    margin-bottom: 20px;
+    padding: 16px;
+    background: var(--bg);
+    border-radius: var(--radius);
+}
+
+.artist-bio h3 {
+    font-size: 14px;
+    margin-bottom: 10px;
+    color: var(--accent);
+}
+
+.artist-bio p {
+    font-size: 14px;
+    line-height: 1.6;
+    margin-bottom: 10px;
+}
+
+.artist-bio p:last-child {
+    margin-bottom: 0;
+}
+
+.artist-stats {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    margin-bottom: 20px;
+    padding: 16px 0;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+}
+
+.artist-stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.stat-number {
+    font-family: 'Playfair Display', serif;
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--accent);
+}
+
+.stat-label {
+    font-size: 11px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.artist-equipment {
+    margin-bottom: 20px;
+}
+
+.artist-equipment h3 {
+    font-size: 14px;
+    margin-bottom: 10px;
+    color: var(--text-dim);
+}
+
+.equipment-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+}
+
+.equipment-item {
+    padding: 6px 12px;
+    background: var(--bg);
+    border-radius: 20px;
+    font-size: 12px;
+}
+
+.artist-quote {
+    margin-bottom: 20px;
+    padding: 20px;
+    background: linear-gradient(135deg, #fff5f5 0%, #fef2f2 100%);
+    border-radius: var(--radius);
+    border-left: 3px solid var(--accent);
+}
+
+.artist-quote blockquote {
+    font-family: 'Playfair Display', serif;
+    font-size: 16px;
+    font-style: italic;
+    color: var(--text);
+    margin: 0;
+}
+
+.artist-cta {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
 /* ============ STORY MODAL ============ */
 .story-modal {
     max-width: 400px;
