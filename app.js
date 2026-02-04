@@ -1101,8 +1101,8 @@ function switchGameMode(mode) {
             case 'slider':
                 setupDailyPuzzle();
                 break;
-            case 'nonogram':
-                setupNonogramHome();
+            case 'zoom':
+                setupZoomHome();
                 break;
             case 'ranking':
                 setupRankingHome();
@@ -1234,61 +1234,40 @@ function finishRanking() {
 }
 
 // ============================================================
-// ==================== NONOGRAM / PICROSS ====================
+// ==================== ZOOM IN GAME ==========================
 // ============================================================
 
-let nonogramState = {
-    size: 10,
-    solution: [],
-    board: [],
-    mode: 'fill', // 'fill' or 'mark'
+let zoomState = {
     puzzle: null,
-    isDaily: false
+    isDaily: false,
+    currentZoom: 1,      // 1 = most zoomed, 5 = full image
+    maxZoom: 5,
+    guessesUsed: 0,
+    options: [],
+    correctAnswer: null,
+    offsetX: 0,
+    offsetY: 0,
+    completed: false
 };
 
-function setupNonogramHome() {
+function setupZoomHome() {
     const daily = getDailyPuzzle();
-    document.getElementById('nonogramNumber').textContent = getDailyPuzzleNumber();
-    document.getElementById('nonogramDate').textContent = new Date().toLocaleDateString('en-US', { 
+    document.getElementById('zoomNumber').textContent = getDailyPuzzleNumber();
+    document.getElementById('zoomDate').textContent = new Date().toLocaleDateString('en-US', { 
         month: 'short', day: 'numeric', year: 'numeric' 
     });
     
-    document.getElementById('playNonogramBtn').onclick = () => startNonogram(daily, true);
-    document.getElementById('nonogramBackBtn').onclick = () => {
-        document.getElementById('nonogramView').classList.add('hidden');
+    document.getElementById('playZoomBtn').onclick = () => startZoom(daily, true);
+    document.getElementById('zoomBackBtn').onclick = () => {
+        document.getElementById('zoomView').classList.add('hidden');
         document.getElementById('homeView').classList.remove('hidden');
     };
-    
-    // Size buttons
-    document.querySelectorAll('.size-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-            document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            nonogramState.size = parseInt(btn.dataset.size);
-        });
-    });
-    
-    // Mode buttons
-    document.getElementById('nonogramFillBtn').onclick = () => setNonogramMode('fill');
-    document.getElementById('nonogramMarkBtn').onclick = () => setNonogramMode('mark');
-    
-    // Help button
-    document.getElementById('nonogramHelpBtn').onclick = () => {
-        document.getElementById('nonogramHelpModal').classList.remove('hidden');
-    };
-    document.getElementById('closeNonogramHelp').onclick = () => {
-        document.getElementById('nonogramHelpModal').classList.add('hidden');
-    };
-    document.getElementById('nonogramHelpModal').onclick = (e) => {
-        if (e.target.id === 'nonogramHelpModal') {
-            document.getElementById('nonogramHelpModal').classList.add('hidden');
-        }
-    };
+    document.getElementById('zoomOutBtn').onclick = zoomOut;
     
     // Render gallery
-    const gallery = document.getElementById('nonogramGallery');
+    const gallery = document.getElementById('zoomGallery');
     gallery.innerHTML = puzzles.slice(0, 8).map(p => `
-        <div class="puzzle-card" onclick="startNonogram(puzzles.find(x => x.id === ${p.id}), false)">
+        <div class="puzzle-card" onclick="startZoom(puzzles.find(x => x.id === ${p.id}), false)">
             <img src="${p.image}" alt="${p.title}" class="puzzle-card-image" loading="lazy">
             <div class="puzzle-card-info">
                 <div class="puzzle-card-title">${p.title}</div>
@@ -1297,196 +1276,170 @@ function setupNonogramHome() {
     `).join('');
 }
 
-function startNonogram(puzzle, isDaily) {
+function startZoom(puzzle, isDaily) {
     playSound('click');
-    nonogramState.puzzle = puzzle;
-    nonogramState.isDaily = isDaily;
+    zoomState.puzzle = puzzle;
+    zoomState.isDaily = isDaily;
+    zoomState.currentZoom = 1;
+    zoomState.guessesUsed = 0;
+    zoomState.completed = false;
+    zoomState.correctAnswer = puzzle.id;
+    
+    // Random offset for zoomed view (between 20-80% of image)
+    zoomState.offsetX = 20 + Math.random() * 60;
+    zoomState.offsetY = 20 + Math.random() * 60;
+    
+    // Generate 4 options (1 correct + 3 random)
+    const otherPuzzles = puzzles.filter(p => p.id !== puzzle.id);
+    const shuffledOthers = otherPuzzles.sort(() => Math.random() - 0.5).slice(0, 3);
+    zoomState.options = [puzzle, ...shuffledOthers].sort(() => Math.random() - 0.5);
     
     if (isDaily) {
-        document.getElementById('nonogramDailyBadge').classList.remove('hidden');
-        document.getElementById('nonogramBadgeNum').textContent = getDailyPuzzleNumber();
+        document.getElementById('zoomDailyBadge').classList.remove('hidden');
+        document.getElementById('zoomBadgeNum').textContent = getDailyPuzzleNumber();
     } else {
-        document.getElementById('nonogramDailyBadge').classList.add('hidden');
+        document.getElementById('zoomDailyBadge').classList.add('hidden');
     }
     
     document.getElementById('homeView').classList.add('hidden');
-    document.getElementById('nonogramView').classList.remove('hidden');
+    document.getElementById('zoomView').classList.remove('hidden');
     
-    generateNonogram(puzzle);
+    renderZoom();
 }
 
-function generateNonogram(puzzle) {
-    const size = nonogramState.size;
+function renderZoom() {
+    const img = document.getElementById('zoomImage');
+    const wrapper = document.getElementById('zoomImageWrapper');
     
-    // Create solution from image (simplified - uses seeded random based on image)
-    const seed = puzzle.id * 1000 + size;
-    nonogramState.solution = [];
-    nonogramState.board = [];
+    img.src = zoomState.puzzle.image;
     
-    for (let y = 0; y < size; y++) {
-        const row = [];
-        const boardRow = [];
-        for (let x = 0; x < size; x++) {
-            // Generate pattern based on seed
-            const val = seededRandom(seed + y * size + x) > 0.5 ? 1 : 0;
-            row.push(val);
-            boardRow.push(0); // 0 = empty, 1 = filled, 2 = marked
+    // Calculate zoom level (1 = 800%, 5 = 100%)
+    const zoomLevels = [8, 5, 3, 1.8, 1];
+    const scale = zoomLevels[zoomState.currentZoom - 1];
+    
+    const containerSize = 280;
+    const imgSize = containerSize * scale;
+    
+    // Position image so the interesting part is visible
+    const offsetX = (zoomState.offsetX / 100) * (imgSize - containerSize);
+    const offsetY = (zoomState.offsetY / 100) * (imgSize - containerSize);
+    
+    img.style.width = `${imgSize}px`;
+    img.style.height = `${imgSize}px`;
+    img.style.left = `-${offsetX}px`;
+    img.style.top = `-${offsetY}px`;
+    
+    // Update zoom dots
+    document.querySelectorAll('.zoom-dot').forEach((dot, i) => {
+        dot.classList.remove('active', 'used');
+        if (i + 1 === zoomState.currentZoom) {
+            dot.classList.add('active');
+        } else if (i + 1 < zoomState.currentZoom) {
+            dot.classList.add('used');
         }
-        nonogramState.solution.push(row);
-        nonogramState.board.push(boardRow);
-    }
+    });
     
-    renderNonogram();
-}
-
-function renderNonogram() {
-    const size = nonogramState.size;
-    const solution = nonogramState.solution;
-    
-    // Calculate clues
-    const rowClues = solution.map(row => getClues(row));
-    const colClues = [];
-    for (let x = 0; x < size; x++) {
-        const col = solution.map(row => row[x]);
-        colClues.push(getClues(col));
-    }
-    
-    // Render column clues
-    const colCluesEl = document.getElementById('nonogramColClues');
-    colCluesEl.innerHTML = colClues.map(clue => `
-        <div class="nonogram-col-clue">
-            ${clue.map(n => `<span>${n}</span>`).join('')}
-        </div>
+    // Render choices
+    const choices = document.getElementById('zoomChoices');
+    choices.innerHTML = zoomState.options.map(p => `
+        <button class="zoom-choice" data-id="${p.id}" onclick="makeZoomGuess(${p.id})">
+            ${p.title}
+        </button>
     `).join('');
     
-    // Render row clues
-    const rowCluesEl = document.getElementById('nonogramRowClues');
-    rowCluesEl.innerHTML = rowClues.map(clue => `
-        <div class="nonogram-row-clue">
-            ${clue.map(n => `<span>${n}</span>`).join('')}
-        </div>
-    `).join('');
-    
-    // Render board
-    const board = document.getElementById('nonogramBoard');
-    board.style.gridTemplateColumns = `repeat(${size}, 24px)`;
-    board.innerHTML = '';
-    
-    for (let y = 0; y < size; y++) {
-        for (let x = 0; x < size; x++) {
-            const cell = document.createElement('div');
-            cell.className = 'nonogram-cell';
-            cell.dataset.x = x;
-            cell.dataset.y = y;
-            cell.onclick = () => clickNonogramCell(x, y);
-            board.appendChild(cell);
-        }
-    }
-    
-    updateNonogramProgress();
-}
-
-function getClues(line) {
-    const clues = [];
-    let count = 0;
-    for (const val of line) {
-        if (val === 1) {
-            count++;
-        } else if (count > 0) {
-            clues.push(count);
-            count = 0;
-        }
-    }
-    if (count > 0) clues.push(count);
-    return clues.length > 0 ? clues : [0];
-}
-
-function setNonogramMode(mode) {
-    nonogramState.mode = mode;
-    document.getElementById('nonogramFillBtn').classList.toggle('active', mode === 'fill');
-    document.getElementById('nonogramMarkBtn').classList.toggle('active', mode === 'mark');
-}
-
-function clickNonogramCell(x, y) {
-    playSound('click');
-    vibrate(5);
-    
-    const current = nonogramState.board[y][x];
-    
-    if (nonogramState.mode === 'fill') {
-        nonogramState.board[y][x] = current === 1 ? 0 : 1;
+    // Update zoom out button
+    const zoomOutBtn = document.getElementById('zoomOutBtn');
+    if (zoomState.currentZoom >= zoomState.maxZoom) {
+        zoomOutBtn.disabled = true;
+        zoomOutBtn.textContent = 'Fully zoomed out';
     } else {
-        nonogramState.board[y][x] = current === 2 ? 0 : 2;
+        zoomOutBtn.disabled = false;
+        zoomOutBtn.textContent = `🔍 Zoom Out (${zoomState.maxZoom - zoomState.currentZoom} left)`;
     }
-    
-    // Update cell display
-    const cell = document.querySelector(`.nonogram-cell[data-x="${x}"][data-y="${y}"]`);
-    cell.classList.remove('filled', 'marked');
-    if (nonogramState.board[y][x] === 1) cell.classList.add('filled');
-    if (nonogramState.board[y][x] === 2) cell.classList.add('marked');
-    
-    updateNonogramProgress();
-    checkNonogramComplete();
 }
 
-function updateNonogramProgress() {
-    const size = nonogramState.size;
-    let correct = 0;
-    let total = 0;
+function makeZoomGuess(id) {
+    if (zoomState.completed) return;
     
-    for (let y = 0; y < size; y++) {
-        for (let x = 0; x < size; x++) {
-            if (nonogramState.solution[y][x] === 1) {
-                total++;
-                if (nonogramState.board[y][x] === 1) correct++;
-            }
+    playSound('click');
+    zoomState.guessesUsed++;
+    
+    const choiceBtn = document.querySelector(`.zoom-choice[data-id="${id}"]`);
+    
+    if (id === zoomState.correctAnswer) {
+        // Correct!
+        choiceBtn.classList.add('correct');
+        zoomState.completed = true;
+        zoomComplete();
+    } else {
+        // Wrong - disable this choice and zoom out
+        choiceBtn.classList.add('wrong');
+        choiceBtn.classList.add('disabled');
+        vibrate(100);
+        
+        // Auto zoom out on wrong guess
+        if (zoomState.currentZoom < zoomState.maxZoom) {
+            setTimeout(() => {
+                zoomState.currentZoom++;
+                renderZoom();
+                // Re-disable already wrong choices
+                document.querySelectorAll('.zoom-choice.wrong').forEach(btn => {
+                    btn.classList.add('disabled');
+                });
+            }, 500);
         }
     }
-    
-    const pct = total > 0 ? (correct / total) * 100 : 0;
-    document.getElementById('nonogramProgressBar').style.width = `${pct}%`;
 }
 
-function checkNonogramComplete() {
-    const size = nonogramState.size;
+function zoomOut() {
+    if (zoomState.currentZoom >= zoomState.maxZoom || zoomState.completed) return;
     
-    for (let y = 0; y < size; y++) {
-        for (let x = 0; x < size; x++) {
-            const expected = nonogramState.solution[y][x];
-            const actual = nonogramState.board[y][x] === 1 ? 1 : 0;
-            if (expected !== actual) return;
-        }
-    }
-    
-    // Completed!
-    nonogramComplete();
+    playSound('click');
+    zoomState.guessesUsed++;
+    zoomState.currentZoom++;
+    renderZoom();
 }
 
-function nonogramComplete() {
+function zoomComplete() {
     playSound('win');
     showConfetti();
     vibrate([100, 50, 100, 50, 200]);
     
-    // Show the revealed image
-    document.getElementById('completedImage').src = nonogramState.puzzle.image;
-    document.getElementById('finalTime').textContent = '-';
-    document.getElementById('finalMoves').textContent = nonogramState.size + '×' + nonogramState.size;
-    document.getElementById('completionShopLink').href = nonogramState.puzzle.shopUrl;
-    document.getElementById('completionGalleryLink').href = nonogramState.puzzle.galleryUrl;
-    document.getElementById('shareSection').classList.add('hidden');
+    // Calculate score based on zoom level when guessed
+    const score = zoomState.maxZoom - zoomState.currentZoom + 1;
+    const rating = score === 5 ? '🏆 Perfect! First try!' :
+                   score === 4 ? '⭐ Excellent!' :
+                   score === 3 ? '👍 Great!' :
+                   score === 2 ? '✅ Good!' : '🎉 Got it!';
     
-    completionModal.classList.remove('hidden');
-    
-    document.getElementById('playAgainBtn').onclick = () => {
-        completionModal.classList.add('hidden');
-        startNonogram(nonogramState.puzzle, nonogramState.isDaily);
-    };
-    
-    document.getElementById('newPuzzleBtn').onclick = () => {
-        completionModal.classList.add('hidden');
-        document.getElementById('nonogramView').classList.add('hidden');
-        document.getElementById('homeView').classList.remove('hidden');
-    };
+    setTimeout(() => {
+        document.getElementById('completedImage').src = zoomState.puzzle.image;
+        document.getElementById('finalTime').textContent = rating;
+        document.getElementById('finalMoves').textContent = `${zoomState.guessesUsed} guesses`;
+        document.getElementById('completionShopLink').href = zoomState.puzzle.shopUrl;
+        document.getElementById('completionGalleryLink').href = zoomState.puzzle.galleryUrl;
+        
+        if (zoomState.isDaily) {
+            document.getElementById('shareSection').classList.remove('hidden');
+        } else {
+            document.getElementById('shareSection').classList.add('hidden');
+        }
+        
+        completionModal.classList.remove('hidden');
+        
+        document.getElementById('playAgainBtn').onclick = () => {
+            completionModal.classList.add('hidden');
+            // Pick a new random puzzle for replay
+            const newPuzzle = puzzles[Math.floor(Math.random() * puzzles.length)];
+            startZoom(newPuzzle, false);
+        };
+        
+        document.getElementById('newPuzzleBtn').onclick = () => {
+            completionModal.classList.add('hidden');
+            document.getElementById('zoomView').classList.add('hidden');
+            document.getElementById('homeView').classList.remove('hidden');
+        };
+    }, 800);
 }
 
 // ============================================================

@@ -42,7 +42,7 @@
             <!-- Game Mode Selector -->
             <div class="game-mode-tabs">
                 <button class="mode-tab active" data-mode="slider">🧩 Slider</button>
-                <button class="mode-tab" data-mode="nonogram">🔢 Nonogram</button>
+                <button class="mode-tab" data-mode="zoom">🔍 Zoom</button>
                 <button class="mode-tab" data-mode="ranking">❤️ Ranking</button>
                 <button class="mode-tab" data-mode="shapeku">🎨 Shapeku</button>
                 <button class="mode-tab" data-mode="wordsearch">🔤 Words</button>
@@ -115,48 +115,43 @@
                 </div>
                 </div><!-- End sliderHome -->
 
-                <!-- ========== NONOGRAM GAME HOME ========== -->
-                <div id="nonogramHome" class="game-home hidden">
+                <!-- ========== ZOOM IN GAME HOME ========== -->
+                <div id="zoomHome" class="game-home hidden">
                     <div class="home-header">
-                        <h1>Daily Nonogram</h1>
-                        <p>Reveal the hidden image with logic!</p>
+                        <h1>Daily Zoom</h1>
+                        <p>Guess the image from a tiny detail!</p>
                     </div>
                     
                     <div class="game-intro-tip">
-                        <strong>New to Nonogram?</strong> Use the number clues to fill in cells. 
-                        Numbers show how many consecutive cells to fill in each row/column. 
-                        Tap ❓ during play for full instructions!
+                        <strong>How to play:</strong> You'll see a zoomed-in portion of an image. 
+                        Guess what it is! Each wrong guess zooms out a little. 
+                        Fewer zooms = higher score! 🔍
                     </div>
                     
-                    <div id="nonogramDailyCard" class="daily-card">
+                    <div id="zoomDailyCard" class="daily-card">
                         <div class="daily-badge">
-                            <span class="daily-number">#<span id="nonogramNumber">1</span></span>
-                            <span class="daily-date" id="nonogramDate">Feb 3, 2026</span>
+                            <span class="daily-number">#<span id="zoomNumber">1</span></span>
+                            <span class="daily-date" id="zoomDate">Feb 3, 2026</span>
                         </div>
                         <div class="daily-image-container mystery">
-                            <div class="mystery-image">?</div>
-                            <div id="nonogramOverlay" class="daily-overlay hidden">
-                                <span class="daily-status">✓ Revealed</span>
+                            <div class="mystery-image">🔍</div>
+                            <div id="zoomOverlay" class="daily-overlay hidden">
+                                <span class="daily-status">✓ Guessed</span>
                             </div>
                         </div>
                         <div class="daily-info">
                             <h3>Mystery Image</h3>
-                            <p class="daily-category">Solve to reveal!</p>
+                            <p class="daily-category">Can you guess it?</p>
                         </div>
-                        <button id="playNonogramBtn" class="play-daily-btn">
-                            Play Today's Nonogram
+                        <button id="playZoomBtn" class="play-daily-btn">
+                            Play Today's Zoom
                         </button>
                     </div>
                     
                     <div class="free-play-section">
-                        <h2>Practice Nonograms</h2>
-                        <p>Choose a size to practice</p>
-                        <div class="size-options">
-                            <button class="size-btn" data-size="5">5×5</button>
-                            <button class="size-btn active" data-size="10">10×10</button>
-                            <button class="size-btn" data-size="15">15×15</button>
-                        </div>
-                        <div id="nonogramGallery" class="puzzle-gallery"></div>
+                        <h2>Practice Mode</h2>
+                        <p>Test your eye for detail</p>
+                        <div id="zoomGallery" class="puzzle-gallery"></div>
                     </div>
                 </div>
 
@@ -299,29 +294,39 @@
                 </div>
             </section>
 
-            <!-- ========== NONOGRAM GAME VIEW ========== -->
-            <section id="nonogramView" class="view hidden">
+            <!-- ========== ZOOM IN GAME VIEW ========== -->
+            <section id="zoomView" class="view hidden">
                 <div class="puzzle-nav">
-                    <button id="nonogramBackBtn" class="icon-btn">← Back</button>
-                    <button id="nonogramHelpBtn" class="hint-btn">❓</button>
-                    <span id="nonogramDailyBadge" class="daily-badge-small hidden">Daily #<span id="nonogramBadgeNum">1</span></span>
+                    <button id="zoomBackBtn" class="icon-btn">← Back</button>
+                    <span id="zoomDailyBadge" class="daily-badge-small hidden">Daily #<span id="zoomBadgeNum">1</span></span>
                 </div>
                 
-                <div class="nonogram-container">
-                    <div class="nonogram-board-wrapper">
-                        <div id="nonogramColClues" class="nonogram-col-clues"></div>
-                        <div class="nonogram-main">
-                            <div id="nonogramRowClues" class="nonogram-row-clues"></div>
-                            <div id="nonogramBoard" class="nonogram-board"></div>
+                <div class="zoom-container">
+                    <div class="zoom-level-indicator">
+                        <span>Zoom Level: </span>
+                        <div class="zoom-dots">
+                            <span class="zoom-dot active" data-level="1"></span>
+                            <span class="zoom-dot" data-level="2"></span>
+                            <span class="zoom-dot" data-level="3"></span>
+                            <span class="zoom-dot" data-level="4"></span>
+                            <span class="zoom-dot" data-level="5"></span>
                         </div>
                     </div>
-                    <div class="nonogram-controls">
-                        <button id="nonogramFillBtn" class="control-btn active">✓ Fill</button>
-                        <button id="nonogramMarkBtn" class="control-btn">✗ Mark</button>
+                    
+                    <div class="zoom-image-container">
+                        <div id="zoomImageWrapper" class="zoom-image-wrapper">
+                            <img id="zoomImage" src="" alt="Guess the image">
+                        </div>
                     </div>
-                    <div id="nonogramProgress" class="nonogram-progress">
-                        <div id="nonogramProgressBar" class="progress-bar"></div>
+                    
+                    <div class="zoom-options">
+                        <p class="zoom-prompt">What is this image?</p>
+                        <div id="zoomChoices" class="zoom-choices">
+                            <!-- Options generated by JS -->
+                        </div>
                     </div>
+                    
+                    <button id="zoomOutBtn" class="zoom-out-btn">🔍 Zoom Out (use a guess)</button>
                 </div>
             </section>
 
@@ -544,41 +549,6 @@
             </div>
         </div>
 
-        <!-- Nonogram Help Modal -->
-        <div id="nonogramHelpModal" class="modal hidden">
-            <div class="modal-content help-modal">
-                <button id="closeNonogramHelp" class="close-btn">×</button>
-                <h2>How to Play Nonogram</h2>
-                <div class="help-content">
-                    <div class="help-section">
-                        <h3>🎯 Goal</h3>
-                        <p>Fill in cells to reveal a hidden picture!</p>
-                    </div>
-                    <div class="help-section">
-                        <h3>🔢 The Numbers</h3>
-                        <p><strong>Left numbers</strong> = cells to fill in that ROW</p>
-                        <p><strong>Top numbers</strong> = cells to fill in that COLUMN</p>
-                    </div>
-                    <div class="help-section">
-                        <h3>📖 Reading Clues</h3>
-                        <p><code>5</code> = fill 5 cells in a row</p>
-                        <p><code>2 3</code> = fill 2, gap, then 3</p>
-                        <p><code>0</code> = no cells in this line</p>
-                    </div>
-                    <div class="help-section">
-                        <h3>✓ Controls</h3>
-                        <p><strong>Fill mode (✓)</strong> - tap to fill cells black</p>
-                        <p><strong>Mark mode (✗)</strong> - tap to mark empty cells</p>
-                    </div>
-                    <div class="help-section">
-                        <h3>💡 Tips</h3>
-                        <p>• Start with large numbers first</p>
-                        <p>• Mark cells you know are empty</p>
-                        <p>• Look where rows and columns overlap</p>
-                    </div>
-                </div>
-            </div>
-        </div>
 
         <!-- Confetti Canvas -->
         <canvas id="confetti" class="confetti-canvas"></canvas>
