@@ -1902,6 +1902,329 @@ body {
     text-decoration: line-through;
 }
 
+/* ============ PHOTO AUCTION STYLES ============ */
+.auction-stats-preview {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    margin: 20px 0;
+}
+
+.auction-stat {
+    text-align: center;
+}
+
+.auction-stat-value {
+    display: block;
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--accent);
+}
+
+.auction-stat-label {
+    font-size: 12px;
+    color: var(--text-dim);
+}
+
+.auction-container {
+    padding: 16px;
+    text-align: center;
+}
+
+.auction-question {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    margin-bottom: 4px;
+}
+
+.auction-hint {
+    font-size: 13px;
+    color: var(--text-dim);
+    margin-bottom: 20px;
+}
+
+.auction-streak {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--accent);
+}
+
+.auction-cards {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.auction-card {
+    flex: 1;
+    max-width: 160px;
+    background: white;
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    cursor: pointer;
+    transition: all 0.3s;
+    position: relative;
+}
+
+.auction-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+}
+
+.auction-card:active {
+    transform: scale(0.98);
+}
+
+.auction-card img {
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+}
+
+.auction-title {
+    padding: 8px;
+    font-size: 12px;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.auction-value {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.85);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: white;
+}
+
+.auction-value .value-label {
+    font-size: 11px;
+    opacity: 0.8;
+    margin-bottom: 4px;
+}
+
+.auction-value .value-score {
+    font-size: 28px;
+    font-weight: 700;
+}
+
+.auction-vs {
+    font-size: 28px;
+    flex-shrink: 0;
+}
+
+.auction-card.winner {
+    border: 3px solid var(--success);
+}
+
+.auction-card.winner .auction-value {
+    background: rgba(0, 184, 148, 0.9);
+}
+
+.auction-card.loser {
+    opacity: 0.6;
+}
+
+.auction-card.selected {
+    border: 3px solid var(--accent);
+}
+
+.auction-feedback {
+    background: var(--bg);
+    padding: 20px;
+    border-radius: var(--radius);
+    margin-top: 16px;
+}
+
+.feedback-text {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 12px;
+}
+
+.feedback-text.correct {
+    color: var(--success);
+}
+
+.feedback-text.wrong {
+    color: var(--accent-dark);
+}
+
+/* ============ PERSONALITY QUIZ STYLES ============ */
+.personality-types-preview {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+    margin: 16px 0 24px;
+}
+
+.personality-badge {
+    padding: 6px 12px;
+    background: white;
+    border-radius: 20px;
+    font-size: 12px;
+    box-shadow: var(--shadow);
+}
+
+.personality-container {
+    padding: 16px;
+    text-align: center;
+}
+
+.personality-question {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    margin-bottom: 20px;
+}
+
+.personality-cards {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-bottom: 16px;
+}
+
+.personality-card {
+    flex: 1;
+    max-width: 170px;
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.personality-card:hover {
+    transform: scale(1.03);
+    box-shadow: var(--shadow-lg);
+}
+
+.personality-card:active {
+    transform: scale(0.98);
+}
+
+.personality-card img {
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+}
+
+.personality-card.selected {
+    border: 4px solid var(--accent);
+    transform: scale(1.05);
+}
+
+.personality-hint {
+    font-size: 13px;
+    color: var(--text-dim);
+}
+
+/* Personality Result */
+.personality-result-container {
+    padding: 20px;
+    text-align: center;
+}
+
+.personality-result-container h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 18px;
+    color: var(--text-dim);
+    margin-bottom: 16px;
+}
+
+.soul-result-card {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: var(--radius);
+    padding: 30px 20px;
+    color: white;
+    margin-bottom: 24px;
+    box-shadow: var(--shadow-lg);
+}
+
+.soul-emoji {
+    font-size: 60px;
+    margin-bottom: 12px;
+}
+
+.soul-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 32px;
+    margin-bottom: 12px;
+}
+
+.soul-description {
+    font-size: 14px;
+    opacity: 0.9;
+    line-height: 1.6;
+}
+
+.soul-traits {
+    margin-bottom: 24px;
+}
+
+.soul-traits h3 {
+    font-size: 14px;
+    color: var(--text-dim);
+    margin-bottom: 12px;
+}
+
+.traits-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+}
+
+.trait-tag {
+    padding: 8px 16px;
+    background: var(--bg);
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.soul-match {
+    margin-bottom: 24px;
+}
+
+.soul-match h3 {
+    font-size: 14px;
+    color: var(--text-dim);
+    margin-bottom: 12px;
+}
+
+.soul-match-images {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.soul-match-images img {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow);
+}
+
+.soul-share {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
 /* ============ RESPONSIVE ============ */
 @media (min-width: 400px) {
     .puzzle-gallery {

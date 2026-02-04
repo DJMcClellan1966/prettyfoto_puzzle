@@ -1365,11 +1365,11 @@ function switchGameMode(mode) {
             case 'zoom':
                 setupZoomHome();
                 break;
-            case 'ranking':
-                setupRankingHome();
+            case 'auction':
+                setupAuctionHome();
                 break;
-            case 'shapeku':
-                setupShapekuHome();
+            case 'personality':
+                setupPersonalityHome();
                 break;
             case 'wordsearch':
                 setupWordsearchHome();
@@ -1379,119 +1379,135 @@ function switchGameMode(mode) {
 }
 
 // ============================================================
-// ==================== PHOTO RANKING =========================
+// ==================== PHOTO AUCTION =========================
 // ============================================================
 
-let rankingState = {
-    comparisons: [],
-    scores: {},
-    currentPair: 0,
-    totalPairs: 10
+let auctionState = {
+    currentPair: [],
+    currentStreak: 0,
+    bestStreak: 0,
+    totalPlays: 0,
+    revealed: false
 };
 
-function setupRankingHome() {
-    document.getElementById('startRankingBtn').onclick = startRanking;
-    document.getElementById('rankingBackBtn').onclick = () => {
-        document.getElementById('rankingView').classList.add('hidden');
+// Simulated popularity scores (would come from real data in production)
+function getPopularityScore(puzzle) {
+    // Generate consistent "popularity" based on puzzle properties
+    const seed = puzzle.id * 7 + puzzle.title.length * 13;
+    return Math.floor(seededRandom(seed) * 900 + 100); // 100-999
+}
+
+function setupAuctionHome() {
+    // Load saved stats
+    const savedAuction = localStorage.getItem('auctionStats');
+    if (savedAuction) {
+        const data = JSON.parse(savedAuction);
+        auctionState.bestStreak = data.bestStreak || 0;
+        auctionState.totalPlays = data.totalPlays || 0;
+    }
+    
+    document.getElementById('auctionBestStreak').textContent = auctionState.bestStreak;
+    document.getElementById('auctionTotalPlays').textContent = auctionState.totalPlays;
+    
+    document.getElementById('startAuctionBtn').onclick = startAuction;
+    document.getElementById('auctionBackBtn').onclick = () => {
+        document.getElementById('auctionView').classList.add('hidden');
         document.getElementById('homeView').classList.remove('hidden');
     };
+    document.getElementById('auctionNextBtn').onclick = nextAuctionRound;
 }
 
-function startRanking() {
+function startAuction() {
     playSound('click');
+    auctionState.currentStreak = 0;
+    auctionState.revealed = false;
     
-    // Reset state
-    rankingState = {
-        comparisons: generateComparisons(),
-        scores: {},
-        currentPair: 0,
-        totalPairs: 10
-    };
-    
-    // Initialize scores
-    puzzles.forEach(p => rankingState.scores[p.id] = 0);
-    
-    // Show ranking view
+    document.getElementById('auctionCurrentStreak').textContent = '0';
     document.getElementById('homeView').classList.add('hidden');
-    document.getElementById('rankingView').classList.remove('hidden');
+    document.getElementById('auctionView').classList.remove('hidden');
     
-    showRankingPair();
+    loadAuctionPair();
 }
 
-function generateComparisons() {
-    const pairs = [];
+function loadAuctionPair() {
+    auctionState.revealed = false;
+    
+    // Pick two random different puzzles
     const shuffled = [...puzzles].sort(() => Math.random() - 0.5);
+    auctionState.currentPair = [shuffled[0], shuffled[1]];
     
-    for (let i = 0; i < Math.min(10, Math.floor(shuffled.length / 2)); i++) {
-        pairs.push([shuffled[i * 2], shuffled[i * 2 + 1]]);
-    }
-    return pairs;
+    const [p1, p2] = auctionState.currentPair;
+    
+    document.getElementById('auctionImg1').src = p1.image;
+    document.getElementById('auctionTitle1').textContent = p1.title;
+    document.getElementById('auctionImg2').src = p2.image;
+    document.getElementById('auctionTitle2').textContent = p2.title;
+    
+    // Reset card states
+    document.getElementById('auctionCard1').className = 'auction-card';
+    document.getElementById('auctionCard2').className = 'auction-card';
+    document.getElementById('auctionValue1').classList.add('hidden');
+    document.getElementById('auctionValue2').classList.add('hidden');
+    document.getElementById('auctionFeedback').classList.add('hidden');
 }
 
-function showRankingPair() {
-    if (rankingState.currentPair >= rankingState.comparisons.length) {
-        finishRanking();
-        return;
-    }
+function selectAuctionCard(index) {
+    if (auctionState.revealed) return;
     
-    const [img1, img2] = rankingState.comparisons[rankingState.currentPair];
-    
-    document.getElementById('rankingProgress').textContent = 
-        `${rankingState.currentPair + 1} of ${rankingState.comparisons.length}`;
-    
-    document.getElementById('rankingImg1').src = img1.image;
-    document.getElementById('rankingTitle1').textContent = img1.title;
-    document.getElementById('rankingImg2').src = img2.image;
-    document.getElementById('rankingTitle2').textContent = img2.title;
-    
-    // Set up click handlers
-    document.getElementById('rankingCard1').onclick = () => selectRanking(img1.id, img2.id);
-    document.getElementById('rankingCard2').onclick = () => selectRanking(img2.id, img1.id);
-}
-
-function selectRanking(winnerId, loserId) {
     playSound('click');
-    vibrate(10);
+    auctionState.revealed = true;
+    auctionState.totalPlays++;
     
-    rankingState.scores[winnerId] += 1;
-    rankingState.currentPair++;
+    const [p1, p2] = auctionState.currentPair;
+    const score1 = getPopularityScore(p1);
+    const score2 = getPopularityScore(p2);
     
-    // Animate transition
-    const cards = document.querySelectorAll('.ranking-card');
-    cards.forEach(c => c.style.opacity = '0.5');
+    const winnerIndex = score1 >= score2 ? 0 : 1;
+    const userCorrect = index === winnerIndex;
     
-    setTimeout(() => {
-        cards.forEach(c => c.style.opacity = '1');
-        showRankingPair();
-    }, 200);
+    // Show values
+    document.querySelector('#auctionValue1 .value-score').textContent = score1;
+    document.querySelector('#auctionValue2 .value-score').textContent = score2;
+    document.getElementById('auctionValue1').classList.remove('hidden');
+    document.getElementById('auctionValue2').classList.remove('hidden');
+    
+    // Mark winner/loser
+    document.getElementById('auctionCard1').classList.add(winnerIndex === 0 ? 'winner' : 'loser');
+    document.getElementById('auctionCard2').classList.add(winnerIndex === 1 ? 'winner' : 'loser');
+    document.getElementById(`auctionCard${index + 1}`).classList.add('selected');
+    
+    // Show feedback
+    const feedback = document.getElementById('auctionFeedback');
+    const feedbackText = feedback.querySelector('.feedback-text');
+    
+    if (userCorrect) {
+        auctionState.currentStreak++;
+        if (auctionState.currentStreak > auctionState.bestStreak) {
+            auctionState.bestStreak = auctionState.currentStreak;
+        }
+        feedbackText.textContent = `✓ Correct! Streak: ${auctionState.currentStreak} 🔥`;
+        feedbackText.className = 'feedback-text correct';
+        playSound('success');
+    } else {
+        feedbackText.textContent = `✗ Wrong! The ${winnerIndex === 0 ? 'left' : 'right'} photo was more popular. Streak ended at ${auctionState.currentStreak}.`;
+        feedbackText.className = 'feedback-text wrong';
+        auctionState.currentStreak = 0;
+        vibrate(100);
+    }
+    
+    document.getElementById('auctionCurrentStreak').textContent = auctionState.currentStreak;
+    feedback.classList.remove('hidden');
+    
+    // Save stats
+    localStorage.setItem('auctionStats', JSON.stringify({
+        bestStreak: auctionState.bestStreak,
+        totalPlays: auctionState.totalPlays
+    }));
 }
 
-function finishRanking() {
-    playSound('win');
-    showConfetti();
-    
-    // Sort by score
-    const sorted = Object.entries(rankingState.scores)
-        .sort((a, b) => b[1] - a[1])
-        .slice(0, 3);
-    
-    const topPicks = document.getElementById('topPicks');
-    topPicks.innerHTML = sorted.map(([id, score], i) => {
-        const puzzle = puzzles.find(p => p.id === parseInt(id));
-        return `
-            <div class="top-pick" onclick="window.open('${puzzle.shopUrl}', '_blank')">
-                <span class="top-pick-rank">${i + 1}</span>
-                <img src="${puzzle.image}" alt="${puzzle.title}">
-            </div>
-        `;
-    }).join('');
-    
-    document.getElementById('rankingView').classList.add('hidden');
-    document.getElementById('homeView').classList.remove('hidden');
-    document.getElementById('rankingResults').classList.remove('hidden');
-    
-    stats.shopClicks = (stats.shopClicks || 0);
-    saveStats();
+function nextAuctionRound() {
+    playSound('click');
+    loadAuctionPair();
 }
 
 // ============================================================
@@ -1713,279 +1729,267 @@ function zoomComplete() {
 }
 
 // ============================================================
-// ==================== SHAPEKU (PICTURE SUDOKU) ==============
+// ==================== PERSONALITY QUIZ ======================
 // ============================================================
 
-let shapekuState = {
-    size: 4,
-    board: [],
-    solution: [],
-    fixedCells: [],  // Track which cells are given clues
-    images: [],
-    selectedImage: null
+const PERSONALITY_TYPES = {
+    dreamer: {
+        emoji: '🦋',
+        title: 'The Dreamer',
+        description: 'You see beauty in delicate details and find magic in fleeting moments. Your soul is drawn to the ethereal and transformative nature of butterflies - symbols of change and hope.',
+        traits: ['Creative', 'Sensitive', 'Imaginative', 'Hopeful'],
+        categories: ['butterflies'],
+        color: '#9b59b6'
+    },
+    explorer: {
+        emoji: '🏔️',
+        title: 'The Explorer',
+        description: 'Vast horizons call to your adventurous spirit. You find peace in grand landscapes and feel most alive when surrounded by the raw majesty of nature.',
+        traits: ['Adventurous', 'Independent', 'Curious', 'Bold'],
+        categories: ['landscapes'],
+        color: '#3498db'
+    },
+    nurturer: {
+        emoji: '🌸',
+        title: 'The Nurturer',
+        description: 'Your heart blooms with compassion and warmth. Like flowers, you bring color and joy to those around you, finding fulfillment in growth and beauty.',
+        traits: ['Caring', 'Gentle', 'Patient', 'Generous'],
+        categories: ['flowers'],
+        color: '#e91e63'
+    },
+    freeSpirit: {
+        emoji: '🐴',
+        title: 'The Free Spirit',
+        description: 'Untamed and authentic, you value freedom above all else. Like wild horses, your spirit cannot be contained - you follow your own path with grace and power.',
+        traits: ['Free', 'Authentic', 'Strong', 'Passionate'],
+        categories: ['horses'],
+        color: '#e67e22'
+    }
 };
 
-function setupShapekuHome() {
-    document.querySelectorAll('.shapeku-size-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-            document.querySelectorAll('.shapeku-size-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            shapekuState.size = parseInt(btn.dataset.size);
-        });
-    });
-    
-    document.getElementById('startShapekuBtn').onclick = startShapeku;
-    document.getElementById('shapekuBackBtn').onclick = () => {
-        document.getElementById('shapekuView').classList.add('hidden');
+let personalityState = {
+    currentQuestion: 0,
+    totalQuestions: 10,
+    comparisons: [],
+    scores: {
+        butterflies: 0,
+        flowers: 0,
+        horses: 0,
+        landscapes: 0
+    }
+};
+
+function setupPersonalityHome() {
+    document.getElementById('startPersonalityBtn').onclick = startPersonality;
+    document.getElementById('personalityBackBtn').onclick = () => {
+        document.getElementById('personalityView').classList.add('hidden');
         document.getElementById('homeView').classList.remove('hidden');
     };
-    document.getElementById('shapekuCheckBtn').onclick = checkShapeku;
+    document.getElementById('shareSoulBtn').onclick = shareSoulResult;
+    document.getElementById('retakeSoulBtn').onclick = () => {
+        document.getElementById('personalityResultView').classList.add('hidden');
+        startPersonality();
+    };
 }
 
-function startShapeku() {
+function startPersonality() {
     playSound('click');
     
-    const size = shapekuState.size;
-    
-    // Pick images for this game
-    const shuffled = [...puzzles].sort(() => Math.random() - 0.5);
-    shapekuState.images = shuffled.slice(0, size);
-    
-    // Generate valid solved board
-    shapekuState.solution = generateShapekuSolution(size);
-    
-    // Create puzzle by keeping some cells as clues (about 40%)
-    shapekuState.board = [];
-    shapekuState.fixedCells = [];
-    
-    for (let y = 0; y < size; y++) {
-        const row = [];
-        const fixedRow = [];
-        for (let x = 0; x < size; x++) {
-            // Keep about 40% of cells as clues
-            const isFixed = Math.random() < 0.4;
-            row.push(isFixed ? shapekuState.solution[y][x] : null);
-            fixedRow.push(isFixed);
-        }
-        shapekuState.board.push(row);
-        shapekuState.fixedCells.push(fixedRow);
-    }
-    
-    shapekuState.selectedImage = null;
+    // Reset state
+    personalityState = {
+        currentQuestion: 0,
+        totalQuestions: 10,
+        comparisons: generatePersonalityPairs(),
+        scores: { butterflies: 0, flowers: 0, horses: 0, landscapes: 0 }
+    };
     
     document.getElementById('homeView').classList.add('hidden');
-    document.getElementById('shapekuView').classList.remove('hidden');
+    document.getElementById('personalityView').classList.remove('hidden');
+    document.getElementById('personalityResultView').classList.add('hidden');
     
-    renderShapeku();
+    showPersonalityQuestion();
 }
 
-function generateShapekuSolution(size) {
-    // Generate a valid Latin square (each number once per row/column)
-    const board = [];
+function generatePersonalityPairs() {
+    const pairs = [];
+    const categories = ['butterflies', 'flowers', 'horses', 'landscapes'];
     
-    // For 4x4: use a known valid pattern and shuffle
-    if (size === 4) {
-        // Base valid 4x4 Latin square
-        const base = [
-            [0, 1, 2, 3],
-            [1, 2, 3, 0],
-            [2, 3, 0, 1],
-            [3, 0, 1, 2]
-        ];
+    // Generate pairs that compare different categories
+    for (let i = 0; i < 10; i++) {
+        const shuffledCats = [...categories].sort(() => Math.random() - 0.5);
+        const cat1 = shuffledCats[0];
+        const cat2 = shuffledCats[1];
         
-        // Shuffle rows
-        const rowOrder = [0, 1, 2, 3].sort(() => Math.random() - 0.5);
-        // Shuffle columns
-        const colOrder = [0, 1, 2, 3].sort(() => Math.random() - 0.5);
-        // Shuffle symbols
-        const symbolMap = [0, 1, 2, 3].sort(() => Math.random() - 0.5);
+        const imgs1 = puzzles.filter(p => p.category === cat1);
+        const imgs2 = puzzles.filter(p => p.category === cat2);
         
-        for (let y = 0; y < 4; y++) {
-            const row = [];
-            for (let x = 0; x < 4; x++) {
-                row.push(symbolMap[base[rowOrder[y]][colOrder[x]]]);
-            }
-            board.push(row);
-        }
-    } else {
-        // For 6x6: use a simple valid pattern
-        const base = [
-            [0, 1, 2, 3, 4, 5],
-            [2, 3, 4, 5, 0, 1],
-            [4, 5, 0, 1, 2, 3],
-            [1, 2, 3, 4, 5, 0],
-            [3, 4, 5, 0, 1, 2],
-            [5, 0, 1, 2, 3, 4]
-        ];
-        
-        const rowOrder = [0, 1, 2, 3, 4, 5].sort(() => Math.random() - 0.5);
-        const colOrder = [0, 1, 2, 3, 4, 5].sort(() => Math.random() - 0.5);
-        const symbolMap = [0, 1, 2, 3, 4, 5].sort(() => Math.random() - 0.5);
-        
-        for (let y = 0; y < 6; y++) {
-            const row = [];
-            for (let x = 0; x < 6; x++) {
-                row.push(symbolMap[base[rowOrder[y]][colOrder[x]]]);
-            }
-            board.push(row);
+        if (imgs1.length && imgs2.length) {
+            pairs.push([
+                imgs1[Math.floor(Math.random() * imgs1.length)],
+                imgs2[Math.floor(Math.random() * imgs2.length)]
+            ]);
+        } else {
+            // Fallback to random images
+            const shuffled = [...puzzles].sort(() => Math.random() - 0.5);
+            pairs.push([shuffled[0], shuffled[1]]);
         }
     }
     
-    return board;
+    return pairs;
 }
 
-function renderShapeku() {
-    const size = shapekuState.size;
-    
-    // Render palette
-    const palette = document.getElementById('shapekuPalette');
-    palette.innerHTML = shapekuState.images.map((img, i) => `
-        <img src="${img.image}" alt="${img.title}" class="palette-img ${shapekuState.selectedImage === i ? 'selected' : ''}" 
-             data-index="${i}" onclick="selectShapekuImage(${i})">
-    `).join('');
-    
-    // Render board
-    const board = document.getElementById('shapekuBoard');
-    const cellSize = size === 4 ? 60 : 45;
-    board.style.gridTemplateColumns = `repeat(${size}, ${cellSize}px)`;
-    board.innerHTML = '';
-    
-    for (let y = 0; y < size; y++) {
-        for (let x = 0; x < size; x++) {
-            const cell = document.createElement('div');
-            cell.className = 'shapeku-cell';
-            cell.style.width = `${cellSize}px`;
-            cell.style.height = `${cellSize}px`;
-            cell.dataset.x = x;
-            cell.dataset.y = y;
-            
-            const val = shapekuState.board[y][x];
-            if (val !== null && shapekuState.images[val]) {
-                const img = document.createElement('img');
-                img.src = shapekuState.images[val].image;
-                cell.appendChild(img);
-            }
-            
-            // Mark fixed cells (given clues)
-            if (shapekuState.fixedCells[y][x]) {
-                cell.classList.add('fixed');
-            }
-            
-            cell.onclick = () => clickShapekuCell(x, y);
-            board.appendChild(cell);
-        }
-    }
-}
-
-function selectShapekuImage(index) {
-    playSound('click');
-    shapekuState.selectedImage = index;
-    renderShapeku(); // Re-render to show selection
-}
-
-function clickShapekuCell(x, y) {
-    // Don't allow changing fixed cells (given clues)
-    if (shapekuState.fixedCells[y][x]) {
+function showPersonalityQuestion() {
+    if (personalityState.currentQuestion >= personalityState.comparisons.length) {
+        finishPersonality();
         return;
     }
     
-    playSound('click');
+    const [img1, img2] = personalityState.comparisons[personalityState.currentQuestion];
     
-    // If no image selected, clear the cell
-    if (shapekuState.selectedImage === null) {
-        shapekuState.board[y][x] = null;
-    } else {
-        shapekuState.board[y][x] = shapekuState.selectedImage;
-    }
+    document.getElementById('personalityProgress').textContent = 
+        `${personalityState.currentQuestion + 1} of ${personalityState.totalQuestions}`;
     
-    renderShapeku();
+    document.getElementById('personalityImg1').src = img1.image;
+    document.getElementById('personalityImg2').src = img2.image;
+    
+    // Reset card states
+    document.getElementById('personalityCard1').classList.remove('selected');
+    document.getElementById('personalityCard2').classList.remove('selected');
 }
 
-function checkShapeku() {
+function selectPersonality(index) {
     playSound('click');
-    const size = shapekuState.size;
-    let correct = true;
-    let hasEmpty = false;
+    vibrate(10);
     
-    // Clear previous errors
-    document.querySelectorAll('.shapeku-cell').forEach(c => c.classList.remove('error'));
+    const [img1, img2] = personalityState.comparisons[personalityState.currentQuestion];
+    const selected = index === 0 ? img1 : img2;
     
-    // Check for empty cells
-    for (let y = 0; y < size; y++) {
-        for (let x = 0; x < size; x++) {
-            if (shapekuState.board[y][x] === null) {
-                hasEmpty = true;
-                document.querySelector(`.shapeku-cell[data-x="${x}"][data-y="${y}"]`).classList.add('error');
-            }
-        }
+    // Add score for the selected category
+    if (selected.category && personalityState.scores.hasOwnProperty(selected.category)) {
+        personalityState.scores[selected.category]++;
     }
     
-    if (hasEmpty) {
-        return; // Don't check further if there are empty cells
-    }
+    // Show selection briefly
+    document.getElementById(`personalityCard${index + 1}`).classList.add('selected');
     
-    // Check rows
-    for (let y = 0; y < size; y++) {
-        const row = shapekuState.board[y];
-        if (new Set(row).size !== size) {
-            correct = false;
-            for (let x = 0; x < size; x++) {
-                document.querySelector(`.shapeku-cell[data-x="${x}"][data-y="${y}"]`).classList.add('error');
-            }
-        }
-    }
-    
-    // Check columns
-    for (let x = 0; x < size; x++) {
-        const col = shapekuState.board.map(row => row[x]);
-        if (new Set(col).size !== size) {
-            correct = false;
-            for (let y = 0; y < size; y++) {
-                document.querySelector(`.shapeku-cell[data-x="${x}"][data-y="${y}"]`).classList.add('error');
-            }
-        }
-    }
-    
-    if (correct) {
-        shapekuComplete();
-    }
+    setTimeout(() => {
+        personalityState.currentQuestion++;
+        showPersonalityQuestion();
+    }, 300);
 }
 
-function shapekuComplete() {
+function finishPersonality() {
     playSound('win');
     showConfetti();
     
-    const randomImg = shapekuState.images[Math.floor(Math.random() * shapekuState.images.length)];
+    // Determine personality type based on highest scoring category
+    const scores = personalityState.scores;
+    let topCategory = 'butterflies';
+    let topScore = 0;
     
-    document.getElementById('completedImage').src = randomImg.image;
-    document.getElementById('finalTime').textContent = '🎨 Solved!';
-    document.getElementById('finalMoves').textContent = shapekuState.size + '×' + shapekuState.size;
-    document.getElementById('completionShopLink').href = randomImg.shopUrl;
-    document.getElementById('completionGalleryLink').href = randomImg.galleryUrl;
-    document.getElementById('shareSection').classList.remove('hidden');
+    for (const [cat, score] of Object.entries(scores)) {
+        if (score > topScore) {
+            topScore = score;
+            topCategory = cat;
+        }
+    }
     
-    // Generate share card
+    // Map category to personality type
+    const typeMap = {
+        butterflies: 'dreamer',
+        flowers: 'nurturer',
+        horses: 'freeSpirit',
+        landscapes: 'explorer'
+    };
+    
+    const personalityType = PERSONALITY_TYPES[typeMap[topCategory]];
+    
+    // Show result view
+    document.getElementById('personalityView').classList.add('hidden');
+    document.getElementById('personalityResultView').classList.remove('hidden');
+    
+    // Populate result
+    document.getElementById('soulEmoji').textContent = personalityType.emoji;
+    document.getElementById('soulTitle').textContent = personalityType.title;
+    document.getElementById('soulDescription').textContent = personalityType.description;
+    
+    // Set card color
+    document.getElementById('soulResultCard').style.background = 
+        `linear-gradient(135deg, ${personalityType.color} 0%, ${adjustColor(personalityType.color, -30)} 100%)`;
+    
+    // Traits
+    document.getElementById('soulTraits').innerHTML = personalityType.traits
+        .map(t => `<span class="trait-tag">${t}</span>`).join('');
+    
+    // Matching images
+    const matchingImages = puzzles.filter(p => 
+        personalityType.categories.includes(p.category)
+    ).slice(0, 3);
+    
+    document.getElementById('soulMatch').innerHTML = matchingImages
+        .map(img => `<img src="${img.image}" alt="${img.title}">`).join('');
+    
+    // Shop link
+    const catLinks = {
+        butterflies: 'https://www.prettyfoto.com/gallery-butterflies',
+        flowers: 'https://www.prettyfoto.com/gallery-flowers',
+        horses: 'https://www.prettyfoto.com/gallery-horses',
+        landscapes: 'https://www.prettyfoto.com/gallery-mountains'
+    };
+    document.getElementById('soulShopLink').href = catLinks[topCategory] || 'https://www.prettyfoto.com/shop-art';
+    
+    // Store result for sharing
+    personalityState.result = {
+        type: typeMap[topCategory],
+        ...personalityType,
+        matchingImages
+    };
+}
+
+function adjustColor(hex, amount) {
+    // Simple color adjustment
+    const num = parseInt(hex.replace('#', ''), 16);
+    const r = Math.min(255, Math.max(0, (num >> 16) + amount));
+    const g = Math.min(255, Math.max(0, ((num >> 8) & 0x00FF) + amount));
+    const b = Math.min(255, Math.max(0, (num & 0x0000FF) + amount));
+    return `#${(r << 16 | g << 8 | b).toString(16).padStart(6, '0')}`;
+}
+
+function shareSoulResult() {
+    playSound('click');
+    
+    const result = personalityState.result;
+    if (!result) return;
+    
+    // Generate share card for personality
+    const matchImg = result.matchingImages[0];
     generateShareCard(
-        'shapeku',
+        'personality',
         Math.floor(Math.random() * 1000),
-        'Picture Sudoku',
-        '🎨 Solved!',
-        `${shapekuState.size}×${shapekuState.size}`,
-        'Grid complete',
-        randomImg.image,
+        result.title,
+        `${result.emoji} ${result.title}`,
+        result.traits.slice(0, 2).join(' • '),
+        'Nature Soul Quiz',
+        matchImg ? matchImg.image : puzzles[0].image,
         0
     );
+    
+    // Show completion modal with share options
+    document.getElementById('completedImage').src = matchImg ? matchImg.image : puzzles[0].image;
+    document.getElementById('finalTime').textContent = `${result.emoji} ${result.title}`;
+    document.getElementById('finalMoves').textContent = result.traits.slice(0, 2).join(' • ');
+    document.getElementById('shareSection').classList.remove('hidden');
     
     completionModal.classList.remove('hidden');
     
     document.getElementById('playAgainBtn').onclick = () => {
         completionModal.classList.add('hidden');
-        startShapeku();
+        startPersonality();
     };
     
     document.getElementById('newPuzzleBtn').onclick = () => {
         completionModal.classList.add('hidden');
-        document.getElementById('shapekuView').classList.add('hidden');
+        document.getElementById('personalityResultView').classList.add('hidden');
         document.getElementById('homeView').classList.remove('hidden');
     };
 }

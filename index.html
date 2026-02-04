@@ -43,8 +43,8 @@
             <div class="game-mode-tabs">
                 <button class="mode-tab active" data-mode="slider">🧩 Slider</button>
                 <button class="mode-tab" data-mode="zoom">🔍 Zoom</button>
-                <button class="mode-tab" data-mode="ranking">❤️ Ranking</button>
-                <button class="mode-tab" data-mode="shapeku">🎨 Shapeku</button>
+                <button class="mode-tab" data-mode="auction">💰 Auction</button>
+                <button class="mode-tab" data-mode="personality">✨ Soul</button>
                 <button class="mode-tab" data-mode="wordsearch">🔤 Words</button>
             </div>
 
@@ -155,50 +155,61 @@
                     </div>
                 </div>
 
-                <!-- ========== PHOTO RANKING HOME ========== -->
-                <div id="rankingHome" class="game-home hidden">
+                <!-- ========== PHOTO AUCTION HOME ========== -->
+                <div id="auctionHome" class="game-home hidden">
                     <div class="home-header">
-                        <h1>Photo Ranking</h1>
-                        <p>Which photo speaks to you more?</p>
+                        <h1>💰 Photo Auction</h1>
+                        <p>Guess which photo is worth more!</p>
                     </div>
                     
-                    <div class="ranking-intro">
-                        <p>Compare photos and discover your favorites!</p>
-                        <p class="ranking-subtext">Your top picks = personalized recommendations</p>
+                    <div class="game-intro-tip">
+                        <strong>How it works:</strong> Two photos face off. 
+                        Guess which one got more views/sales on our website.
+                        Can you predict what people love? 🎯
                     </div>
                     
-                    <button id="startRankingBtn" class="play-daily-btn">
-                        Start Ranking
+                    <div class="auction-stats-preview">
+                        <div class="auction-stat">
+                            <span class="auction-stat-value" id="auctionBestStreak">0</span>
+                            <span class="auction-stat-label">Best Streak</span>
+                        </div>
+                        <div class="auction-stat">
+                            <span class="auction-stat-value" id="auctionTotalPlays">0</span>
+                            <span class="auction-stat-label">Rounds Played</span>
+                        </div>
+                    </div>
+                    
+                    <button id="startAuctionBtn" class="play-daily-btn">
+                        🎲 Start Auction
                     </button>
-                    
-                    <div id="rankingResults" class="ranking-results hidden">
-                        <h3>Your Top Favorites</h3>
-                        <div id="topPicks" class="top-picks"></div>
-                        <a href="https://www.prettyfoto.com/shop-art" target="_blank" class="gallery-shop-btn">
-                            Shop Your Favorites →
-                        </a>
-                    </div>
                 </div>
 
-                <!-- ========== SHAPEKU (PICTURE SUDOKU) HOME ========== -->
-                <div id="shapekuHome" class="game-home hidden">
+                <!-- ========== PHOTO PERSONALITY HOME ========== -->
+                <div id="personalityHome" class="game-home hidden">
                     <div class="home-header">
-                        <h1>Shapeku</h1>
-                        <p>Sudoku with beautiful images!</p>
+                        <h1>✨ Nature Soul</h1>
+                        <p>Discover your nature personality!</p>
                     </div>
                     
-                    <div class="shapeku-intro">
-                        <p>Place each image once per row, column, and box</p>
+                    <div class="game-intro-tip">
+                        <strong>10 quick choices</strong> reveal which type of nature 
+                        speaks to your soul. Beautiful results to share! 🦋
                     </div>
                     
-                    <div class="size-options">
-                        <button class="shapeku-size-btn active" data-size="4">4×4 Easy</button>
-                        <button class="shapeku-size-btn" data-size="6">6×6 Medium</button>
+                    <div class="personality-types-preview">
+                        <span class="personality-badge">🦋 The Dreamer</span>
+                        <span class="personality-badge">🏔️ The Explorer</span>
+                        <span class="personality-badge">🌸 The Nurturer</span>
+                        <span class="personality-badge">🐴 The Free Spirit</span>
                     </div>
                     
-                    <button id="startShapekuBtn" class="play-daily-btn">
-                        New Shapeku
+                    <button id="startPersonalityBtn" class="play-daily-btn">
+                        ✨ Discover Your Soul
                     </button>
+                    
+                    <div id="personalityResult" class="personality-result hidden">
+                        <!-- Results shown here after quiz -->
+                    </div>
                 </div>
 
                 <!-- ========== WORD SEARCH HOME ========== -->
@@ -330,44 +341,99 @@
                 </div>
             </section>
 
-            <!-- ========== RANKING GAME VIEW ========== -->
-            <section id="rankingView" class="view hidden">
+            <!-- ========== AUCTION GAME VIEW ========== -->
+            <section id="auctionView" class="view hidden">
                 <div class="puzzle-nav">
-                    <button id="rankingBackBtn" class="icon-btn">← Back</button>
-                    <span id="rankingProgress">1 of 10</span>
+                    <button id="auctionBackBtn" class="icon-btn">← Back</button>
+                    <span class="auction-streak">🔥 <span id="auctionCurrentStreak">0</span></span>
                 </div>
                 
-                <div class="ranking-container">
-                    <h2 class="ranking-question">Which do you prefer?</h2>
-                    <div class="ranking-cards">
-                        <div id="rankingCard1" class="ranking-card">
-                            <img id="rankingImg1" src="" alt="Option 1">
-                            <p id="rankingTitle1"></p>
+                <div class="auction-container">
+                    <h2 class="auction-question">Which photo is worth MORE?</h2>
+                    <p class="auction-hint">Based on actual views & popularity</p>
+                    
+                    <div class="auction-cards">
+                        <div id="auctionCard1" class="auction-card" onclick="selectAuctionCard(0)">
+                            <img id="auctionImg1" src="" alt="Option 1">
+                            <p id="auctionTitle1" class="auction-title"></p>
+                            <div id="auctionValue1" class="auction-value hidden">
+                                <span class="value-label">Popularity</span>
+                                <span class="value-score"></span>
+                            </div>
                         </div>
-                        <div class="ranking-vs">vs</div>
-                        <div id="rankingCard2" class="ranking-card">
-                            <img id="rankingImg2" src="" alt="Option 2">
-                            <p id="rankingTitle2"></p>
+                        
+                        <div class="auction-vs">💰</div>
+                        
+                        <div id="auctionCard2" class="auction-card" onclick="selectAuctionCard(1)">
+                            <img id="auctionImg2" src="" alt="Option 2">
+                            <p id="auctionTitle2" class="auction-title"></p>
+                            <div id="auctionValue2" class="auction-value hidden">
+                                <span class="value-label">Popularity</span>
+                                <span class="value-score"></span>
+                            </div>
                         </div>
                     </div>
-                    <p class="ranking-hint">Tap your favorite!</p>
+                    
+                    <div id="auctionFeedback" class="auction-feedback hidden">
+                        <p class="feedback-text"></p>
+                        <button id="auctionNextBtn" class="play-daily-btn">Next Round →</button>
+                    </div>
                 </div>
             </section>
 
-            <!-- ========== SHAPEKU GAME VIEW ========== -->
-            <section id="shapekuView" class="view hidden">
+            <!-- ========== PERSONALITY QUIZ VIEW ========== -->
+            <section id="personalityView" class="view hidden">
                 <div class="puzzle-nav">
-                    <button id="shapekuBackBtn" class="icon-btn">← Back</button>
-                    <button id="shapekuHintBtn" class="hint-btn">💡</button>
+                    <button id="personalityBackBtn" class="icon-btn">← Back</button>
+                    <span id="personalityProgress">1 of 10</span>
                 </div>
                 
-                <div class="shapeku-container">
-                    <div class="shapeku-palette">
-                        <p>Select an image to place:</p>
-                        <div id="shapekuPalette" class="palette-images"></div>
+                <div class="personality-container">
+                    <h2 class="personality-question">Which speaks to your soul?</h2>
+                    
+                    <div class="personality-cards">
+                        <div id="personalityCard1" class="personality-card" onclick="selectPersonality(0)">
+                            <img id="personalityImg1" src="" alt="Option 1">
+                        </div>
+                        <div id="personalityCard2" class="personality-card" onclick="selectPersonality(1)">
+                            <img id="personalityImg2" src="" alt="Option 2">
+                        </div>
                     </div>
-                    <div id="shapekuBoard" class="shapeku-board"></div>
-                    <button id="shapekuCheckBtn" class="check-btn">Check Solution</button>
+                    
+                    <p class="personality-hint">Trust your instinct - tap what draws you!</p>
+                </div>
+            </section>
+            
+            <!-- ========== PERSONALITY RESULT VIEW ========== -->
+            <section id="personalityResultView" class="view hidden">
+                <div class="personality-result-container">
+                    <h2>Your Nature Soul is...</h2>
+                    
+                    <div id="soulResultCard" class="soul-result-card">
+                        <div class="soul-emoji" id="soulEmoji">🦋</div>
+                        <h1 class="soul-title" id="soulTitle">The Dreamer</h1>
+                        <p class="soul-description" id="soulDescription">
+                            You see beauty in delicate details...
+                        </p>
+                    </div>
+                    
+                    <div class="soul-traits">
+                        <h3>Your Traits</h3>
+                        <div id="soulTraits" class="traits-list"></div>
+                    </div>
+                    
+                    <div class="soul-match">
+                        <h3>Your Perfect Match</h3>
+                        <div id="soulMatch" class="soul-match-images"></div>
+                        <a id="soulShopLink" href="#" target="_blank" class="play-daily-btn">
+                            🛒 Shop Your Style
+                        </a>
+                    </div>
+                    
+                    <div class="soul-share">
+                        <button id="shareSoulBtn" class="share-btn primary">📤 Share My Result</button>
+                        <button id="retakeSoulBtn" class="share-btn">🔄 Retake Quiz</button>
+                    </div>
                 </div>
             </section>
 
