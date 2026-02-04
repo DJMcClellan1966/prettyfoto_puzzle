@@ -45,7 +45,7 @@
                 <button class="mode-tab" data-mode="zoom">🔍 Zoom</button>
                 <button class="mode-tab" data-mode="auction">💰 Auction</button>
                 <button class="mode-tab" data-mode="personality">✨ Soul</button>
-                <button class="mode-tab" data-mode="wordsearch">🔤 Words</button>
+                <button class="mode-tab" data-mode="frame">📸 Frame</button>
             </div>
 
             <!-- Home View -->
@@ -212,25 +212,37 @@
                     </div>
                 </div>
 
-                <!-- ========== WORD SEARCH HOME ========== -->
-                <div id="wordsearchHome" class="game-home hidden">
+                <!-- ========== PHOTO FRAME HOME ========== -->
+                <div id="frameHome" class="game-home hidden">
                     <div class="home-header">
-                        <h1>Photo Word Search</h1>
-                        <p>Find words hidden in the grid!</p>
+                        <h1>📸 Nature Frame</h1>
+                        <p>Frame your photo with beautiful nature art!</p>
                     </div>
                     
-                    <div id="wordsearchPreview" class="wordsearch-preview">
-                        <img id="wsPreviewImage" src="" alt="Featured image">
-                        <h3 id="wsPreviewTitle">Loading...</h3>
+                    <div class="game-intro-tip">
+                        <strong>Perfect for sharing!</strong> Upload a selfie or photo, 
+                        choose a nature frame, and download your branded creation.
                     </div>
                     
-                    <button id="startWordsearchBtn" class="play-daily-btn">
-                        Start Word Search
+                    <div class="frame-upload-area" id="frameUploadArea">
+                        <div class="upload-icon">📷</div>
+                        <p>Tap to upload a photo</p>
+                        <p class="upload-hint">or drag & drop</p>
+                        <input type="file" id="frameFileInput" accept="image/*" hidden>
+                    </div>
+                    
+                    <button id="frameCameraBtn" class="play-daily-btn secondary">
+                        📸 Take a Selfie
                     </button>
                     
-                    <div class="free-play-section">
-                        <h2>Choose an Image</h2>
-                        <div id="wordsearchGallery" class="puzzle-gallery"></div>
+                    <div class="frame-examples">
+                        <h3>Frame Styles</h3>
+                        <div class="frame-style-preview">
+                            <div class="frame-preview-item" data-style="dreamer">🦋 Dreamer</div>
+                            <div class="frame-preview-item" data-style="explorer">🏔️ Explorer</div>
+                            <div class="frame-preview-item" data-style="nurturer">🌸 Nurturer</div>
+                            <div class="frame-preview-item" data-style="spirit">🐴 Free Spirit</div>
+                        </div>
                     </div>
                 </div>
             </section>
@@ -437,26 +449,68 @@
                 </div>
             </section>
 
-            <!-- ========== WORD SEARCH GAME VIEW ========== -->
-            <section id="wordsearchView" class="view hidden">
+            <!-- ========== PHOTO FRAME VIEW ========== -->
+            <section id="frameView" class="view hidden">
                 <div class="puzzle-nav">
-                    <button id="wsBackBtn" class="icon-btn">← Back</button>
-                    <a id="wsShopLink" href="#" target="_blank" class="shop-btn">🛒 Buy Print</a>
+                    <button id="frameBackBtn" class="icon-btn">← Back</button>
+                    <button id="frameNewBtn" class="icon-btn">🔄 New Photo</button>
                 </div>
                 
-                <div class="wordsearch-container">
-                    <div class="ws-image-preview">
-                        <img id="wsGameImage" src="" alt="Featured">
-                        <h3 id="wsGameTitle"></h3>
+                <div class="frame-container">
+                    <div class="frame-canvas-wrapper">
+                        <canvas id="frameCanvas" width="400" height="500"></canvas>
                     </div>
-                    <div id="wsGrid" class="ws-grid"></div>
-                    <div class="ws-words">
-                        <h4>Find these words:</h4>
-                        <div id="wsWordList" class="ws-word-list"></div>
+                    
+                    <div class="frame-style-selector">
+                        <h3>Choose Your Frame</h3>
+                        <div class="frame-styles">
+                            <button class="frame-style-btn active" data-style="dreamer">
+                                <span class="style-emoji">🦋</span>
+                                <span class="style-name">Dreamer</span>
+                            </button>
+                            <button class="frame-style-btn" data-style="explorer">
+                                <span class="style-emoji">🏔️</span>
+                                <span class="style-name">Explorer</span>
+                            </button>
+                            <button class="frame-style-btn" data-style="nurturer">
+                                <span class="style-emoji">🌸</span>
+                                <span class="style-name">Nurturer</span>
+                            </button>
+                            <button class="frame-style-btn" data-style="spirit">
+                                <span class="style-emoji">🐴</span>
+                                <span class="style-name">Spirit</span>
+                            </button>
+                        </div>
                     </div>
+                    
+                    <div class="frame-actions">
+                        <button id="downloadFrameBtn" class="share-btn">📥 Save Image</button>
+                        <button id="shareFrameBtn" class="share-btn primary">📤 Share</button>
+                    </div>
+                    
+                    <p class="frame-cta">
+                        Love nature art? <a href="https://www.prettyfoto.com/shop-art" target="_blank">Shop prints →</a>
+                    </p>
                 </div>
             </section>
         </main>
+        
+        <!-- Camera Modal -->
+        <div id="cameraModal" class="modal hidden">
+            <div class="modal-content camera-modal">
+                <button id="closeCameraBtn" class="close-btn">×</button>
+                <h2>Take a Selfie</h2>
+                <div class="camera-container">
+                    <video id="cameraVideo" autoplay playsinline></video>
+                    <canvas id="cameraCapture" hidden></canvas>
+                </div>
+                <div class="camera-controls">
+                    <button id="switchCameraBtn" class="icon-btn">🔄</button>
+                    <button id="captureBtn" class="capture-btn">📸</button>
+                    <div class="spacer"></div>
+                </div>
+            </div>
+        </div>
 
         <!-- Onboarding Modal -->
         <div id="onboardingModal" class="modal hidden">

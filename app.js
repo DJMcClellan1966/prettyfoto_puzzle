@@ -1371,8 +1371,8 @@ function switchGameMode(mode) {
             case 'personality':
                 setupPersonalityHome();
                 break;
-            case 'wordsearch':
-                setupWordsearchHome();
+            case 'frame':
+                setupFrameHome();
                 break;
         }
     }
@@ -1992,6 +1992,341 @@ function shareSoulResult() {
         document.getElementById('personalityResultView').classList.add('hidden');
         document.getElementById('homeView').classList.remove('hidden');
     };
+}
+
+// ============================================================
+// ==================== PHOTO FRAME ===========================
+// ============================================================
+
+const FRAME_STYLES = {
+    dreamer: {
+        emoji: '🦋',
+        name: 'Dreamer',
+        colors: ['#9b59b6', '#8e44ad'],
+        accent: '#e8daef',
+        category: 'butterflies'
+    },
+    explorer: {
+        emoji: '🏔️',
+        name: 'Explorer',
+        colors: ['#3498db', '#2980b9'],
+        accent: '#d6eaf8',
+        category: 'landscapes'
+    },
+    nurturer: {
+        emoji: '🌸',
+        name: 'Nurturer',
+        colors: ['#e91e63', '#c2185b'],
+        accent: '#fce4ec',
+        category: 'flowers'
+    },
+    spirit: {
+        emoji: '🐴',
+        name: 'Free Spirit',
+        colors: ['#e67e22', '#d35400'],
+        accent: '#fdebd0',
+        category: 'horses'
+    }
+};
+
+let frameState = {
+    userImage: null,
+    currentStyle: 'dreamer',
+    stream: null,
+    facingMode: 'user'
+};
+
+function setupFrameHome() {
+    const uploadArea = document.getElementById('frameUploadArea');
+    const fileInput = document.getElementById('frameFileInput');
+    
+    // Click to upload
+    uploadArea.onclick = () => fileInput.click();
+    
+    // File selected
+    fileInput.onchange = (e) => {
+        if (e.target.files[0]) {
+            loadUserImage(e.target.files[0]);
+        }
+    };
+    
+    // Drag and drop
+    uploadArea.ondragover = (e) => {
+        e.preventDefault();
+        uploadArea.classList.add('dragover');
+    };
+    uploadArea.ondragleave = () => uploadArea.classList.remove('dragover');
+    uploadArea.ondrop = (e) => {
+        e.preventDefault();
+        uploadArea.classList.remove('dragover');
+        if (e.dataTransfer.files[0]) {
+            loadUserImage(e.dataTransfer.files[0]);
+        }
+    };
+    
+    // Camera button
+    document.getElementById('frameCameraBtn').onclick = openCamera;
+    
+    // Frame view buttons
+    document.getElementById('frameBackBtn').onclick = () => {
+        document.getElementById('frameView').classList.add('hidden');
+        document.getElementById('homeView').classList.remove('hidden');
+    };
+    document.getElementById('frameNewBtn').onclick = () => {
+        document.getElementById('frameView').classList.add('hidden');
+        document.getElementById('homeView').classList.remove('hidden');
+    };
+    document.getElementById('downloadFrameBtn').onclick = downloadFrame;
+    document.getElementById('shareFrameBtn').onclick = shareFrame;
+    
+    // Style buttons
+    document.querySelectorAll('.frame-style-btn').forEach(btn => {
+        btn.onclick = () => {
+            document.querySelectorAll('.frame-style-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            frameState.currentStyle = btn.dataset.style;
+            renderFrame();
+        };
+    });
+    
+    // Camera modal
+    document.getElementById('closeCameraBtn').onclick = closeCamera;
+    document.getElementById('switchCameraBtn').onclick = switchCamera;
+    document.getElementById('captureBtn').onclick = capturePhoto;
+}
+
+function loadUserImage(file) {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        const img = new Image();
+        img.onload = () => {
+            frameState.userImage = img;
+            showFrameEditor();
+        };
+        img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+}
+
+function showFrameEditor() {
+    playSound('click');
+    document.getElementById('homeView').classList.add('hidden');
+    document.getElementById('frameView').classList.remove('hidden');
+    renderFrame();
+}
+
+function renderFrame() {
+    const canvas = document.getElementById('frameCanvas');
+    const ctx = canvas.getContext('2d');
+    const style = FRAME_STYLES[frameState.currentStyle];
+    
+    const width = 400;
+    const height = 500;
+    canvas.width = width;
+    canvas.height = height;
+    
+    // Background gradient
+    const gradient = ctx.createLinearGradient(0, 0, width, height);
+    gradient.addColorStop(0, style.colors[0]);
+    gradient.addColorStop(1, style.colors[1]);
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, width, height);
+    
+    // Decorative pattern
+    ctx.fillStyle = 'rgba(255,255,255,0.1)';
+    for (let i = 0; i < 20; i++) {
+        const x = Math.random() * width;
+        const y = Math.random() * height;
+        const size = Math.random() * 30 + 10;
+        ctx.beginPath();
+        ctx.arc(x, y, size, 0, Math.PI * 2);
+        ctx.fill();
+    }
+    
+    // Photo area (white background)
+    const photoX = 30;
+    const photoY = 60;
+    const photoW = width - 60;
+    const photoH = 300;
+    
+    ctx.fillStyle = 'white';
+    ctx.beginPath();
+    ctx.roundRect(photoX, photoY, photoW, photoH, 12);
+    ctx.fill();
+    
+    // Draw user photo
+    if (frameState.userImage) {
+        ctx.save();
+        ctx.beginPath();
+        ctx.roundRect(photoX + 5, photoY + 5, photoW - 10, photoH - 10, 8);
+        ctx.clip();
+        
+        // Calculate crop to fill
+        const img = frameState.userImage;
+        const imgRatio = img.width / img.height;
+        const frameRatio = (photoW - 10) / (photoH - 10);
+        
+        let sx = 0, sy = 0, sw = img.width, sh = img.height;
+        if (imgRatio > frameRatio) {
+            sw = img.height * frameRatio;
+            sx = (img.width - sw) / 2;
+        } else {
+            sh = img.width / frameRatio;
+            sy = (img.height - sh) / 2;
+        }
+        
+        ctx.drawImage(img, sx, sy, sw, sh, photoX + 5, photoY + 5, photoW - 10, photoH - 10);
+        ctx.restore();
+    }
+    
+    // Header with logo
+    ctx.fillStyle = 'rgba(255,255,255,0.95)';
+    ctx.beginPath();
+    ctx.roundRect(photoX, 15, photoW, 35, 20);
+    ctx.fill();
+    
+    ctx.fillStyle = style.colors[0];
+    ctx.font = 'bold 16px "Playfair Display", serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('🌸 PrettyFoto', width / 2, 40);
+    
+    // Style badge
+    ctx.fillStyle = 'white';
+    ctx.font = 'bold 14px Inter, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(`${style.emoji} ${style.name}`, width / 2, photoY + photoH + 35);
+    
+    // Footer
+    ctx.fillStyle = 'rgba(255,255,255,0.2)';
+    ctx.beginPath();
+    ctx.roundRect(50, height - 60, width - 100, 40, 20);
+    ctx.fill();
+    
+    ctx.fillStyle = 'white';
+    ctx.font = '13px Inter, sans-serif';
+    ctx.fillText('prettyfoto.com', width / 2, height - 34);
+    
+    // Corner decorations
+    const corners = [
+        { x: 15, y: photoY + photoH + 60 },
+        { x: width - 15, y: photoY + photoH + 60 }
+    ];
+    
+    ctx.font = '30px serif';
+    ctx.textAlign = 'center';
+    corners.forEach(c => {
+        ctx.fillText(style.emoji, c.x, c.y);
+    });
+}
+
+function downloadFrame() {
+    playSound('click');
+    const canvas = document.getElementById('frameCanvas');
+    const link = document.createElement('a');
+    link.download = `prettyfoto-${frameState.currentStyle}-frame.png`;
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+}
+
+async function shareFrame() {
+    playSound('click');
+    const canvas = document.getElementById('frameCanvas');
+    
+    try {
+        const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+        const file = new File([blob], 'prettyfoto-frame.png', { type: 'image/png' });
+        
+        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+            await navigator.share({
+                files: [file],
+                title: 'My PrettyFoto Frame',
+                text: `Check out my ${FRAME_STYLES[frameState.currentStyle].name} nature frame! 🌸 prettyfoto.com`
+            });
+        } else if (navigator.share) {
+            await navigator.share({
+                title: 'My PrettyFoto Frame',
+                text: `Check out my ${FRAME_STYLES[frameState.currentStyle].name} nature frame! 🌸 prettyfoto.com`
+            });
+        } else {
+            downloadFrame();
+        }
+    } catch (err) {
+        downloadFrame();
+    }
+}
+
+// Camera functions
+async function openCamera() {
+    playSound('click');
+    const modal = document.getElementById('cameraModal');
+    const video = document.getElementById('cameraVideo');
+    
+    try {
+        frameState.stream = await navigator.mediaDevices.getUserMedia({
+            video: { facingMode: frameState.facingMode }
+        });
+        video.srcObject = frameState.stream;
+        modal.classList.remove('hidden');
+    } catch (err) {
+        alert('Could not access camera. Please check permissions.');
+    }
+}
+
+function closeCamera() {
+    const modal = document.getElementById('cameraModal');
+    const video = document.getElementById('cameraVideo');
+    
+    if (frameState.stream) {
+        frameState.stream.getTracks().forEach(track => track.stop());
+        frameState.stream = null;
+    }
+    video.srcObject = null;
+    modal.classList.add('hidden');
+}
+
+async function switchCamera() {
+    playSound('click');
+    frameState.facingMode = frameState.facingMode === 'user' ? 'environment' : 'user';
+    
+    if (frameState.stream) {
+        frameState.stream.getTracks().forEach(track => track.stop());
+    }
+    
+    const video = document.getElementById('cameraVideo');
+    try {
+        frameState.stream = await navigator.mediaDevices.getUserMedia({
+            video: { facingMode: frameState.facingMode }
+        });
+        video.srcObject = frameState.stream;
+    } catch (err) {
+        console.error('Could not switch camera');
+    }
+}
+
+function capturePhoto() {
+    playSound('click');
+    const video = document.getElementById('cameraVideo');
+    const canvas = document.getElementById('cameraCapture');
+    
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    
+    const ctx = canvas.getContext('2d');
+    // Mirror the capture for selfie mode
+    if (frameState.facingMode === 'user') {
+        ctx.translate(canvas.width, 0);
+        ctx.scale(-1, 1);
+    }
+    ctx.drawImage(video, 0, 0);
+    
+    // Convert to image
+    const img = new Image();
+    img.onload = () => {
+        frameState.userImage = img;
+        closeCamera();
+        showFrameEditor();
+    };
+    img.src = canvas.toDataURL('image/png');
 }
 
 // ============================================================
