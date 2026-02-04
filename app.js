@@ -1062,3 +1062,875 @@ window.addEventListener('resize', () => {
         renderBoard(tileSize);
     }
 });
+
+// ============================================================
+// ==================== NEW GAME MODES ========================
+// ============================================================
+
+let currentGameMode = 'slider';
+
+// ============ GAME MODE SWITCHING ============
+function setupGameModeTabs() {
+    document.querySelectorAll('.mode-tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+            playSound('click');
+            const mode = tab.dataset.mode;
+            switchGameMode(mode);
+        });
+    });
+}
+
+function switchGameMode(mode) {
+    currentGameMode = mode;
+    
+    // Update tabs
+    document.querySelectorAll('.mode-tab').forEach(t => t.classList.remove('active'));
+    document.querySelector(`.mode-tab[data-mode="${mode}"]`).classList.add('active');
+    
+    // Hide all game homes
+    document.querySelectorAll('.game-home').forEach(h => h.classList.add('hidden'));
+    
+    // Show selected game home
+    const homeId = `${mode}Home`;
+    const homeEl = document.getElementById(homeId);
+    if (homeEl) {
+        homeEl.classList.remove('hidden');
+        
+        // Initialize the game mode
+        switch(mode) {
+            case 'slider':
+                setupDailyPuzzle();
+                break;
+            case 'nonogram':
+                setupNonogramHome();
+                break;
+            case 'ranking':
+                setupRankingHome();
+                break;
+            case 'shapeku':
+                setupShapekuHome();
+                break;
+            case 'wordsearch':
+                setupWordsearchHome();
+                break;
+        }
+    }
+}
+
+// ============================================================
+// ==================== PHOTO RANKING =========================
+// ============================================================
+
+let rankingState = {
+    comparisons: [],
+    scores: {},
+    currentPair: 0,
+    totalPairs: 10
+};
+
+function setupRankingHome() {
+    document.getElementById('startRankingBtn').onclick = startRanking;
+    document.getElementById('rankingBackBtn').onclick = () => {
+        document.getElementById('rankingView').classList.add('hidden');
+        document.getElementById('homeView').classList.remove('hidden');
+    };
+}
+
+function startRanking() {
+    playSound('click');
+    
+    // Reset state
+    rankingState = {
+        comparisons: generateComparisons(),
+        scores: {},
+        currentPair: 0,
+        totalPairs: 10
+    };
+    
+    // Initialize scores
+    puzzles.forEach(p => rankingState.scores[p.id] = 0);
+    
+    // Show ranking view
+    document.getElementById('homeView').classList.add('hidden');
+    document.getElementById('rankingView').classList.remove('hidden');
+    
+    showRankingPair();
+}
+
+function generateComparisons() {
+    const pairs = [];
+    const shuffled = [...puzzles].sort(() => Math.random() - 0.5);
+    
+    for (let i = 0; i < Math.min(10, Math.floor(shuffled.length / 2)); i++) {
+        pairs.push([shuffled[i * 2], shuffled[i * 2 + 1]]);
+    }
+    return pairs;
+}
+
+function showRankingPair() {
+    if (rankingState.currentPair >= rankingState.comparisons.length) {
+        finishRanking();
+        return;
+    }
+    
+    const [img1, img2] = rankingState.comparisons[rankingState.currentPair];
+    
+    document.getElementById('rankingProgress').textContent = 
+        `${rankingState.currentPair + 1} of ${rankingState.comparisons.length}`;
+    
+    document.getElementById('rankingImg1').src = img1.image;
+    document.getElementById('rankingTitle1').textContent = img1.title;
+    document.getElementById('rankingImg2').src = img2.image;
+    document.getElementById('rankingTitle2').textContent = img2.title;
+    
+    // Set up click handlers
+    document.getElementById('rankingCard1').onclick = () => selectRanking(img1.id, img2.id);
+    document.getElementById('rankingCard2').onclick = () => selectRanking(img2.id, img1.id);
+}
+
+function selectRanking(winnerId, loserId) {
+    playSound('click');
+    vibrate(10);
+    
+    rankingState.scores[winnerId] += 1;
+    rankingState.currentPair++;
+    
+    // Animate transition
+    const cards = document.querySelectorAll('.ranking-card');
+    cards.forEach(c => c.style.opacity = '0.5');
+    
+    setTimeout(() => {
+        cards.forEach(c => c.style.opacity = '1');
+        showRankingPair();
+    }, 200);
+}
+
+function finishRanking() {
+    playSound('win');
+    showConfetti();
+    
+    // Sort by score
+    const sorted = Object.entries(rankingState.scores)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 3);
+    
+    const topPicks = document.getElementById('topPicks');
+    topPicks.innerHTML = sorted.map(([id, score], i) => {
+        const puzzle = puzzles.find(p => p.id === parseInt(id));
+        return `
+            <div class="top-pick" onclick="window.open('${puzzle.shopUrl}', '_blank')">
+                <span class="top-pick-rank">${i + 1}</span>
+                <img src="${puzzle.image}" alt="${puzzle.title}">
+            </div>
+        `;
+    }).join('');
+    
+    document.getElementById('rankingView').classList.add('hidden');
+    document.getElementById('homeView').classList.remove('hidden');
+    document.getElementById('rankingResults').classList.remove('hidden');
+    
+    stats.shopClicks = (stats.shopClicks || 0);
+    saveStats();
+}
+
+// ============================================================
+// ==================== NONOGRAM / PICROSS ====================
+// ============================================================
+
+let nonogramState = {
+    size: 10,
+    solution: [],
+    board: [],
+    mode: 'fill', // 'fill' or 'mark'
+    puzzle: null,
+    isDaily: false
+};
+
+function setupNonogramHome() {
+    const daily = getDailyPuzzle();
+    document.getElementById('nonogramNumber').textContent = getDailyPuzzleNumber();
+    document.getElementById('nonogramDate').textContent = new Date().toLocaleDateString('en-US', { 
+        month: 'short', day: 'numeric', year: 'numeric' 
+    });
+    
+    document.getElementById('playNonogramBtn').onclick = () => startNonogram(daily, true);
+    document.getElementById('nonogramBackBtn').onclick = () => {
+        document.getElementById('nonogramView').classList.add('hidden');
+        document.getElementById('homeView').classList.remove('hidden');
+    };
+    
+    // Size buttons
+    document.querySelectorAll('.size-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            nonogramState.size = parseInt(btn.dataset.size);
+        });
+    });
+    
+    // Mode buttons
+    document.getElementById('nonogramFillBtn').onclick = () => setNonogramMode('fill');
+    document.getElementById('nonogramMarkBtn').onclick = () => setNonogramMode('mark');
+    
+    // Render gallery
+    const gallery = document.getElementById('nonogramGallery');
+    gallery.innerHTML = puzzles.slice(0, 8).map(p => `
+        <div class="puzzle-card" onclick="startNonogram(puzzles.find(x => x.id === ${p.id}), false)">
+            <img src="${p.image}" alt="${p.title}" class="puzzle-card-image" loading="lazy">
+            <div class="puzzle-card-info">
+                <div class="puzzle-card-title">${p.title}</div>
+            </div>
+        </div>
+    `).join('');
+}
+
+function startNonogram(puzzle, isDaily) {
+    playSound('click');
+    nonogramState.puzzle = puzzle;
+    nonogramState.isDaily = isDaily;
+    
+    if (isDaily) {
+        document.getElementById('nonogramDailyBadge').classList.remove('hidden');
+        document.getElementById('nonogramBadgeNum').textContent = getDailyPuzzleNumber();
+    } else {
+        document.getElementById('nonogramDailyBadge').classList.add('hidden');
+    }
+    
+    document.getElementById('homeView').classList.add('hidden');
+    document.getElementById('nonogramView').classList.remove('hidden');
+    
+    generateNonogram(puzzle);
+}
+
+function generateNonogram(puzzle) {
+    const size = nonogramState.size;
+    
+    // Create solution from image (simplified - uses seeded random based on image)
+    const seed = puzzle.id * 1000 + size;
+    nonogramState.solution = [];
+    nonogramState.board = [];
+    
+    for (let y = 0; y < size; y++) {
+        const row = [];
+        const boardRow = [];
+        for (let x = 0; x < size; x++) {
+            // Generate pattern based on seed
+            const val = seededRandom(seed + y * size + x) > 0.5 ? 1 : 0;
+            row.push(val);
+            boardRow.push(0); // 0 = empty, 1 = filled, 2 = marked
+        }
+        nonogramState.solution.push(row);
+        nonogramState.board.push(boardRow);
+    }
+    
+    renderNonogram();
+}
+
+function renderNonogram() {
+    const size = nonogramState.size;
+    const solution = nonogramState.solution;
+    
+    // Calculate clues
+    const rowClues = solution.map(row => getClues(row));
+    const colClues = [];
+    for (let x = 0; x < size; x++) {
+        const col = solution.map(row => row[x]);
+        colClues.push(getClues(col));
+    }
+    
+    // Render column clues
+    const colCluesEl = document.getElementById('nonogramColClues');
+    colCluesEl.innerHTML = colClues.map(clue => `
+        <div class="nonogram-col-clue">
+            ${clue.map(n => `<span>${n}</span>`).join('')}
+        </div>
+    `).join('');
+    
+    // Render row clues
+    const rowCluesEl = document.getElementById('nonogramRowClues');
+    rowCluesEl.innerHTML = rowClues.map(clue => `
+        <div class="nonogram-row-clue">
+            ${clue.map(n => `<span>${n}</span>`).join('')}
+        </div>
+    `).join('');
+    
+    // Render board
+    const board = document.getElementById('nonogramBoard');
+    board.style.gridTemplateColumns = `repeat(${size}, 24px)`;
+    board.innerHTML = '';
+    
+    for (let y = 0; y < size; y++) {
+        for (let x = 0; x < size; x++) {
+            const cell = document.createElement('div');
+            cell.className = 'nonogram-cell';
+            cell.dataset.x = x;
+            cell.dataset.y = y;
+            cell.onclick = () => clickNonogramCell(x, y);
+            board.appendChild(cell);
+        }
+    }
+    
+    updateNonogramProgress();
+}
+
+function getClues(line) {
+    const clues = [];
+    let count = 0;
+    for (const val of line) {
+        if (val === 1) {
+            count++;
+        } else if (count > 0) {
+            clues.push(count);
+            count = 0;
+        }
+    }
+    if (count > 0) clues.push(count);
+    return clues.length > 0 ? clues : [0];
+}
+
+function setNonogramMode(mode) {
+    nonogramState.mode = mode;
+    document.getElementById('nonogramFillBtn').classList.toggle('active', mode === 'fill');
+    document.getElementById('nonogramMarkBtn').classList.toggle('active', mode === 'mark');
+}
+
+function clickNonogramCell(x, y) {
+    playSound('click');
+    vibrate(5);
+    
+    const current = nonogramState.board[y][x];
+    
+    if (nonogramState.mode === 'fill') {
+        nonogramState.board[y][x] = current === 1 ? 0 : 1;
+    } else {
+        nonogramState.board[y][x] = current === 2 ? 0 : 2;
+    }
+    
+    // Update cell display
+    const cell = document.querySelector(`.nonogram-cell[data-x="${x}"][data-y="${y}"]`);
+    cell.classList.remove('filled', 'marked');
+    if (nonogramState.board[y][x] === 1) cell.classList.add('filled');
+    if (nonogramState.board[y][x] === 2) cell.classList.add('marked');
+    
+    updateNonogramProgress();
+    checkNonogramComplete();
+}
+
+function updateNonogramProgress() {
+    const size = nonogramState.size;
+    let correct = 0;
+    let total = 0;
+    
+    for (let y = 0; y < size; y++) {
+        for (let x = 0; x < size; x++) {
+            if (nonogramState.solution[y][x] === 1) {
+                total++;
+                if (nonogramState.board[y][x] === 1) correct++;
+            }
+        }
+    }
+    
+    const pct = total > 0 ? (correct / total) * 100 : 0;
+    document.getElementById('nonogramProgressBar').style.width = `${pct}%`;
+}
+
+function checkNonogramComplete() {
+    const size = nonogramState.size;
+    
+    for (let y = 0; y < size; y++) {
+        for (let x = 0; x < size; x++) {
+            const expected = nonogramState.solution[y][x];
+            const actual = nonogramState.board[y][x] === 1 ? 1 : 0;
+            if (expected !== actual) return;
+        }
+    }
+    
+    // Completed!
+    nonogramComplete();
+}
+
+function nonogramComplete() {
+    playSound('win');
+    showConfetti();
+    vibrate([100, 50, 100, 50, 200]);
+    
+    // Show the revealed image
+    document.getElementById('completedImage').src = nonogramState.puzzle.image;
+    document.getElementById('finalTime').textContent = '-';
+    document.getElementById('finalMoves').textContent = nonogramState.size + '×' + nonogramState.size;
+    document.getElementById('completionShopLink').href = nonogramState.puzzle.shopUrl;
+    document.getElementById('completionGalleryLink').href = nonogramState.puzzle.galleryUrl;
+    document.getElementById('shareSection').classList.add('hidden');
+    
+    completionModal.classList.remove('hidden');
+    
+    document.getElementById('playAgainBtn').onclick = () => {
+        completionModal.classList.add('hidden');
+        startNonogram(nonogramState.puzzle, nonogramState.isDaily);
+    };
+    
+    document.getElementById('newPuzzleBtn').onclick = () => {
+        completionModal.classList.add('hidden');
+        document.getElementById('nonogramView').classList.add('hidden');
+        document.getElementById('homeView').classList.remove('hidden');
+    };
+}
+
+// ============================================================
+// ==================== SHAPEKU (PICTURE SUDOKU) ==============
+// ============================================================
+
+let shapekuState = {
+    size: 4,
+    board: [],
+    solution: [],
+    images: [],
+    selectedImage: null
+};
+
+function setupShapekuHome() {
+    document.querySelectorAll('.shapeku-size-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.shapeku-size-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            shapekuState.size = parseInt(btn.dataset.size);
+        });
+    });
+    
+    document.getElementById('startShapekuBtn').onclick = startShapeku;
+    document.getElementById('shapekuBackBtn').onclick = () => {
+        document.getElementById('shapekuView').classList.add('hidden');
+        document.getElementById('homeView').classList.remove('hidden');
+    };
+    document.getElementById('shapekuCheckBtn').onclick = checkShapeku;
+}
+
+function startShapeku() {
+    playSound('click');
+    
+    const size = shapekuState.size;
+    
+    // Pick images for this game
+    const shuffled = [...puzzles].sort(() => Math.random() - 0.5);
+    shapekuState.images = shuffled.slice(0, size);
+    
+    // Generate solved board
+    shapekuState.solution = generateShapekuSolution(size);
+    
+    // Create puzzle by removing some cells
+    shapekuState.board = shapekuState.solution.map(row => 
+        row.map(val => Math.random() > 0.5 ? val : null)
+    );
+    
+    shapekuState.selectedImage = null;
+    
+    document.getElementById('homeView').classList.add('hidden');
+    document.getElementById('shapekuView').classList.remove('hidden');
+    
+    renderShapeku();
+}
+
+function generateShapekuSolution(size) {
+    // Simple valid sudoku generator for 4x4 or 6x6
+    const board = [];
+    
+    for (let y = 0; y < size; y++) {
+        const row = [];
+        for (let x = 0; x < size; x++) {
+            // Use a simple pattern that's always valid
+            row.push((x + y * (size === 4 ? 2 : 2)) % size);
+        }
+        board.push(row);
+    }
+    
+    // Shuffle rows within blocks and columns within blocks
+    return board;
+}
+
+function renderShapeku() {
+    const size = shapekuState.size;
+    
+    // Render palette
+    const palette = document.getElementById('shapekuPalette');
+    palette.innerHTML = shapekuState.images.map((img, i) => `
+        <img src="${img.image}" alt="${img.title}" class="palette-img" 
+             data-index="${i}" onclick="selectShapekuImage(${i})">
+    `).join('');
+    
+    // Render board
+    const board = document.getElementById('shapekuBoard');
+    board.style.gridTemplateColumns = `repeat(${size}, 50px)`;
+    board.innerHTML = '';
+    
+    for (let y = 0; y < size; y++) {
+        for (let x = 0; x < size; x++) {
+            const cell = document.createElement('div');
+            cell.className = 'shapeku-cell';
+            cell.dataset.x = x;
+            cell.dataset.y = y;
+            
+            const val = shapekuState.board[y][x];
+            if (val !== null) {
+                const img = document.createElement('img');
+                img.src = shapekuState.images[val].image;
+                cell.appendChild(img);
+                
+                if (shapekuState.solution[y][x] === val) {
+                    cell.classList.add('fixed');
+                }
+            }
+            
+            cell.onclick = () => clickShapekuCell(x, y);
+            board.appendChild(cell);
+        }
+    }
+}
+
+function selectShapekuImage(index) {
+    playSound('click');
+    shapekuState.selectedImage = index;
+    
+    document.querySelectorAll('.palette-img').forEach(img => {
+        img.classList.toggle('selected', parseInt(img.dataset.index) === index);
+    });
+}
+
+function clickShapekuCell(x, y) {
+    // Don't allow changing fixed cells
+    if (shapekuState.solution[y][x] === shapekuState.board[y][x] && shapekuState.board[y][x] !== null) {
+        return;
+    }
+    
+    if (shapekuState.selectedImage === null) return;
+    
+    playSound('click');
+    shapekuState.board[y][x] = shapekuState.selectedImage;
+    renderShapeku();
+}
+
+function checkShapeku() {
+    playSound('click');
+    const size = shapekuState.size;
+    let correct = true;
+    
+    // Clear previous errors
+    document.querySelectorAll('.shapeku-cell').forEach(c => c.classList.remove('error'));
+    
+    // Check rows
+    for (let y = 0; y < size; y++) {
+        const row = shapekuState.board[y];
+        if (row.includes(null) || new Set(row).size !== size) {
+            correct = false;
+            // Mark row as error
+            for (let x = 0; x < size; x++) {
+                document.querySelector(`.shapeku-cell[data-x="${x}"][data-y="${y}"]`).classList.add('error');
+            }
+        }
+    }
+    
+    // Check columns
+    for (let x = 0; x < size; x++) {
+        const col = shapekuState.board.map(row => row[x]);
+        if (col.includes(null) || new Set(col).size !== size) {
+            correct = false;
+            for (let y = 0; y < size; y++) {
+                document.querySelector(`.shapeku-cell[data-x="${x}"][data-y="${y}"]`).classList.add('error');
+            }
+        }
+    }
+    
+    if (correct) {
+        shapekuComplete();
+    }
+}
+
+function shapekuComplete() {
+    playSound('win');
+    showConfetti();
+    
+    const randomImg = shapekuState.images[Math.floor(Math.random() * shapekuState.images.length)];
+    
+    document.getElementById('completedImage').src = randomImg.image;
+    document.getElementById('finalTime').textContent = '-';
+    document.getElementById('finalMoves').textContent = shapekuState.size + '×' + shapekuState.size;
+    document.getElementById('completionShopLink').href = randomImg.shopUrl;
+    document.getElementById('completionGalleryLink').href = randomImg.galleryUrl;
+    document.getElementById('shareSection').classList.add('hidden');
+    
+    completionModal.classList.remove('hidden');
+    
+    document.getElementById('playAgainBtn').onclick = () => {
+        completionModal.classList.add('hidden');
+        startShapeku();
+    };
+    
+    document.getElementById('newPuzzleBtn').onclick = () => {
+        completionModal.classList.add('hidden');
+        document.getElementById('shapekuView').classList.add('hidden');
+        document.getElementById('homeView').classList.remove('hidden');
+    };
+}
+
+// ============================================================
+// ==================== WORD SEARCH ===========================
+// ============================================================
+
+const NATURE_WORDS = {
+    butterflies: ['BUTTERFLY', 'WINGS', 'MONARCH', 'FLUTTER', 'NECTAR', 'GARDEN'],
+    flowers: ['FLOWER', 'PETAL', 'BLOOM', 'GARDEN', 'SPRING', 'NATURE', 'COLOR', 'BEAUTY'],
+    horses: ['HORSE', 'MANE', 'GALLOP', 'FIELD', 'WILD', 'BEAUTY', 'GRACE'],
+    landscapes: ['MOUNTAIN', 'VALLEY', 'VISTA', 'NATURE', 'PEAK', 'SCENIC', 'VIEW']
+};
+
+let wsState = {
+    puzzle: null,
+    grid: [],
+    words: [],
+    foundWords: [],
+    selecting: false,
+    selection: []
+};
+
+function setupWordsearchHome() {
+    const preview = puzzles[0];
+    document.getElementById('wsPreviewImage').src = preview.image;
+    document.getElementById('wsPreviewTitle').textContent = preview.title;
+    
+    document.getElementById('startWordsearchBtn').onclick = () => startWordsearch(preview);
+    document.getElementById('wsBackBtn').onclick = () => {
+        document.getElementById('wordsearchView').classList.add('hidden');
+        document.getElementById('homeView').classList.remove('hidden');
+    };
+    
+    // Render gallery
+    const gallery = document.getElementById('wordsearchGallery');
+    gallery.innerHTML = puzzles.slice(0, 8).map(p => `
+        <div class="puzzle-card" onclick="startWordsearch(puzzles.find(x => x.id === ${p.id}))">
+            <img src="${p.image}" alt="${p.title}" class="puzzle-card-image" loading="lazy">
+            <div class="puzzle-card-info">
+                <div class="puzzle-card-title">${p.title}</div>
+            </div>
+        </div>
+    `).join('');
+}
+
+function startWordsearch(puzzle) {
+    playSound('click');
+    wsState.puzzle = puzzle;
+    wsState.foundWords = [];
+    
+    // Get words for this category
+    const categoryWords = NATURE_WORDS[puzzle.category] || NATURE_WORDS.flowers;
+    wsState.words = categoryWords.slice(0, 5);
+    
+    // Generate grid
+    wsState.grid = generateWordSearchGrid(wsState.words, 10);
+    
+    document.getElementById('homeView').classList.add('hidden');
+    document.getElementById('wordsearchView').classList.remove('hidden');
+    
+    document.getElementById('wsGameImage').src = puzzle.image;
+    document.getElementById('wsGameTitle').textContent = puzzle.title;
+    document.getElementById('wsShopLink').href = puzzle.shopUrl;
+    
+    renderWordsearch();
+}
+
+function generateWordSearchGrid(words, size) {
+    // Create empty grid
+    const grid = Array(size).fill(null).map(() => Array(size).fill(''));
+    
+    // Place words
+    words.forEach(word => {
+        placeWord(grid, word, size);
+    });
+    
+    // Fill empty spaces with random letters
+    const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    for (let y = 0; y < size; y++) {
+        for (let x = 0; x < size; x++) {
+            if (!grid[y][x]) {
+                grid[y][x] = letters[Math.floor(Math.random() * letters.length)];
+            }
+        }
+    }
+    
+    return grid;
+}
+
+function placeWord(grid, word, size) {
+    const directions = [
+        [0, 1],  // horizontal
+        [1, 0],  // vertical
+        [1, 1],  // diagonal down
+    ];
+    
+    for (let attempts = 0; attempts < 100; attempts++) {
+        const dir = directions[Math.floor(Math.random() * directions.length)];
+        const startX = Math.floor(Math.random() * size);
+        const startY = Math.floor(Math.random() * size);
+        
+        // Check if word fits
+        let fits = true;
+        for (let i = 0; i < word.length; i++) {
+            const x = startX + dir[1] * i;
+            const y = startY + dir[0] * i;
+            
+            if (x < 0 || x >= size || y < 0 || y >= size) {
+                fits = false;
+                break;
+            }
+            
+            if (grid[y][x] && grid[y][x] !== word[i]) {
+                fits = false;
+                break;
+            }
+        }
+        
+        if (fits) {
+            for (let i = 0; i < word.length; i++) {
+                const x = startX + dir[1] * i;
+                const y = startY + dir[0] * i;
+                grid[y][x] = word[i];
+            }
+            return true;
+        }
+    }
+    return false;
+}
+
+function renderWordsearch() {
+    const size = wsState.grid.length;
+    
+    // Render grid
+    const gridEl = document.getElementById('wsGrid');
+    gridEl.style.gridTemplateColumns = `repeat(${size}, 28px)`;
+    gridEl.innerHTML = '';
+    
+    for (let y = 0; y < size; y++) {
+        for (let x = 0; x < size; x++) {
+            const cell = document.createElement('div');
+            cell.className = 'ws-cell';
+            cell.textContent = wsState.grid[y][x];
+            cell.dataset.x = x;
+            cell.dataset.y = y;
+            
+            cell.onmousedown = cell.ontouchstart = (e) => {
+                e.preventDefault();
+                startWsSelection(x, y);
+            };
+            cell.onmouseenter = cell.ontouchmove = (e) => {
+                if (wsState.selecting) {
+                    e.preventDefault();
+                    extendWsSelection(x, y);
+                }
+            };
+            
+            gridEl.appendChild(cell);
+        }
+    }
+    
+    document.onmouseup = document.ontouchend = endWsSelection;
+    
+    // Render word list
+    const wordList = document.getElementById('wsWordList');
+    wordList.innerHTML = wsState.words.map(word => `
+        <span class="ws-word ${wsState.foundWords.includes(word) ? 'found' : ''}">${word}</span>
+    `).join('');
+}
+
+function startWsSelection(x, y) {
+    wsState.selecting = true;
+    wsState.selection = [{x, y}];
+    updateWsSelection();
+}
+
+function extendWsSelection(x, y) {
+    if (!wsState.selection.find(s => s.x === x && s.y === y)) {
+        wsState.selection.push({x, y});
+        updateWsSelection();
+    }
+}
+
+function updateWsSelection() {
+    document.querySelectorAll('.ws-cell').forEach(cell => {
+        cell.classList.remove('selected');
+    });
+    
+    wsState.selection.forEach(({x, y}) => {
+        document.querySelector(`.ws-cell[data-x="${x}"][data-y="${y}"]`).classList.add('selected');
+    });
+}
+
+function endWsSelection() {
+    if (!wsState.selecting) return;
+    wsState.selecting = false;
+    
+    // Check if selection forms a word
+    const selectedWord = wsState.selection.map(({x, y}) => wsState.grid[y][x]).join('');
+    const reversedWord = selectedWord.split('').reverse().join('');
+    
+    if (wsState.words.includes(selectedWord) && !wsState.foundWords.includes(selectedWord)) {
+        foundWsWord(selectedWord);
+    } else if (wsState.words.includes(reversedWord) && !wsState.foundWords.includes(reversedWord)) {
+        foundWsWord(reversedWord);
+    } else {
+        // Clear selection
+        document.querySelectorAll('.ws-cell.selected').forEach(c => c.classList.remove('selected'));
+    }
+    
+    wsState.selection = [];
+}
+
+function foundWsWord(word) {
+    playSound('click');
+    vibrate(50);
+    
+    wsState.foundWords.push(word);
+    
+    // Mark cells as found
+    wsState.selection.forEach(({x, y}) => {
+        document.querySelector(`.ws-cell[data-x="${x}"][data-y="${y}"]`).classList.add('found');
+        document.querySelector(`.ws-cell[data-x="${x}"][data-y="${y}"]`).classList.remove('selected');
+    });
+    
+    // Update word list
+    document.querySelectorAll('.ws-word').forEach(el => {
+        if (el.textContent === word) el.classList.add('found');
+    });
+    
+    // Check if complete
+    if (wsState.foundWords.length === wsState.words.length) {
+        wordsearchComplete();
+    }
+}
+
+function wordsearchComplete() {
+    playSound('win');
+    showConfetti();
+    
+    document.getElementById('completedImage').src = wsState.puzzle.image;
+    document.getElementById('finalTime').textContent = '-';
+    document.getElementById('finalMoves').textContent = wsState.foundWords.length + ' words';
+    document.getElementById('completionShopLink').href = wsState.puzzle.shopUrl;
+    document.getElementById('completionGalleryLink').href = wsState.puzzle.galleryUrl;
+    document.getElementById('shareSection').classList.add('hidden');
+    
+    setTimeout(() => completionModal.classList.remove('hidden'), 500);
+    
+    document.getElementById('playAgainBtn').onclick = () => {
+        completionModal.classList.add('hidden');
+        startWordsearch(wsState.puzzle);
+    };
+    
+    document.getElementById('newPuzzleBtn').onclick = () => {
+        completionModal.classList.add('hidden');
+        document.getElementById('wordsearchView').classList.add('hidden');
+        document.getElementById('homeView').classList.remove('hidden');
+    };
+}
+
+// ============ INITIALIZE NEW GAMES ============
+document.addEventListener('DOMContentLoaded', () => {
+    setupGameModeTabs();
+});

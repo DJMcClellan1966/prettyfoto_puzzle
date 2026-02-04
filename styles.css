@@ -1239,6 +1239,538 @@ body {
     color: white;
 }
 
+/* ============ GAME MODE TABS ============ */
+.game-mode-tabs {
+    display: flex;
+    gap: 4px;
+    padding: 8px;
+    background: var(--bg-card);
+    border-radius: var(--radius);
+    margin-bottom: 16px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.mode-tab {
+    flex: 1;
+    min-width: 60px;
+    padding: 10px 8px;
+    border: none;
+    background: transparent;
+    border-radius: var(--radius-sm);
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-dim);
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.2s;
+}
+
+.mode-tab.active {
+    background: var(--accent);
+    color: white;
+}
+
+.mode-tab:hover:not(.active) {
+    background: var(--bg);
+}
+
+.game-home {
+    animation: fadeIn 0.3s ease;
+}
+
+.game-home.hidden {
+    display: none;
+}
+
+/* ============ NONOGRAM STYLES ============ */
+.mystery-image {
+    width: 100%;
+    aspect-ratio: 1;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 80px;
+    color: white;
+    border-radius: var(--radius);
+}
+
+.nonogram-container {
+    padding: 16px;
+}
+
+.nonogram-board-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+
+.nonogram-col-clues {
+    display: flex;
+    gap: 1px;
+    margin-left: 50px;
+}
+
+.nonogram-col-clue {
+    width: 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--text);
+    gap: 2px;
+    padding-bottom: 4px;
+}
+
+.nonogram-main {
+    display: flex;
+    gap: 4px;
+}
+
+.nonogram-row-clues {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    width: 50px;
+}
+
+.nonogram-row-clue {
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--text);
+    gap: 4px;
+    padding-right: 4px;
+}
+
+.nonogram-board {
+    display: grid;
+    gap: 1px;
+    background: var(--border);
+    padding: 1px;
+    border-radius: 4px;
+}
+
+.nonogram-cell {
+    width: 24px;
+    height: 24px;
+    background: white;
+    cursor: pointer;
+    transition: all 0.1s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.nonogram-cell.filled {
+    background: var(--text);
+}
+
+.nonogram-cell.marked {
+    background: white;
+}
+
+.nonogram-cell.marked::after {
+    content: '×';
+    color: var(--text-dim);
+    font-size: 14px;
+}
+
+.nonogram-cell:nth-child(5n) {
+    border-right: 2px solid var(--text-dim);
+}
+
+.nonogram-controls {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.control-btn {
+    padding: 12px 24px;
+    border: 2px solid var(--border);
+    background: white;
+    border-radius: 25px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.control-btn.active {
+    border-color: var(--accent);
+    background: var(--accent);
+    color: white;
+}
+
+.nonogram-progress {
+    margin-top: 16px;
+    height: 8px;
+    background: var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--success));
+    width: 0%;
+    transition: width 0.3s;
+}
+
+/* ============ RANKING STYLES ============ */
+.ranking-intro {
+    text-align: center;
+    padding: 24px;
+    background: linear-gradient(135deg, #fff5f5 0%, #fef3e8 100%);
+    border-radius: var(--radius);
+    margin-bottom: 20px;
+}
+
+.ranking-subtext {
+    font-size: 13px;
+    color: var(--text-dim);
+    margin-top: 8px;
+}
+
+.ranking-container {
+    padding: 16px;
+    text-align: center;
+}
+
+.ranking-question {
+    font-size: 20px;
+    margin-bottom: 20px;
+    color: var(--text);
+}
+
+.ranking-cards {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.ranking-card {
+    flex: 1;
+    max-width: 160px;
+    cursor: pointer;
+    transition: transform 0.2s;
+    border-radius: var(--radius);
+    overflow: hidden;
+    background: white;
+    box-shadow: var(--shadow);
+}
+
+.ranking-card:hover {
+    transform: scale(1.02);
+}
+
+.ranking-card:active {
+    transform: scale(0.98);
+}
+
+.ranking-card img {
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+}
+
+.ranking-card p {
+    padding: 8px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text);
+}
+
+.ranking-vs {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text-dim);
+}
+
+.ranking-hint {
+    font-size: 13px;
+    color: var(--text-dim);
+}
+
+.ranking-results {
+    margin-top: 24px;
+    padding: 20px;
+    background: var(--bg-card);
+    border-radius: var(--radius);
+}
+
+.ranking-results h3 {
+    margin-bottom: 16px;
+    font-size: 18px;
+}
+
+.top-picks {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.top-pick {
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    position: relative;
+}
+
+.top-pick img {
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+}
+
+.top-pick-rank {
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    width: 24px;
+    height: 24px;
+    background: var(--gold);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+/* ============ SHAPEKU STYLES ============ */
+.shapeku-intro {
+    text-align: center;
+    padding: 16px;
+    background: var(--bg);
+    border-radius: var(--radius);
+    margin-bottom: 16px;
+}
+
+.size-options, .shapeku-size-options {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.size-btn, .shapeku-size-btn {
+    padding: 10px 20px;
+    border: 2px solid var(--border);
+    background: white;
+    border-radius: 25px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.size-btn.active, .shapeku-size-btn.active {
+    border-color: var(--accent);
+    background: var(--accent);
+    color: white;
+}
+
+.shapeku-container {
+    padding: 16px;
+}
+
+.shapeku-palette {
+    margin-bottom: 16px;
+    text-align: center;
+}
+
+.shapeku-palette p {
+    font-size: 13px;
+    color: var(--text-dim);
+    margin-bottom: 8px;
+}
+
+.palette-images {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.palette-img {
+    width: 50px;
+    height: 50px;
+    border-radius: 8px;
+    cursor: pointer;
+    border: 3px solid transparent;
+    transition: all 0.2s;
+    object-fit: cover;
+}
+
+.palette-img.selected {
+    border-color: var(--accent);
+    transform: scale(1.1);
+}
+
+.shapeku-board {
+    display: grid;
+    gap: 2px;
+    background: var(--text);
+    padding: 2px;
+    border-radius: 8px;
+    margin: 0 auto;
+    max-width: fit-content;
+}
+
+.shapeku-cell {
+    width: 50px;
+    height: 50px;
+    background: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.shapeku-cell img {
+    width: 90%;
+    height: 90%;
+    object-fit: cover;
+    border-radius: 4px;
+}
+
+.shapeku-cell.fixed {
+    background: #f0f0f0;
+}
+
+.shapeku-cell.error {
+    background: #ffe0e0;
+}
+
+.check-btn {
+    display: block;
+    margin: 20px auto 0;
+    padding: 14px 32px;
+    background: var(--success);
+    color: white;
+    border: none;
+    border-radius: 25px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+/* ============ WORD SEARCH STYLES ============ */
+.wordsearch-preview {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.wordsearch-preview img {
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: var(--radius);
+    margin-bottom: 8px;
+}
+
+.wordsearch-preview h3 {
+    font-size: 16px;
+    color: var(--text);
+}
+
+.wordsearch-container {
+    padding: 16px;
+}
+
+.ws-image-preview {
+    text-align: center;
+    margin-bottom: 16px;
+}
+
+.ws-image-preview img {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: var(--radius-sm);
+}
+
+.ws-image-preview h3 {
+    font-size: 14px;
+    margin-top: 8px;
+}
+
+.ws-grid {
+    display: grid;
+    gap: 2px;
+    background: var(--border);
+    padding: 2px;
+    border-radius: 8px;
+    margin: 0 auto;
+    max-width: fit-content;
+    user-select: none;
+}
+
+.ws-cell {
+    width: 28px;
+    height: 28px;
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 600;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.1s;
+}
+
+.ws-cell.selected {
+    background: var(--accent-light);
+}
+
+.ws-cell.found {
+    background: var(--success);
+    color: white;
+}
+
+.ws-words {
+    margin-top: 20px;
+}
+
+.ws-words h4 {
+    font-size: 14px;
+    margin-bottom: 12px;
+    text-align: center;
+}
+
+.ws-word-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+}
+
+.ws-word {
+    padding: 6px 12px;
+    background: var(--bg);
+    border-radius: 15px;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.ws-word.found {
+    background: var(--success);
+    color: white;
+    text-decoration: line-through;
+}
+
 /* ============ RESPONSIVE ============ */
 @media (min-width: 400px) {
     .puzzle-gallery {

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>PrettyFoto Puzzles - Daily Sliding Tile Puzzle</title>
+    <title>PrettyFoto Games - Daily Photo Puzzles & Games</title>
     
     <!-- PWA Meta Tags -->
     <link rel="manifest" href="manifest.json">
@@ -39,15 +39,26 @@
 
         <!-- Main Content -->
         <main class="main">
+            <!-- Game Mode Selector -->
+            <div class="game-mode-tabs">
+                <button class="mode-tab active" data-mode="slider">🧩 Slider</button>
+                <button class="mode-tab" data-mode="nonogram">🔢 Nonogram</button>
+                <button class="mode-tab" data-mode="ranking">❤️ Ranking</button>
+                <button class="mode-tab" data-mode="shapeku">🎨 Shapeku</button>
+                <button class="mode-tab" data-mode="wordsearch">🔤 Words</button>
+            </div>
+
             <!-- Home View -->
             <section id="homeView" class="view">
-                <div class="home-header">
-                    <h1>Daily Puzzle</h1>
-                    <p>A new puzzle every day at midnight</p>
-                </div>
+                <!-- ========== SLIDER GAME HOME ========== -->
+                <div id="sliderHome" class="game-home">
+                    <div class="home-header">
+                        <h1>Daily Puzzle</h1>
+                        <p>A new puzzle every day at midnight</p>
+                    </div>
 
-                <!-- Daily Puzzle Card -->
-                <div id="dailyCard" class="daily-card">
+                    <!-- Daily Puzzle Card -->
+                    <div id="dailyCard" class="daily-card">
                     <div class="daily-badge">
                         <span class="daily-number">#<span id="puzzleNumber">1</span></span>
                         <span class="daily-date" id="puzzleDate">Feb 3, 2026</span>
@@ -100,6 +111,114 @@
                             Shop Art Prints at PrettyFoto.com
                         </a>
                         <p class="cta-discount">Use code <strong>EVERYWHERE26</strong> for 25% off!</p>
+                    </div>
+                </div>
+                </div><!-- End sliderHome -->
+
+                <!-- ========== NONOGRAM GAME HOME ========== -->
+                <div id="nonogramHome" class="game-home hidden">
+                    <div class="home-header">
+                        <h1>Daily Nonogram</h1>
+                        <p>Reveal the hidden image with logic!</p>
+                    </div>
+                    
+                    <div id="nonogramDailyCard" class="daily-card">
+                        <div class="daily-badge">
+                            <span class="daily-number">#<span id="nonogramNumber">1</span></span>
+                            <span class="daily-date" id="nonogramDate">Feb 3, 2026</span>
+                        </div>
+                        <div class="daily-image-container mystery">
+                            <div class="mystery-image">?</div>
+                            <div id="nonogramOverlay" class="daily-overlay hidden">
+                                <span class="daily-status">✓ Revealed</span>
+                            </div>
+                        </div>
+                        <div class="daily-info">
+                            <h3>Mystery Image</h3>
+                            <p class="daily-category">Solve to reveal!</p>
+                        </div>
+                        <button id="playNonogramBtn" class="play-daily-btn">
+                            Play Today's Nonogram
+                        </button>
+                    </div>
+                    
+                    <div class="free-play-section">
+                        <h2>Practice Nonograms</h2>
+                        <p>Choose a size to practice</p>
+                        <div class="size-options">
+                            <button class="size-btn" data-size="5">5×5</button>
+                            <button class="size-btn active" data-size="10">10×10</button>
+                            <button class="size-btn" data-size="15">15×15</button>
+                        </div>
+                        <div id="nonogramGallery" class="puzzle-gallery"></div>
+                    </div>
+                </div>
+
+                <!-- ========== PHOTO RANKING HOME ========== -->
+                <div id="rankingHome" class="game-home hidden">
+                    <div class="home-header">
+                        <h1>Photo Ranking</h1>
+                        <p>Which photo speaks to you more?</p>
+                    </div>
+                    
+                    <div class="ranking-intro">
+                        <p>Compare photos and discover your favorites!</p>
+                        <p class="ranking-subtext">Your top picks = personalized recommendations</p>
+                    </div>
+                    
+                    <button id="startRankingBtn" class="play-daily-btn">
+                        Start Ranking
+                    </button>
+                    
+                    <div id="rankingResults" class="ranking-results hidden">
+                        <h3>Your Top Favorites</h3>
+                        <div id="topPicks" class="top-picks"></div>
+                        <a href="https://www.prettyfoto.com/shop-art" target="_blank" class="gallery-shop-btn">
+                            Shop Your Favorites →
+                        </a>
+                    </div>
+                </div>
+
+                <!-- ========== SHAPEKU (PICTURE SUDOKU) HOME ========== -->
+                <div id="shapekuHome" class="game-home hidden">
+                    <div class="home-header">
+                        <h1>Shapeku</h1>
+                        <p>Sudoku with beautiful images!</p>
+                    </div>
+                    
+                    <div class="shapeku-intro">
+                        <p>Place each image once per row, column, and box</p>
+                    </div>
+                    
+                    <div class="size-options">
+                        <button class="shapeku-size-btn active" data-size="4">4×4 Easy</button>
+                        <button class="shapeku-size-btn" data-size="6">6×6 Medium</button>
+                    </div>
+                    
+                    <button id="startShapekuBtn" class="play-daily-btn">
+                        New Shapeku
+                    </button>
+                </div>
+
+                <!-- ========== WORD SEARCH HOME ========== -->
+                <div id="wordsearchHome" class="game-home hidden">
+                    <div class="home-header">
+                        <h1>Photo Word Search</h1>
+                        <p>Find words hidden in the grid!</p>
+                    </div>
+                    
+                    <div id="wordsearchPreview" class="wordsearch-preview">
+                        <img id="wsPreviewImage" src="" alt="Featured image">
+                        <h3 id="wsPreviewTitle">Loading...</h3>
+                    </div>
+                    
+                    <button id="startWordsearchBtn" class="play-daily-btn">
+                        Start Word Search
+                    </button>
+                    
+                    <div class="free-play-section">
+                        <h2>Choose an Image</h2>
+                        <div id="wordsearchGallery" class="puzzle-gallery"></div>
                     </div>
                 </div>
             </section>
@@ -171,6 +290,92 @@
 
                     <!-- Shuffle button (non-daily only) -->
                     <button id="shuffleBtn" class="shuffle-btn hidden">🔀 Shuffle Again</button>
+                </div>
+            </section>
+
+            <!-- ========== NONOGRAM GAME VIEW ========== -->
+            <section id="nonogramView" class="view hidden">
+                <div class="puzzle-nav">
+                    <button id="nonogramBackBtn" class="icon-btn">← Back</button>
+                    <span id="nonogramDailyBadge" class="daily-badge-small hidden">Daily #<span id="nonogramBadgeNum">1</span></span>
+                </div>
+                
+                <div class="nonogram-container">
+                    <div class="nonogram-board-wrapper">
+                        <div id="nonogramColClues" class="nonogram-col-clues"></div>
+                        <div class="nonogram-main">
+                            <div id="nonogramRowClues" class="nonogram-row-clues"></div>
+                            <div id="nonogramBoard" class="nonogram-board"></div>
+                        </div>
+                    </div>
+                    <div class="nonogram-controls">
+                        <button id="nonogramFillBtn" class="control-btn active">✓ Fill</button>
+                        <button id="nonogramMarkBtn" class="control-btn">✗ Mark</button>
+                    </div>
+                    <div id="nonogramProgress" class="nonogram-progress">
+                        <div id="nonogramProgressBar" class="progress-bar"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ========== RANKING GAME VIEW ========== -->
+            <section id="rankingView" class="view hidden">
+                <div class="puzzle-nav">
+                    <button id="rankingBackBtn" class="icon-btn">← Back</button>
+                    <span id="rankingProgress">1 of 10</span>
+                </div>
+                
+                <div class="ranking-container">
+                    <h2 class="ranking-question">Which do you prefer?</h2>
+                    <div class="ranking-cards">
+                        <div id="rankingCard1" class="ranking-card">
+                            <img id="rankingImg1" src="" alt="Option 1">
+                            <p id="rankingTitle1"></p>
+                        </div>
+                        <div class="ranking-vs">vs</div>
+                        <div id="rankingCard2" class="ranking-card">
+                            <img id="rankingImg2" src="" alt="Option 2">
+                            <p id="rankingTitle2"></p>
+                        </div>
+                    </div>
+                    <p class="ranking-hint">Tap your favorite!</p>
+                </div>
+            </section>
+
+            <!-- ========== SHAPEKU GAME VIEW ========== -->
+            <section id="shapekuView" class="view hidden">
+                <div class="puzzle-nav">
+                    <button id="shapekuBackBtn" class="icon-btn">← Back</button>
+                    <button id="shapekuHintBtn" class="hint-btn">💡</button>
+                </div>
+                
+                <div class="shapeku-container">
+                    <div class="shapeku-palette">
+                        <p>Select an image to place:</p>
+                        <div id="shapekuPalette" class="palette-images"></div>
+                    </div>
+                    <div id="shapekuBoard" class="shapeku-board"></div>
+                    <button id="shapekuCheckBtn" class="check-btn">Check Solution</button>
+                </div>
+            </section>
+
+            <!-- ========== WORD SEARCH GAME VIEW ========== -->
+            <section id="wordsearchView" class="view hidden">
+                <div class="puzzle-nav">
+                    <button id="wsBackBtn" class="icon-btn">← Back</button>
+                    <a id="wsShopLink" href="#" target="_blank" class="shop-btn">🛒 Buy Print</a>
+                </div>
+                
+                <div class="wordsearch-container">
+                    <div class="ws-image-preview">
+                        <img id="wsGameImage" src="" alt="Featured">
+                        <h3 id="wsGameTitle"></h3>
+                    </div>
+                    <div id="wsGrid" class="ws-grid"></div>
+                    <div class="ws-words">
+                        <h4>Find these words:</h4>
+                        <div id="wsWordList" class="ws-word-list"></div>
+                    </div>
                 </div>
             </section>
         </main>
