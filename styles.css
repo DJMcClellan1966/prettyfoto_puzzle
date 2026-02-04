@@ -1131,22 +1131,6 @@ body {
     margin-bottom: 20px;
 }
 
-.share-card-preview {
-    background: var(--bg);
-    border-radius: var(--radius);
-    padding: 12px;
-    margin-bottom: 12px;
-    display: flex;
-    justify-content: center;
-}
-
-.share-card-preview canvas {
-    max-width: 100%;
-    height: auto;
-    border-radius: var(--radius-sm);
-    box-shadow: var(--shadow);
-}
-
 .share-buttons {
     display: flex;
     gap: 10px;
@@ -2560,36 +2544,9 @@ body {
     transition: --accent 0.3s, --accent-light 0.3s;
 }
 
-/* ============ LIVE ACTIVITY FEED ============ */
-.live-activity-feed {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 10px 16px;
-    background: linear-gradient(90deg, rgba(231, 76, 60, 0.1) 0%, rgba(231, 76, 60, 0.05) 100%);
-    border-radius: var(--radius-sm);
-    margin-bottom: 12px;
-    font-size: 13px;
-    overflow: hidden;
-}
-
-.live-dot {
-    width: 8px;
-    height: 8px;
-    background: #e74c3c;
-    border-radius: 50%;
-    animation: pulse 1.5s infinite;
-    flex-shrink: 0;
-}
-
 @keyframes pulse {
     0%, 100% { opacity: 1; transform: scale(1); }
     50% { opacity: 0.5; transform: scale(0.8); }
-}
-
-.activity-text {
-    white-space: nowrap;
-    animation: slideIn 0.5s ease;
 }
 
 @keyframes slideIn {

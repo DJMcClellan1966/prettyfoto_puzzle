@@ -94,12 +94,6 @@
             <section id="homeView" class="view">
                 <!-- ========== SLIDER GAME HOME ========== -->
                 <div id="sliderHome" class="game-home">
-                    <!-- Live Activity Feed -->
-                    <div id="liveActivityFeed" class="live-activity-feed">
-                        <span class="live-dot"></span>
-                        <span id="activityText" class="activity-text">Loading...</span>
-                    </div>
-
                     <!-- Personalized Welcome -->
                     <div class="personalized-welcome">
                         <h1 id="welcomeTitle">Welcome!</h1>
@@ -532,7 +526,6 @@
                     </div>
                     
                     <div class="soul-share">
-                        <button id="shareSoulBtn" class="share-btn primary">📤 Share My Result</button>
                         <button id="retakeSoulBtn" class="share-btn">🔄 Retake Quiz</button>
                     </div>
                 </div>
@@ -574,7 +567,6 @@
                     
                     <div class="frame-actions">
                         <button id="downloadFrameBtn" class="share-btn">📥 Save Image</button>
-                        <button id="shareFrameBtn" class="share-btn primary">📤 Share</button>
                     </div>
                     
                     <p class="frame-cta">
@@ -736,29 +728,6 @@
             </div>
         </div>
 
-        <!-- Video Export Modal -->
-        <div id="videoModal" class="modal hidden">
-            <div class="modal-content video-modal">
-                <button id="closeVideoModal" class="close-btn">×</button>
-                <h2>🎬 Share Your Win!</h2>
-                <p class="video-subtitle">Download a video to share on TikTok, Reels & Shorts</p>
-                
-                <div class="video-preview">
-                    <canvas id="videoCanvas" width="540" height="960"></canvas>
-                </div>
-                
-                <div class="video-actions">
-                    <button id="generateVideoBtn" class="play-daily-btn">🎬 Generate Video</button>
-                    <button id="downloadVideoBtn" class="play-daily-btn hidden">📥 Download Video</button>
-                </div>
-                
-                <div class="video-tips">
-                    <p>📱 Perfect for: TikTok, Instagram Reels, YouTube Shorts</p>
-                    <p>🏷️ Use hashtags: #puzzlegame #naturelovers #satisfying</p>
-                </div>
-            </div>
-        </div>
-
         <!-- Spin Wheel Modal -->
         <div id="spinModal" class="modal hidden">
             <div class="modal-content spin-modal">
@@ -870,7 +839,6 @@
                 <div id="todayResult" class="today-result hidden">
                     <h3>Today's Result</h3>
                     <p id="todayResultText"></p>
-                    <button id="shareBtn" class="share-btn">📤 Share Result</button>
                 </div>
                 
                 <!-- Analytics Section (Owner Insights) -->
@@ -920,21 +888,9 @@
                     </div>
                 </div>
                 
-                <!-- Share Section -->
+                <!-- See Story (non-social) -->
                 <div id="shareSection" class="share-section">
-                    <div class="share-card-preview">
-                        <canvas id="shareCardCanvas" width="400" height="500"></canvas>
-                    </div>
-                    <div class="share-buttons">
-                        <button id="downloadCardBtn" class="share-btn">📥 Save Image</button>
-                        <button id="shareCardBtn" class="share-btn primary">📤 Share</button>
-                    </div>
-                    <div class="extra-share-buttons">
-                        <button id="createVideoBtn" class="share-extra-btn">🎬 Create Video</button>
-                        <button id="viewStoryBtn" class="share-extra-btn">📖 See Story</button>
-                    </div>
-                    <button id="copyTextBtn" class="share-text-btn">📋 Copy as Text</button>
-                    <p id="copiedMsg" class="copied-msg hidden">Copied!</p>
+                    <button id="viewStoryBtn" class="share-extra-btn">📖 See Story</button>
                 </div>
 
                 <!-- Shop CTA - Always visible -->

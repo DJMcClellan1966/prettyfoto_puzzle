@@ -408,47 +408,6 @@ function isFavorite(puzzleId) {
     return userPrefs.favoriteImages.includes(puzzleId);
 }
 
-// ============ LIVE ACTIVITY FEED ============
-const ACTIVITY_MESSAGES = [
-    { template: "{{name}} in {{city}} just solved the daily puzzle! 🎉", type: "solve" },
-    { template: "{{name}} completed the {{category}} collection! 🏆", type: "collection" },
-    { template: "{{count}} people are playing right now 🎮", type: "count" },
-    { template: "{{name}} got a perfect score on Zoom! ⭐", type: "zoom" },
-    { template: "{{name}} discovered they're a {{soul}}! ✨", type: "soul" },
-    { template: "{{name}} just won {{prize}} on the spin wheel! 🎡", type: "spin" },
-    { template: "{{name}} shared their {{category}} frame! 📸", type: "frame" }
-];
-
-const FAKE_NAMES = ["Emma", "Liam", "Olivia", "Noah", "Ava", "Oliver", "Sophia", "James", "Isabella", "William", "Mia", "Benjamin", "Charlotte", "Lucas", "Amelia", "Henry", "Harper", "Alexander", "Evelyn", "Michael"];
-const FAKE_CITIES = ["London", "New York", "Sydney", "Toronto", "Dublin", "Austin", "Seattle", "Denver", "Miami", "Chicago", "Portland", "Boston", "Paris", "Berlin", "Tokyo"];
-const SOUL_TYPES = ["Dreamer 🦋", "Explorer 🏔️", "Nurturer 🌸", "Free Spirit 🐴"];
-const PRIZES = ["15% off", "20% off", "a free frame", "bonus XP"];
-
-function startLiveActivityFeed() {
-    updateActivityFeed();
-    setInterval(updateActivityFeed, 5000 + Math.random() * 5000);
-}
-
-function updateActivityFeed() {
-    const textEl = document.getElementById('activityText');
-    if (!textEl) return;
-    
-    const msg = ACTIVITY_MESSAGES[Math.floor(Math.random() * ACTIVITY_MESSAGES.length)];
-    let text = msg.template;
-    
-    text = text.replace('{{name}}', FAKE_NAMES[Math.floor(Math.random() * FAKE_NAMES.length)]);
-    text = text.replace('{{city}}', FAKE_CITIES[Math.floor(Math.random() * FAKE_CITIES.length)]);
-    text = text.replace('{{category}}', ['Butterfly', 'Flower', 'Horse', 'Landscape'][Math.floor(Math.random() * 4)]);
-    text = text.replace('{{count}}', Math.floor(Math.random() * 200 + 50));
-    text = text.replace('{{soul}}', SOUL_TYPES[Math.floor(Math.random() * SOUL_TYPES.length)]);
-    text = text.replace('{{prize}}', PRIZES[Math.floor(Math.random() * PRIZES.length)]);
-    
-    textEl.style.animation = 'none';
-    textEl.offsetHeight; // Trigger reflow
-    textEl.style.animation = 'slideIn 0.5s ease';
-    textEl.textContent = text;
-}
-
 // ============ COLLECTIONS ============
 const COLLECTIONS = {
     butterflies: {
@@ -961,236 +920,6 @@ function setupStoryModal() {
     };
 }
 
-// ============ VIDEO GENERATION ============
-let videoState = {
-    puzzle: null,
-    time: 0,
-    moves: 0,
-    frames: [],
-    generating: false
-};
-
-function setupVideoModal() {
-    document.getElementById('closeVideoModal').onclick = () => {
-        document.getElementById('videoModal').classList.add('hidden');
-    };
-    document.getElementById('videoModal').onclick = (e) => {
-        if (e.target.id === 'videoModal') {
-            document.getElementById('videoModal').classList.add('hidden');
-        }
-    };
-    
-    document.getElementById('generateVideoBtn').onclick = generateVideo;
-    document.getElementById('downloadVideoBtn').onclick = downloadVideo;
-    
-    // Create Video button in completion modal
-    document.getElementById('createVideoBtn').onclick = () => {
-        openVideoModal();
-    };
-}
-
-function openVideoModal() {
-    playSound('click');
-    videoState.puzzle = currentPuzzle;
-    videoState.time = seconds;
-    videoState.moves = moves;
-    
-    document.getElementById('videoModal').classList.remove('hidden');
-    document.getElementById('generateVideoBtn').classList.remove('hidden');
-    document.getElementById('downloadVideoBtn').classList.add('hidden');
-    
-    // Draw preview frame
-    drawVideoPreview();
-}
-
-function drawVideoPreview() {
-    const canvas = document.getElementById('videoCanvas');
-    const ctx = canvas.getContext('2d');
-    const width = 540;
-    const height = 960;
-    
-    // Background gradient
-    const gradient = ctx.createLinearGradient(0, 0, width, height);
-    gradient.addColorStop(0, '#667eea');
-    gradient.addColorStop(1, '#764ba2');
-    ctx.fillStyle = gradient;
-    ctx.fillRect(0, 0, width, height);
-    
-    // Preview text
-    ctx.fillStyle = 'white';
-    ctx.font = 'bold 24px Inter';
-    ctx.textAlign = 'center';
-    ctx.fillText('Click Generate to create', width/2, height/2 - 20);
-    ctx.fillText('your share video!', width/2, height/2 + 20);
-}
-
-async function generateVideo() {
-    if (videoState.generating) return;
-    
-    playSound('click');
-    videoState.generating = true;
-    
-    const btn = document.getElementById('generateVideoBtn');
-    btn.textContent = 'Generating...';
-    btn.disabled = true;
-    
-    const canvas = document.getElementById('videoCanvas');
-    const ctx = canvas.getContext('2d');
-    const width = 540;
-    const height = 960;
-    
-    // Load puzzle image
-    const img = new Image();
-    img.crossOrigin = 'anonymous';
-    
-    img.onload = async () => {
-        // Create video frames
-        const frames = [];
-        const totalFrames = 60; // 2 seconds at 30fps
-        
-        for (let i = 0; i < totalFrames; i++) {
-            drawVideoFrame(ctx, width, height, img, i, totalFrames);
-            // Capture frame
-            frames.push(canvas.toDataURL('image/png'));
-            
-            // Update progress
-            if (i % 10 === 0) {
-                await new Promise(r => setTimeout(r, 10));
-            }
-        }
-        
-        videoState.frames = frames;
-        videoState.generating = false;
-        
-        btn.classList.add('hidden');
-        document.getElementById('downloadVideoBtn').classList.remove('hidden');
-        
-        // Draw final frame
-        drawVideoFrame(ctx, width, height, img, totalFrames - 1, totalFrames);
-    };
-    
-    img.onerror = () => {
-        videoState.generating = false;
-        btn.textContent = '🎬 Generate Video';
-        btn.disabled = false;
-        alert('Could not load image. Please try again.');
-    };
-    
-    img.src = videoState.puzzle.image;
-}
-
-function drawVideoFrame(ctx, width, height, img, frame, totalFrames) {
-    const progress = frame / totalFrames;
-    
-    // Background gradient
-    const gradient = ctx.createLinearGradient(0, 0, width, height);
-    gradient.addColorStop(0, '#667eea');
-    gradient.addColorStop(1, '#764ba2');
-    ctx.fillStyle = gradient;
-    ctx.fillRect(0, 0, width, height);
-    
-    // Animated particles
-    ctx.fillStyle = 'rgba(255,255,255,0.1)';
-    for (let i = 0; i < 20; i++) {
-        const x = (i * 97 + frame * 3) % width;
-        const y = (i * 73 + frame * 2) % height;
-        const size = 10 + (i % 5) * 10;
-        ctx.beginPath();
-        ctx.arc(x, y, size, 0, Math.PI * 2);
-        ctx.fill();
-    }
-    
-    // Header
-    ctx.fillStyle = 'white';
-    ctx.font = 'bold 32px "Playfair Display"';
-    ctx.textAlign = 'center';
-    ctx.fillText('🌸 PrettyFoto', width/2, 80);
-    
-    // "SOLVED!" text with animation
-    const scale = 0.8 + Math.sin(progress * Math.PI * 2) * 0.1;
-    ctx.save();
-    ctx.translate(width/2, 150);
-    ctx.scale(scale, scale);
-    ctx.font = 'bold 48px Inter';
-    ctx.fillText('✨ SOLVED! ✨', 0, 0);
-    ctx.restore();
-    
-    // Image with scale animation
-    const imgSize = 350;
-    const imgScale = progress < 0.3 ? 0.5 + (progress / 0.3) * 0.5 : 1;
-    const scaledSize = imgSize * imgScale;
-    const imgX = (width - scaledSize) / 2;
-    const imgY = 200 + (imgSize - scaledSize) / 2;
-    
-    // Image shadow
-    ctx.fillStyle = 'rgba(0,0,0,0.3)';
-    ctx.beginPath();
-    ctx.roundRect(imgX + 5, imgY + 5, scaledSize, scaledSize, 20);
-    ctx.fill();
-    
-    // Image
-    ctx.save();
-    ctx.beginPath();
-    ctx.roundRect(imgX, imgY, scaledSize, scaledSize, 20);
-    ctx.clip();
-    ctx.drawImage(img, imgX, imgY, scaledSize, scaledSize);
-    ctx.restore();
-    
-    // Title
-    ctx.font = 'bold 28px "Playfair Display"';
-    ctx.fillText(videoState.puzzle.title, width/2, 600);
-    
-    // Stats
-    ctx.font = '24px Inter';
-    const statsY = 680;
-    ctx.fillText(`⏱️ ${formatTime(videoState.time)}  •  👆 ${videoState.moves} moves`, width/2, statsY);
-    
-    // Confetti (appears after 50% progress)
-    if (progress > 0.5) {
-        const confettiProgress = (progress - 0.5) * 2;
-        const colors = ['#f1c40f', '#e74c3c', '#3498db', '#2ecc71', '#9b59b6'];
-        for (let i = 0; i < 30; i++) {
-            ctx.fillStyle = colors[i % colors.length];
-            const cx = (i * 47) % width;
-            const cy = 100 + confettiProgress * (height - 200) * ((i % 5 + 5) / 10);
-            const csize = 8 + (i % 3) * 4;
-            ctx.fillRect(cx, cy, csize, csize * 0.5);
-        }
-    }
-    
-    // CTA
-    ctx.fillStyle = 'rgba(255,255,255,0.9)';
-    ctx.beginPath();
-    ctx.roundRect(width/2 - 140, height - 200, 280, 50, 25);
-    ctx.fill();
-    
-    ctx.fillStyle = '#667eea';
-    ctx.font = 'bold 18px Inter';
-    ctx.fillText('Play at prettyfoto.com', width/2, height - 168);
-    
-    // Hashtags
-    ctx.fillStyle = 'rgba(255,255,255,0.7)';
-    ctx.font = '14px Inter';
-    ctx.fillText('#puzzlegame #naturelovers #satisfying', width/2, height - 100);
-    ctx.fillText('#' + videoState.puzzle.category + ' #prettyfoto', width/2, height - 75);
-}
-
-function downloadVideo() {
-    playSound('click');
-    
-    // For browsers that don't support video recording, download as animated GIF frames
-    // or as a single image. In production, you'd use MediaRecorder API or a library
-    
-    // Simple solution: Download the final frame as an image
-    const canvas = document.getElementById('videoCanvas');
-    const link = document.createElement('a');
-    link.download = `prettyfoto-${videoState.puzzle.title.toLowerCase().replace(/\s+/g, '-')}.png`;
-    link.href = canvas.toDataURL('image/png');
-    link.click();
-    
-    // Show tip about screen recording
-    alert('Image saved! 💡 Tip: For a real video, use screen recording while playing the puzzle. The satisfying solve animation is perfect for TikTok!');
-}
 
 // ============ AUDIO ============
 let audioCtx = null;
@@ -1286,10 +1015,8 @@ document.addEventListener('DOMContentLoaded', () => {
     checkOnboarding();
     setupPWAInstall();
     updateSoundButton();
-    startLiveActivityFeed();
     setupSpinWheel();
     setupStoryModal();
-    setupVideoModal();
     setupZenMode();
     setupArtistProfile();
 });
@@ -1420,12 +1147,6 @@ function setupEventListeners() {
         gameStarted = false;
         updateGameStats();
     });
-    
-    // Share buttons
-    document.getElementById('shareBtn').addEventListener('click', shareCard);
-    document.getElementById('downloadCardBtn').addEventListener('click', downloadShareCard);
-    document.getElementById('shareCardBtn').addEventListener('click', shareCard);
-    document.getElementById('copyTextBtn').addEventListener('click', copyShareText);
     
     // Completion modal buttons
     document.getElementById('playAgainBtn').addEventListener('click', () => {
@@ -1947,18 +1668,6 @@ function puzzleComplete() {
         
         saveStats();
         
-        // Generate share card
-        generateShareCard(
-            'slider',
-            getDailyPuzzleNumber(),
-            currentPuzzle.title,
-            rating,
-            formatTime(seconds),
-            `${moves} moves`,
-            currentPuzzle.image,
-            stats.currentStreak
-        );
-        
         // Show promo after first completion
         if (!stats.hasSeenPromo && stats.played === 1) {
             setTimeout(() => emailModal.classList.remove('hidden'), 2000);
@@ -1968,18 +1677,6 @@ function puzzleComplete() {
         document.getElementById('playAgainBtn').textContent = 'Play Again';
         stats.galleryPlays++; // Track gallery completions
         saveStats();
-        
-        // Generate share card for gallery puzzles too
-        generateShareCard(
-            'slider',
-            currentPuzzle.id,
-            currentPuzzle.title,
-            rating,
-            formatTime(seconds),
-            `${moves} moves`,
-            currentPuzzle.image,
-            0
-        );
     }
     
     renderCompletedBoard();
@@ -2119,261 +1816,6 @@ function showStats() {
     document.getElementById('analyticsInsight').textContent = insight;
     
     statsModal.classList.remove('hidden');
-}
-
-// ============ SHARE CARDS ============
-let shareCardData = {
-    gameType: 'slider',
-    puzzleNum: 1,
-    title: '',
-    rating: '',
-    stat1: '',
-    stat2: '',
-    imageUrl: '',
-    streak: 0
-};
-
-function generateShareCard(gameType, puzzleNum, title, rating, stat1, stat2, imageUrl, streak = 0) {
-    shareCardData = { gameType, puzzleNum, title, rating, stat1, stat2, imageUrl, streak };
-    
-    const canvas = document.getElementById('shareCardCanvas');
-    const ctx = canvas.getContext('2d');
-    
-    // Card dimensions
-    const width = 400;
-    const height = 500;
-    canvas.width = width;
-    canvas.height = height;
-    
-    // Background gradient
-    const gradient = ctx.createLinearGradient(0, 0, width, height);
-    gradient.addColorStop(0, '#fff5f3');
-    gradient.addColorStop(1, '#ffeee8');
-    ctx.fillStyle = gradient;
-    ctx.fillRect(0, 0, width, height);
-    
-    // Header bar
-    ctx.fillStyle = '#e17055';
-    ctx.fillRect(0, 0, width, 60);
-    
-    // Logo text
-    ctx.fillStyle = 'white';
-    ctx.font = 'bold 20px "Playfair Display", serif';
-    ctx.textAlign = 'left';
-    ctx.fillText('🌸 PrettyFoto', 20, 38);
-    
-    // Game type badge
-    const gameEmoji = {
-        'slider': '🧩',
-        'zoom': '🔍',
-        'ranking': '❤️',
-        'shapeku': '🎨',
-        'wordsearch': '🔤'
-    }[gameType] || '🎮';
-    
-    ctx.textAlign = 'right';
-    ctx.font = '16px Inter, sans-serif';
-    ctx.fillText(`${gameEmoji} #${puzzleNum}`, width - 20, 38);
-    
-    // Image area with blur effect (spoiler protection)
-    const imgY = 80;
-    const imgSize = 200;
-    const imgX = (width - imgSize) / 2;
-    
-    // Draw blurred/styled image background
-    ctx.fillStyle = '#e0e0e0';
-    ctx.beginPath();
-    ctx.roundRect(imgX - 10, imgY - 10, imgSize + 20, imgSize + 20, 12);
-    ctx.fill();
-    
-    // Load and draw image
-    const img = new Image();
-    img.crossOrigin = 'anonymous';
-    img.onload = () => {
-        // Draw image with circular mask
-        ctx.save();
-        ctx.beginPath();
-        ctx.roundRect(imgX, imgY, imgSize, imgSize, 8);
-        ctx.clip();
-        
-        // Apply slight blur effect by drawing multiple offset copies
-        ctx.filter = 'blur(3px)';
-        ctx.drawImage(img, imgX, imgY, imgSize, imgSize);
-        ctx.filter = 'none';
-        
-        // Overlay for spoiler protection
-        ctx.fillStyle = 'rgba(255,255,255,0.4)';
-        ctx.fillRect(imgX, imgY, imgSize, imgSize);
-        
-        ctx.restore();
-        
-        // "Solved!" badge on image
-        ctx.fillStyle = '#27ae60';
-        ctx.beginPath();
-        ctx.roundRect(imgX + imgSize/2 - 40, imgY + imgSize - 30, 80, 35, 20);
-        ctx.fill();
-        ctx.fillStyle = 'white';
-        ctx.font = 'bold 14px Inter, sans-serif';
-        ctx.textAlign = 'center';
-        ctx.fillText('✓ Solved!', imgX + imgSize/2, imgY + imgSize - 7);
-        
-        finishShareCard(ctx, width, height, imgY, imgSize);
-    };
-    img.onerror = () => {
-        // If image fails, draw placeholder
-        ctx.fillStyle = '#ccc';
-        ctx.beginPath();
-        ctx.roundRect(imgX, imgY, imgSize, imgSize, 8);
-        ctx.fill();
-        ctx.fillStyle = '#999';
-        ctx.font = '60px Inter';
-        ctx.textAlign = 'center';
-        ctx.fillText('🖼️', imgX + imgSize/2, imgY + imgSize/2 + 20);
-        
-        finishShareCard(ctx, width, height, imgY, imgSize);
-    };
-    img.src = imageUrl;
-}
-
-function finishShareCard(ctx, width, height, imgY, imgSize) {
-    const { title, rating, stat1, stat2, streak } = shareCardData;
-    
-    // Title
-    ctx.fillStyle = '#2d3436';
-    ctx.font = 'bold 22px "Playfair Display", serif';
-    ctx.textAlign = 'center';
-    ctx.fillText(title, width/2, imgY + imgSize + 45);
-    
-    // Rating
-    ctx.fillStyle = '#e17055';
-    ctx.font = 'bold 28px Inter, sans-serif';
-    ctx.fillText(rating, width/2, imgY + imgSize + 85);
-    
-    // Stats row
-    ctx.fillStyle = '#636e72';
-    ctx.font = '16px Inter, sans-serif';
-    const statsY = imgY + imgSize + 120;
-    
-    // Draw stats in boxes
-    const boxWidth = 100;
-    const boxGap = 20;
-    const startX = (width - (boxWidth * 2 + boxGap)) / 2;
-    
-    // Stat 1 box
-    ctx.fillStyle = 'white';
-    ctx.beginPath();
-    ctx.roundRect(startX, statsY, boxWidth, 50, 8);
-    ctx.fill();
-    ctx.strokeStyle = '#ddd';
-    ctx.lineWidth = 1;
-    ctx.stroke();
-    
-    ctx.fillStyle = '#2d3436';
-    ctx.font = 'bold 18px Inter';
-    ctx.fillText(stat1, startX + boxWidth/2, statsY + 32);
-    
-    // Stat 2 box
-    ctx.fillStyle = 'white';
-    ctx.beginPath();
-    ctx.roundRect(startX + boxWidth + boxGap, statsY, boxWidth, 50, 8);
-    ctx.fill();
-    ctx.stroke();
-    
-    ctx.fillStyle = '#2d3436';
-    ctx.fillText(stat2, startX + boxWidth + boxGap + boxWidth/2, statsY + 32);
-    
-    // Streak (if applicable)
-    if (streak > 0) {
-        ctx.fillStyle = '#f39c12';
-        ctx.font = '16px Inter';
-        ctx.fillText(`🔥 ${streak} day streak`, width/2, statsY + 75);
-    }
-    
-    // Footer CTA
-    ctx.fillStyle = '#e17055';
-    ctx.beginPath();
-    ctx.roundRect(50, height - 60, width - 100, 40, 20);
-    ctx.fill();
-    
-    ctx.fillStyle = 'white';
-    ctx.font = 'bold 14px Inter';
-    ctx.fillText('Play at prettyfoto.com/puzzles', width/2, height - 34);
-}
-
-function downloadShareCard() {
-    playSound('click');
-    const canvas = document.getElementById('shareCardCanvas');
-    const link = document.createElement('a');
-    link.download = `prettyfoto-${shareCardData.gameType}-${shareCardData.puzzleNum}.png`;
-    link.href = canvas.toDataURL('image/png');
-    link.click();
-}
-
-async function shareCard() {
-    playSound('click');
-    const canvas = document.getElementById('shareCardCanvas');
-    
-    try {
-        // Try to share as image
-        const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
-        const file = new File([blob], 'prettyfoto-result.png', { type: 'image/png' });
-        
-        if (navigator.canShare && navigator.canShare({ files: [file] })) {
-            await navigator.share({
-                files: [file],
-                title: 'PrettyFoto Games',
-                text: getShareText()
-            });
-        } else if (navigator.share) {
-            // Fall back to text only
-            await navigator.share({ text: getShareText() });
-        } else {
-            // Fall back to download
-            downloadShareCard();
-        }
-    } catch (err) {
-        // If sharing fails, download instead
-        downloadShareCard();
-    }
-}
-
-function getShareText() {
-    const { gameType, puzzleNum, rating, stat1, stat2, streak } = shareCardData;
-    const gameNames = {
-        'slider': 'Puzzle',
-        'zoom': 'Zoom',
-        'ranking': 'Ranking',
-        'shapeku': 'Shapeku',
-        'wordsearch': 'Words'
-    };
-    
-    let text = `🌸 PrettyFoto ${gameNames[gameType]} #${puzzleNum}\n\n${rating}\n📊 ${stat1} | ${stat2}`;
-    if (streak > 0) text += `\n🔥 ${streak} day streak`;
-    text += '\n\nPlay at prettyfoto.com/puzzles';
-    return text;
-}
-
-function copyShareText() {
-    playSound('click');
-    const text = getShareText();
-    navigator.clipboard.writeText(text).then(() => {
-        const msg = document.getElementById('copiedMsg');
-        msg.classList.remove('hidden');
-        setTimeout(() => msg.classList.add('hidden'), 2000);
-    });
-}
-
-// Legacy function for backward compatibility
-function shareResult() {
-    copyShareText();
-}
-
-function copyToClipboard(text) {
-    navigator.clipboard.writeText(text).then(() => {
-        const msg = document.getElementById('copiedMsg');
-        msg.classList.remove('hidden');
-        setTimeout(() => msg.classList.add('hidden'), 2000);
-    });
 }
 
 function showHint() {
@@ -2777,21 +2219,7 @@ function zoomComplete() {
         document.getElementById('completionShopLink').href = zoomState.puzzle.shopUrl;
         document.getElementById('completionGalleryLink').href = zoomState.puzzle.galleryUrl;
         
-        // Always show share section
         document.getElementById('shareSection').classList.remove('hidden');
-        
-        // Generate share card
-        generateShareCard(
-            'zoom',
-            zoomState.isDaily ? getDailyPuzzleNumber() : zoomState.puzzle.id,
-            zoomState.puzzle.title,
-            rating,
-            `Zoom ${zoomState.currentZoom}/5`,
-            `${zoomState.guessesUsed} guesses`,
-            zoomState.puzzle.image,
-            0
-        );
-        
         completionModal.classList.remove('hidden');
         
         document.getElementById('playAgainBtn').onclick = () => {
@@ -2866,7 +2294,6 @@ function setupPersonalityHome() {
         document.getElementById('personalityView').classList.add('hidden');
         document.getElementById('homeView').classList.remove('hidden');
     };
-    document.getElementById('shareSoulBtn').onclick = shareSoulResult;
     document.getElementById('retakeSoulBtn').onclick = () => {
         document.getElementById('personalityResultView').classList.add('hidden');
         startPersonality();
@@ -3077,45 +2504,6 @@ function adjustColor(hex, amount) {
     return `#${(r << 16 | g << 8 | b).toString(16).padStart(6, '0')}`;
 }
 
-function shareSoulResult() {
-    playSound('click');
-    
-    const result = personalityState.result;
-    if (!result) return;
-    
-    // Generate share card for personality
-    const matchImg = result.matchingImages[0];
-    generateShareCard(
-        'personality',
-        Math.floor(Math.random() * 1000),
-        result.title,
-        `${result.emoji} ${result.title}`,
-        result.traits.slice(0, 2).join(' • '),
-        'Nature Soul Quiz',
-        matchImg ? matchImg.image : puzzles[0].image,
-        0
-    );
-    
-    // Show completion modal with share options
-    document.getElementById('completedImage').src = matchImg ? matchImg.image : puzzles[0].image;
-    document.getElementById('finalTime').textContent = `${result.emoji} ${result.title}`;
-    document.getElementById('finalMoves').textContent = result.traits.slice(0, 2).join(' • ');
-    document.getElementById('shareSection').classList.remove('hidden');
-    
-    completionModal.classList.remove('hidden');
-    
-    document.getElementById('playAgainBtn').onclick = () => {
-        completionModal.classList.add('hidden');
-        startPersonality();
-    };
-    
-    document.getElementById('newPuzzleBtn').onclick = () => {
-        completionModal.classList.add('hidden');
-        document.getElementById('personalityResultView').classList.add('hidden');
-        document.getElementById('homeView').classList.remove('hidden');
-    };
-}
-
 // ============================================================
 // ==================== PHOTO FRAME ===========================
 // ============================================================
@@ -3199,7 +2587,6 @@ function setupFrameHome() {
         document.getElementById('homeView').classList.remove('hidden');
     };
     document.getElementById('downloadFrameBtn').onclick = downloadFrame;
-    document.getElementById('shareFrameBtn').onclick = shareFrame;
     
     // Style buttons
     document.querySelectorAll('.frame-style-btn').forEach(btn => {
@@ -3425,33 +2812,6 @@ function downloadFrame() {
     link.download = `prettyfoto-${frameState.currentStyle}-frame.png`;
     link.href = canvas.toDataURL('image/png');
     link.click();
-}
-
-async function shareFrame() {
-    playSound('click');
-    const canvas = document.getElementById('frameCanvas');
-    
-    try {
-        const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
-        const file = new File([blob], 'prettyfoto-frame.png', { type: 'image/png' });
-        
-        if (navigator.canShare && navigator.canShare({ files: [file] })) {
-            await navigator.share({
-                files: [file],
-                title: 'My PrettyFoto Frame',
-                text: `Check out my ${FRAME_STYLES[frameState.currentStyle].name} nature frame! 🌸 prettyfoto.com`
-            });
-        } else if (navigator.share) {
-            await navigator.share({
-                title: 'My PrettyFoto Frame',
-                text: `Check out my ${FRAME_STYLES[frameState.currentStyle].name} nature frame! 🌸 prettyfoto.com`
-            });
-        } else {
-            downloadFrame();
-        }
-    } catch (err) {
-        downloadFrame();
-    }
 }
 
 // Camera functions
@@ -3853,19 +3213,6 @@ function wordsearchComplete() {
     document.getElementById('completionShopLink').href = wsState.puzzle.shopUrl;
     document.getElementById('completionGalleryLink').href = wsState.puzzle.galleryUrl;
     document.getElementById('shareSection').classList.remove('hidden');
-    
-    // Generate share card
-    generateShareCard(
-        'wordsearch',
-        wsState.puzzle.id,
-        wsState.puzzle.title,
-        '🔤 All words found!',
-        `${wsState.foundWords.length} words`,
-        wsState.puzzle.category,
-        wsState.puzzle.image,
-        0
-    );
-    
     setTimeout(() => completionModal.classList.remove('hidden'), 500);
     
     document.getElementById('playAgainBtn').onclick = () => {
