@@ -1106,6 +1106,54 @@ body {
     margin-bottom: 20px;
 }
 
+.share-card-preview {
+    background: var(--bg);
+    border-radius: var(--radius);
+    padding: 12px;
+    margin-bottom: 12px;
+    display: flex;
+    justify-content: center;
+}
+
+.share-card-preview canvas {
+    max-width: 100%;
+    height: auto;
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow);
+}
+
+.share-buttons {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+
+.share-buttons .share-btn {
+    flex: 1;
+    padding: 12px 16px;
+}
+
+.share-btn.primary {
+    background: var(--accent);
+}
+
+.share-text-btn {
+    width: 100%;
+    padding: 10px;
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-size: 13px;
+    color: var(--text-dim);
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.share-text-btn:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+}
+
 .copied-msg {
     margin-top: 8px;
     color: var(--success);

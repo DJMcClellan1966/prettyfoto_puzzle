@@ -370,8 +370,10 @@ function setupEventListeners() {
     });
     
     // Share buttons
-    document.getElementById('shareBtn').addEventListener('click', shareResult);
-    document.getElementById('shareResultBtn').addEventListener('click', shareResult);
+    document.getElementById('shareBtn').addEventListener('click', shareCard);
+    document.getElementById('downloadCardBtn').addEventListener('click', downloadShareCard);
+    document.getElementById('shareCardBtn').addEventListener('click', shareCard);
+    document.getElementById('copyTextBtn').addEventListener('click', copyShareText);
     
     // Completion modal buttons
     document.getElementById('playAgainBtn').addEventListener('click', () => {
@@ -844,6 +846,12 @@ function puzzleComplete() {
         }
     }
     
+    // Generate rating
+    const rating = moves <= 50 ? '🏆 Perfect!' :
+                   moves <= 80 ? '⭐ Excellent!' :
+                   moves <= 120 ? '👍 Great!' :
+                   moves <= 180 ? '✅ Good!' : '🎉 Solved!';
+    
     if (isDaily) {
         document.getElementById('shareSection').classList.remove('hidden');
         document.getElementById('playAgainBtn').textContent = 'Back Home';
@@ -870,15 +878,39 @@ function puzzleComplete() {
         
         saveStats();
         
+        // Generate share card
+        generateShareCard(
+            'slider',
+            getDailyPuzzleNumber(),
+            currentPuzzle.title,
+            rating,
+            formatTime(seconds),
+            `${moves} moves`,
+            currentPuzzle.image,
+            stats.currentStreak
+        );
+        
         // Show promo after first completion
         if (!stats.hasSeenPromo && stats.played === 1) {
             setTimeout(() => emailModal.classList.remove('hidden'), 2000);
         }
     } else {
-        document.getElementById('shareSection').classList.add('hidden');
+        document.getElementById('shareSection').classList.remove('hidden');
         document.getElementById('playAgainBtn').textContent = 'Play Again';
         stats.galleryPlays++; // Track gallery completions
         saveStats();
+        
+        // Generate share card for gallery puzzles too
+        generateShareCard(
+            'slider',
+            currentPuzzle.id,
+            currentPuzzle.title,
+            rating,
+            formatTime(seconds),
+            `${moves} moves`,
+            currentPuzzle.image,
+            0
+        );
     }
     
     renderCompletedBoard();
@@ -1020,22 +1052,251 @@ function showStats() {
     statsModal.classList.remove('hidden');
 }
 
-// ============ SHARING ============
-function shareResult() {
-    playSound('click');
-    const puzzleNum = getDailyPuzzleNumber();
-    const rating = stats.todayMoves <= 50 ? '🏆 Perfect!' :
-                   stats.todayMoves <= 80 ? '⭐ Excellent!' :
-                   stats.todayMoves <= 120 ? '👍 Great!' :
-                   stats.todayMoves <= 180 ? '✅ Good!' : '🎉 Solved!';
+// ============ SHARE CARDS ============
+let shareCardData = {
+    gameType: 'slider',
+    puzzleNum: 1,
+    title: '',
+    rating: '',
+    stat1: '',
+    stat2: '',
+    imageUrl: '',
+    streak: 0
+};
+
+function generateShareCard(gameType, puzzleNum, title, rating, stat1, stat2, imageUrl, streak = 0) {
+    shareCardData = { gameType, puzzleNum, title, rating, stat1, stat2, imageUrl, streak };
     
-    const shareText = `🌸 PrettyFoto Puzzle #${puzzleNum}\n\n${rating}\n⏱️ ${formatTime(stats.todayTime)}\n👆 ${stats.todayMoves} moves\n🔥 ${stats.currentStreak} day streak\n\nPlay at prettyfoto.com/puzzles`;
+    const canvas = document.getElementById('shareCardCanvas');
+    const ctx = canvas.getContext('2d');
     
-    if (navigator.share) {
-        navigator.share({ text: shareText }).catch(() => copyToClipboard(shareText));
-    } else {
-        copyToClipboard(shareText);
+    // Card dimensions
+    const width = 400;
+    const height = 500;
+    canvas.width = width;
+    canvas.height = height;
+    
+    // Background gradient
+    const gradient = ctx.createLinearGradient(0, 0, width, height);
+    gradient.addColorStop(0, '#fff5f3');
+    gradient.addColorStop(1, '#ffeee8');
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, width, height);
+    
+    // Header bar
+    ctx.fillStyle = '#e17055';
+    ctx.fillRect(0, 0, width, 60);
+    
+    // Logo text
+    ctx.fillStyle = 'white';
+    ctx.font = 'bold 20px "Playfair Display", serif';
+    ctx.textAlign = 'left';
+    ctx.fillText('🌸 PrettyFoto', 20, 38);
+    
+    // Game type badge
+    const gameEmoji = {
+        'slider': '🧩',
+        'zoom': '🔍',
+        'ranking': '❤️',
+        'shapeku': '🎨',
+        'wordsearch': '🔤'
+    }[gameType] || '🎮';
+    
+    ctx.textAlign = 'right';
+    ctx.font = '16px Inter, sans-serif';
+    ctx.fillText(`${gameEmoji} #${puzzleNum}`, width - 20, 38);
+    
+    // Image area with blur effect (spoiler protection)
+    const imgY = 80;
+    const imgSize = 200;
+    const imgX = (width - imgSize) / 2;
+    
+    // Draw blurred/styled image background
+    ctx.fillStyle = '#e0e0e0';
+    ctx.beginPath();
+    ctx.roundRect(imgX - 10, imgY - 10, imgSize + 20, imgSize + 20, 12);
+    ctx.fill();
+    
+    // Load and draw image
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = () => {
+        // Draw image with circular mask
+        ctx.save();
+        ctx.beginPath();
+        ctx.roundRect(imgX, imgY, imgSize, imgSize, 8);
+        ctx.clip();
+        
+        // Apply slight blur effect by drawing multiple offset copies
+        ctx.filter = 'blur(3px)';
+        ctx.drawImage(img, imgX, imgY, imgSize, imgSize);
+        ctx.filter = 'none';
+        
+        // Overlay for spoiler protection
+        ctx.fillStyle = 'rgba(255,255,255,0.4)';
+        ctx.fillRect(imgX, imgY, imgSize, imgSize);
+        
+        ctx.restore();
+        
+        // "Solved!" badge on image
+        ctx.fillStyle = '#27ae60';
+        ctx.beginPath();
+        ctx.roundRect(imgX + imgSize/2 - 40, imgY + imgSize - 30, 80, 35, 20);
+        ctx.fill();
+        ctx.fillStyle = 'white';
+        ctx.font = 'bold 14px Inter, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('✓ Solved!', imgX + imgSize/2, imgY + imgSize - 7);
+        
+        finishShareCard(ctx, width, height, imgY, imgSize);
+    };
+    img.onerror = () => {
+        // If image fails, draw placeholder
+        ctx.fillStyle = '#ccc';
+        ctx.beginPath();
+        ctx.roundRect(imgX, imgY, imgSize, imgSize, 8);
+        ctx.fill();
+        ctx.fillStyle = '#999';
+        ctx.font = '60px Inter';
+        ctx.textAlign = 'center';
+        ctx.fillText('🖼️', imgX + imgSize/2, imgY + imgSize/2 + 20);
+        
+        finishShareCard(ctx, width, height, imgY, imgSize);
+    };
+    img.src = imageUrl;
+}
+
+function finishShareCard(ctx, width, height, imgY, imgSize) {
+    const { title, rating, stat1, stat2, streak } = shareCardData;
+    
+    // Title
+    ctx.fillStyle = '#2d3436';
+    ctx.font = 'bold 22px "Playfair Display", serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(title, width/2, imgY + imgSize + 45);
+    
+    // Rating
+    ctx.fillStyle = '#e17055';
+    ctx.font = 'bold 28px Inter, sans-serif';
+    ctx.fillText(rating, width/2, imgY + imgSize + 85);
+    
+    // Stats row
+    ctx.fillStyle = '#636e72';
+    ctx.font = '16px Inter, sans-serif';
+    const statsY = imgY + imgSize + 120;
+    
+    // Draw stats in boxes
+    const boxWidth = 100;
+    const boxGap = 20;
+    const startX = (width - (boxWidth * 2 + boxGap)) / 2;
+    
+    // Stat 1 box
+    ctx.fillStyle = 'white';
+    ctx.beginPath();
+    ctx.roundRect(startX, statsY, boxWidth, 50, 8);
+    ctx.fill();
+    ctx.strokeStyle = '#ddd';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+    
+    ctx.fillStyle = '#2d3436';
+    ctx.font = 'bold 18px Inter';
+    ctx.fillText(stat1, startX + boxWidth/2, statsY + 32);
+    
+    // Stat 2 box
+    ctx.fillStyle = 'white';
+    ctx.beginPath();
+    ctx.roundRect(startX + boxWidth + boxGap, statsY, boxWidth, 50, 8);
+    ctx.fill();
+    ctx.stroke();
+    
+    ctx.fillStyle = '#2d3436';
+    ctx.fillText(stat2, startX + boxWidth + boxGap + boxWidth/2, statsY + 32);
+    
+    // Streak (if applicable)
+    if (streak > 0) {
+        ctx.fillStyle = '#f39c12';
+        ctx.font = '16px Inter';
+        ctx.fillText(`🔥 ${streak} day streak`, width/2, statsY + 75);
     }
+    
+    // Footer CTA
+    ctx.fillStyle = '#e17055';
+    ctx.beginPath();
+    ctx.roundRect(50, height - 60, width - 100, 40, 20);
+    ctx.fill();
+    
+    ctx.fillStyle = 'white';
+    ctx.font = 'bold 14px Inter';
+    ctx.fillText('Play at prettyfoto.com/puzzles', width/2, height - 34);
+}
+
+function downloadShareCard() {
+    playSound('click');
+    const canvas = document.getElementById('shareCardCanvas');
+    const link = document.createElement('a');
+    link.download = `prettyfoto-${shareCardData.gameType}-${shareCardData.puzzleNum}.png`;
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+}
+
+async function shareCard() {
+    playSound('click');
+    const canvas = document.getElementById('shareCardCanvas');
+    
+    try {
+        // Try to share as image
+        const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+        const file = new File([blob], 'prettyfoto-result.png', { type: 'image/png' });
+        
+        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+            await navigator.share({
+                files: [file],
+                title: 'PrettyFoto Games',
+                text: getShareText()
+            });
+        } else if (navigator.share) {
+            // Fall back to text only
+            await navigator.share({ text: getShareText() });
+        } else {
+            // Fall back to download
+            downloadShareCard();
+        }
+    } catch (err) {
+        // If sharing fails, download instead
+        downloadShareCard();
+    }
+}
+
+function getShareText() {
+    const { gameType, puzzleNum, rating, stat1, stat2, streak } = shareCardData;
+    const gameNames = {
+        'slider': 'Puzzle',
+        'zoom': 'Zoom',
+        'ranking': 'Ranking',
+        'shapeku': 'Shapeku',
+        'wordsearch': 'Words'
+    };
+    
+    let text = `🌸 PrettyFoto ${gameNames[gameType]} #${puzzleNum}\n\n${rating}\n📊 ${stat1} | ${stat2}`;
+    if (streak > 0) text += `\n🔥 ${streak} day streak`;
+    text += '\n\nPlay at prettyfoto.com/puzzles';
+    return text;
+}
+
+function copyShareText() {
+    playSound('click');
+    const text = getShareText();
+    navigator.clipboard.writeText(text).then(() => {
+        const msg = document.getElementById('copiedMsg');
+        msg.classList.remove('hidden');
+        setTimeout(() => msg.classList.add('hidden'), 2000);
+    });
+}
+
+// Legacy function for backward compatibility
+function shareResult() {
+    copyShareText();
 }
 
 function copyToClipboard(text) {
@@ -1419,11 +1680,20 @@ function zoomComplete() {
         document.getElementById('completionShopLink').href = zoomState.puzzle.shopUrl;
         document.getElementById('completionGalleryLink').href = zoomState.puzzle.galleryUrl;
         
-        if (zoomState.isDaily) {
-            document.getElementById('shareSection').classList.remove('hidden');
-        } else {
-            document.getElementById('shareSection').classList.add('hidden');
-        }
+        // Always show share section
+        document.getElementById('shareSection').classList.remove('hidden');
+        
+        // Generate share card
+        generateShareCard(
+            'zoom',
+            zoomState.isDaily ? getDailyPuzzleNumber() : zoomState.puzzle.id,
+            zoomState.puzzle.title,
+            rating,
+            `Zoom ${zoomState.currentZoom}/5`,
+            `${zoomState.guessesUsed} guesses`,
+            zoomState.puzzle.image,
+            0
+        );
         
         completionModal.classList.remove('hidden');
         
@@ -1688,11 +1958,23 @@ function shapekuComplete() {
     const randomImg = shapekuState.images[Math.floor(Math.random() * shapekuState.images.length)];
     
     document.getElementById('completedImage').src = randomImg.image;
-    document.getElementById('finalTime').textContent = '-';
+    document.getElementById('finalTime').textContent = '🎨 Solved!';
     document.getElementById('finalMoves').textContent = shapekuState.size + '×' + shapekuState.size;
     document.getElementById('completionShopLink').href = randomImg.shopUrl;
     document.getElementById('completionGalleryLink').href = randomImg.galleryUrl;
-    document.getElementById('shareSection').classList.add('hidden');
+    document.getElementById('shareSection').classList.remove('hidden');
+    
+    // Generate share card
+    generateShareCard(
+        'shapeku',
+        Math.floor(Math.random() * 1000),
+        'Picture Sudoku',
+        '🎨 Solved!',
+        `${shapekuState.size}×${shapekuState.size}`,
+        'Grid complete',
+        randomImg.image,
+        0
+    );
     
     completionModal.classList.remove('hidden');
     
@@ -2028,11 +2310,23 @@ function wordsearchComplete() {
     showConfetti();
     
     document.getElementById('completedImage').src = wsState.puzzle.image;
-    document.getElementById('finalTime').textContent = '-';
+    document.getElementById('finalTime').textContent = '🔤 Found all!';
     document.getElementById('finalMoves').textContent = wsState.foundWords.length + ' words';
     document.getElementById('completionShopLink').href = wsState.puzzle.shopUrl;
     document.getElementById('completionGalleryLink').href = wsState.puzzle.galleryUrl;
-    document.getElementById('shareSection').classList.add('hidden');
+    document.getElementById('shareSection').classList.remove('hidden');
+    
+    // Generate share card
+    generateShareCard(
+        'wordsearch',
+        wsState.puzzle.id,
+        wsState.puzzle.title,
+        '🔤 All words found!',
+        `${wsState.foundWords.length} words`,
+        wsState.puzzle.category,
+        wsState.puzzle.image,
+        0
+    );
     
     setTimeout(() => completionModal.classList.remove('hidden'), 500);
     

@@ -514,10 +514,17 @@
                     </div>
                 </div>
                 
-                <!-- Share Section (Daily only) -->
-                <div id="shareSection" class="share-section hidden">
-                    <button id="shareResultBtn" class="share-btn large">📤 Share Result</button>
-                    <p id="copiedMsg" class="copied-msg hidden">Copied to clipboard!</p>
+                <!-- Share Section -->
+                <div id="shareSection" class="share-section">
+                    <div class="share-card-preview">
+                        <canvas id="shareCardCanvas" width="400" height="500"></canvas>
+                    </div>
+                    <div class="share-buttons">
+                        <button id="downloadCardBtn" class="share-btn">📥 Save Image</button>
+                        <button id="shareCardBtn" class="share-btn primary">📤 Share</button>
+                    </div>
+                    <button id="copyTextBtn" class="share-text-btn">📋 Copy as Text</button>
+                    <p id="copiedMsg" class="copied-msg hidden">Copied!</p>
                 </div>
 
                 <!-- Shop CTA - Always visible -->
