@@ -200,6 +200,202 @@ let sessionState = {
     sessionRecorded: false   // Whether we've recorded this session's behavior
 };
 
+// ============ PERSONALIZATION ============
+let userPrefs = {
+    // Category engagement (auto-tracked)
+    categoryPlays: {
+        butterflies: 0,
+        flowers: 0,
+        horses: 0,
+        landscapes: 0
+    },
+    // Game mode engagement
+    gamePlays: {
+        slider: 0,
+        zoom: 0,
+        auction: 0,
+        personality: 0,
+        frame: 0
+    },
+    // User's personality result
+    natureSoul: null, // 'dreamer', 'explorer', 'nurturer', 'freeSpirit'
+    // Favorites
+    favoriteImages: [],
+    // Visit tracking
+    visitCount: 0,
+    lastVisit: null,
+    // Preferred game mode
+    preferredGame: 'slider'
+};
+
+const PREFS_KEY = 'prettyfoto_prefs';
+
+function loadPrefs() {
+    const stored = localStorage.getItem(PREFS_KEY);
+    if (stored) {
+        const loaded = JSON.parse(stored);
+        userPrefs = { ...userPrefs, ...loaded };
+        // Ensure nested objects exist
+        userPrefs.categoryPlays = userPrefs.categoryPlays || { butterflies: 0, flowers: 0, horses: 0, landscapes: 0 };
+        userPrefs.gamePlays = userPrefs.gamePlays || { slider: 0, zoom: 0, auction: 0, personality: 0, frame: 0 };
+        userPrefs.favoriteImages = userPrefs.favoriteImages || [];
+    }
+    // Track visit
+    userPrefs.visitCount++;
+    userPrefs.lastVisit = new Date().toISOString();
+    savePrefs();
+}
+
+function savePrefs() {
+    localStorage.setItem(PREFS_KEY, JSON.stringify(userPrefs));
+}
+
+function trackCategoryPlay(category) {
+    if (userPrefs.categoryPlays[category] !== undefined) {
+        userPrefs.categoryPlays[category]++;
+        savePrefs();
+    }
+}
+
+function trackGamePlay(game) {
+    if (userPrefs.gamePlays[game] !== undefined) {
+        userPrefs.gamePlays[game]++;
+        updatePreferredGame();
+        savePrefs();
+    }
+}
+
+function updatePreferredGame() {
+    let maxPlays = 0;
+    let preferred = 'slider';
+    for (const [game, plays] of Object.entries(userPrefs.gamePlays)) {
+        if (plays > maxPlays) {
+            maxPlays = plays;
+            preferred = game;
+        }
+    }
+    userPrefs.preferredGame = preferred;
+}
+
+function getFavoriteCategory() {
+    let maxPlays = 0;
+    let favorite = null;
+    for (const [cat, plays] of Object.entries(userPrefs.categoryPlays)) {
+        if (plays > maxPlays) {
+            maxPlays = plays;
+            favorite = cat;
+        }
+    }
+    return maxPlays > 0 ? favorite : null;
+}
+
+function getPersonalizedImages(count = 4) {
+    const favCat = getFavoriteCategory();
+    if (!favCat) return puzzles.slice(0, count);
+    
+    // Mix: 60% from favorite category, 40% others
+    const favImages = puzzles.filter(p => p.category === favCat);
+    const otherImages = puzzles.filter(p => p.category !== favCat);
+    
+    const favCount = Math.ceil(count * 0.6);
+    const otherCount = count - favCount;
+    
+    const shuffledFav = [...favImages].sort(() => Math.random() - 0.5);
+    const shuffledOther = [...otherImages].sort(() => Math.random() - 0.5);
+    
+    return [...shuffledFav.slice(0, favCount), ...shuffledOther.slice(0, otherCount)];
+}
+
+function getWelcomeMessage() {
+    const soul = userPrefs.natureSoul;
+    const visits = userPrefs.visitCount;
+    const favCat = getFavoriteCategory();
+    
+    const soulEmojis = {
+        dreamer: '🦋',
+        explorer: '🏔️',
+        nurturer: '🌸',
+        freeSpirit: '🐴'
+    };
+    
+    const soulNames = {
+        dreamer: 'Dreamer',
+        explorer: 'Explorer',
+        nurturer: 'Nurturer',
+        freeSpirit: 'Free Spirit'
+    };
+    
+    if (visits === 1) {
+        return { title: 'Welcome!', subtitle: 'Discover beautiful nature photography' };
+    }
+    
+    if (soul && soulNames[soul]) {
+        return { 
+            title: `Welcome back, ${soulNames[soul]}! ${soulEmojis[soul]}`, 
+            subtitle: `Ready for today's ${favCat || 'nature'} adventure?`
+        };
+    }
+    
+    if (visits > 5) {
+        const catEmojis = { butterflies: '🦋', flowers: '🌸', horses: '🐴', landscapes: '🏔️' };
+        if (favCat) {
+            return { 
+                title: `Welcome back! ${catEmojis[favCat] || '🌟'}`, 
+                subtitle: `We have new ${favCat} for you!`
+            };
+        }
+    }
+    
+    return { title: 'Welcome back!', subtitle: 'New puzzles await you' };
+}
+
+function getThemeColors() {
+    const soul = userPrefs.natureSoul;
+    const favCat = getFavoriteCategory();
+    
+    const themes = {
+        dreamer: { primary: '#9b59b6', light: '#e8daef' },
+        explorer: { primary: '#3498db', light: '#d6eaf8' },
+        nurturer: { primary: '#e91e63', light: '#fce4ec' },
+        freeSpirit: { primary: '#e67e22', light: '#fdebd0' }
+    };
+    
+    const catToSoul = {
+        butterflies: 'dreamer',
+        landscapes: 'explorer',
+        flowers: 'nurturer',
+        horses: 'freeSpirit'
+    };
+    
+    if (soul && themes[soul]) return themes[soul];
+    if (favCat && catToSoul[favCat]) return themes[catToSoul[favCat]];
+    
+    return null; // Use default theme
+}
+
+function applyPersonalizedTheme() {
+    const colors = getThemeColors();
+    if (colors) {
+        document.documentElement.style.setProperty('--accent', colors.primary);
+        document.documentElement.style.setProperty('--accent-light', colors.light);
+    }
+}
+
+function toggleFavorite(puzzleId) {
+    const idx = userPrefs.favoriteImages.indexOf(puzzleId);
+    if (idx > -1) {
+        userPrefs.favoriteImages.splice(idx, 1);
+    } else {
+        userPrefs.favoriteImages.push(puzzleId);
+    }
+    savePrefs();
+    return userPrefs.favoriteImages.includes(puzzleId);
+}
+
+function isFavorite(puzzleId) {
+    return userPrefs.favoriteImages.includes(puzzleId);
+}
+
 // ============ AUDIO ============
 let audioCtx = null;
 
@@ -283,7 +479,9 @@ const confettiCanvas = document.getElementById('confetti');
 // ============ INITIALIZATION ============
 document.addEventListener('DOMContentLoaded', () => {
     loadStats();
+    loadPrefs();
     registerServiceWorker();
+    applyPersonalization();
     setupDailyPuzzle();
     renderGallery();
     setupEventListeners();
@@ -292,6 +490,57 @@ document.addEventListener('DOMContentLoaded', () => {
     setupPWAInstall();
     updateSoundButton();
 });
+
+function applyPersonalization() {
+    // Apply personalized theme colors
+    applyPersonalizedTheme();
+    
+    // Update welcome message
+    const welcome = getWelcomeMessage();
+    document.getElementById('welcomeTitle').textContent = welcome.title;
+    document.getElementById('welcomeSubtitle').textContent = welcome.subtitle;
+    
+    // Show "For You" section if user has preferences
+    const favCat = getFavoriteCategory();
+    if (favCat || userPrefs.visitCount > 2) {
+        showForYouSection();
+    }
+}
+
+function showForYouSection() {
+    const section = document.getElementById('forYouSection');
+    const gallery = document.getElementById('forYouGallery');
+    const catLabel = document.getElementById('forYouCategory');
+    
+    const favCat = getFavoriteCategory();
+    const images = getPersonalizedImages(4);
+    
+    if (favCat) {
+        const catEmojis = { butterflies: '🦋', flowers: '🌸', horses: '🐴', landscapes: '🏔️' };
+        catLabel.textContent = `${catEmojis[favCat] || ''} Based on your favorites`;
+    } else {
+        catLabel.textContent = 'Recommended for you';
+    }
+    
+    gallery.innerHTML = images.map(p => `
+        <div class="for-you-item" onclick="selectPuzzle(${p.id})">
+            <img src="${p.image}" alt="${p.title}" loading="lazy">
+            <button class="fav-btn ${isFavorite(p.id) ? 'active' : ''}" 
+                    onclick="event.stopPropagation(); toggleFavoriteBtn(${p.id}, this)">
+                ${isFavorite(p.id) ? '❤️' : '🤍'}
+            </button>
+        </div>
+    `).join('');
+    
+    section.classList.remove('hidden');
+}
+
+function toggleFavoriteBtn(puzzleId, btn) {
+    playSound('click');
+    const isFav = toggleFavorite(puzzleId);
+    btn.textContent = isFav ? '❤️' : '🤍';
+    btn.classList.toggle('active', isFav);
+}
 
 function registerServiceWorker() {
     if ('serviceWorker' in navigator) {
@@ -830,6 +1079,12 @@ function puzzleComplete() {
     playSound('win');
     vibrate([100, 50, 100, 50, 200]);
     showConfetti();
+    
+    // Track for personalization
+    trackGamePlay('slider');
+    if (currentPuzzle.category) {
+        trackCategoryPlay(currentPuzzle.category);
+    }
     
     document.getElementById('completedImage').src = currentPuzzle.image;
     document.getElementById('finalTime').textContent = formatTime(seconds);
@@ -1458,6 +1713,9 @@ function selectAuctionCard(index) {
     auctionState.revealed = true;
     auctionState.totalPlays++;
     
+    // Track for personalization
+    trackGamePlay('auction');
+    
     const [p1, p2] = auctionState.currentPair;
     const score1 = getPopularityScore(p1);
     const score2 = getPopularityScore(p2);
@@ -1682,6 +1940,12 @@ function zoomComplete() {
     showConfetti();
     vibrate([100, 50, 100, 50, 200]);
     
+    // Track for personalization
+    trackGamePlay('zoom');
+    if (zoomState.puzzle && zoomState.puzzle.category) {
+        trackCategoryPlay(zoomState.puzzle.category);
+    }
+    
     // Calculate score based on zoom level when guessed
     const score = zoomState.maxZoom - zoomState.currentZoom + 1;
     const rating = score === 5 ? '🏆 Perfect! First try!' :
@@ -1882,6 +2146,9 @@ function finishPersonality() {
     playSound('win');
     showConfetti();
     
+    // Track for personalization
+    trackGamePlay('personality');
+    
     // Determine personality type based on highest scoring category
     const scores = personalityState.scores;
     let topCategory = 'butterflies';
@@ -1903,6 +2170,11 @@ function finishPersonality() {
     };
     
     const personalityType = PERSONALITY_TYPES[typeMap[topCategory]];
+    
+    // Save to user preferences for personalization
+    userPrefs.natureSoul = typeMap[topCategory];
+    savePrefs();
+    applyPersonalizedTheme(); // Apply new theme colors immediately
     
     // Show result view
     document.getElementById('personalityView').classList.add('hidden');
@@ -2294,6 +2566,10 @@ function drawFrameContent(ctx, width, height, style, decorImages) {
 
 function downloadFrame() {
     playSound('click');
+    
+    // Track for personalization
+    trackGamePlay('frame');
+    
     const canvas = document.getElementById('frameCanvas');
     const link = document.createElement('a');
     link.download = `prettyfoto-${frameState.currentStyle}-frame.png`;

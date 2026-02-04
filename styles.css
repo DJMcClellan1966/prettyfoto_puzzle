@@ -2432,6 +2432,109 @@ body {
     border-color: var(--accent);
 }
 
+/* ============ PERSONALIZATION STYLES ============ */
+.personalized-welcome {
+    text-align: center;
+    margin-bottom: 20px;
+    padding: 16px;
+    background: linear-gradient(135deg, var(--accent) 0%, var(--accent-dark) 100%);
+    border-radius: var(--radius);
+    color: white;
+}
+
+.personalized-welcome h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 24px;
+    margin-bottom: 4px;
+}
+
+.personalized-welcome p {
+    font-size: 14px;
+    opacity: 0.9;
+}
+
+.for-you-section {
+    margin-bottom: 24px;
+    padding: 16px;
+    background: white;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+}
+
+.for-you-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+}
+
+.for-you-badge {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--accent);
+}
+
+.for-you-category {
+    font-size: 12px;
+    color: var(--text-dim);
+    padding: 4px 10px;
+    background: var(--bg);
+    border-radius: 12px;
+}
+
+.for-you-gallery {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+}
+
+.for-you-item {
+    position: relative;
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.for-you-item:hover {
+    transform: scale(1.05);
+}
+
+.for-you-item img {
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+}
+
+.for-you-item .fav-btn {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    width: 24px;
+    height: 24px;
+    background: rgba(255,255,255,0.9);
+    border: none;
+    border-radius: 50%;
+    font-size: 12px;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.for-you-item:hover .fav-btn {
+    opacity: 1;
+}
+
+.for-you-item .fav-btn.active {
+    opacity: 1;
+    color: #e74c3c;
+}
+
+/* Personalized theme transition */
+:root {
+    transition: --accent 0.3s, --accent-light 0.3s;
+}
+
 /* ============ RESPONSIVE ============ */
 @media (min-width: 400px) {
     .puzzle-gallery {
