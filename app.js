@@ -2121,10 +2121,43 @@ function renderFrame() {
     const style = FRAME_STYLES[frameState.currentStyle];
     
     const width = 400;
-    const height = 500;
+    const height = 520;
     canvas.width = width;
     canvas.height = height;
     
+    // Get images for this style's category
+    const styleImages = puzzles.filter(p => p.category === style.category).slice(0, 4);
+    
+    // Load all decoration images first, then render
+    const imagesToLoad = styleImages.map(p => {
+        const img = new Image();
+        img.crossOrigin = 'anonymous';
+        img.src = p.image;
+        return img;
+    });
+    
+    // Wait for images to load (or timeout)
+    let loadedCount = 0;
+    const maxWait = setTimeout(() => drawFrameContent(ctx, width, height, style, []), 2000);
+    
+    imagesToLoad.forEach(img => {
+        img.onload = img.onerror = () => {
+            loadedCount++;
+            if (loadedCount === imagesToLoad.length) {
+                clearTimeout(maxWait);
+                drawFrameContent(ctx, width, height, style, imagesToLoad);
+            }
+        };
+    });
+    
+    // If no images in category, render immediately
+    if (imagesToLoad.length === 0) {
+        clearTimeout(maxWait);
+        drawFrameContent(ctx, width, height, style, []);
+    }
+}
+
+function drawFrameContent(ctx, width, height, style, decorImages) {
     // Background gradient
     const gradient = ctx.createLinearGradient(0, 0, width, height);
     gradient.addColorStop(0, style.colors[0]);
@@ -2132,39 +2165,39 @@ function renderFrame() {
     ctx.fillStyle = gradient;
     ctx.fillRect(0, 0, width, height);
     
-    // Decorative pattern
-    ctx.fillStyle = 'rgba(255,255,255,0.1)';
-    for (let i = 0; i < 20; i++) {
+    // Decorative circles (subtle)
+    ctx.fillStyle = 'rgba(255,255,255,0.08)';
+    for (let i = 0; i < 15; i++) {
         const x = Math.random() * width;
         const y = Math.random() * height;
-        const size = Math.random() * 30 + 10;
+        const size = Math.random() * 40 + 20;
         ctx.beginPath();
         ctx.arc(x, y, size, 0, Math.PI * 2);
         ctx.fill();
     }
     
-    // Photo area (white background)
+    // Photo area
     const photoX = 30;
-    const photoY = 60;
+    const photoY = 55;
     const photoW = width - 60;
-    const photoH = 300;
+    const photoH = 280;
     
+    // White frame border
     ctx.fillStyle = 'white';
     ctx.beginPath();
-    ctx.roundRect(photoX, photoY, photoW, photoH, 12);
+    ctx.roundRect(photoX - 5, photoY - 5, photoW + 10, photoH + 10, 16);
     ctx.fill();
     
     // Draw user photo
     if (frameState.userImage) {
         ctx.save();
         ctx.beginPath();
-        ctx.roundRect(photoX + 5, photoY + 5, photoW - 10, photoH - 10, 8);
+        ctx.roundRect(photoX, photoY, photoW, photoH, 12);
         ctx.clip();
         
-        // Calculate crop to fill
         const img = frameState.userImage;
         const imgRatio = img.width / img.height;
-        const frameRatio = (photoW - 10) / (photoH - 10);
+        const frameRatio = photoW / photoH;
         
         let sx = 0, sy = 0, sw = img.width, sh = img.height;
         if (imgRatio > frameRatio) {
@@ -2175,48 +2208,88 @@ function renderFrame() {
             sy = (img.height - sh) / 2;
         }
         
-        ctx.drawImage(img, sx, sy, sw, sh, photoX + 5, photoY + 5, photoW - 10, photoH - 10);
+        ctx.drawImage(img, sx, sy, sw, sh, photoX, photoY, photoW, photoH);
         ctx.restore();
+    } else {
+        // Placeholder
+        ctx.fillStyle = '#f0f0f0';
+        ctx.beginPath();
+        ctx.roundRect(photoX, photoY, photoW, photoH, 12);
+        ctx.fill();
     }
     
     // Header with logo
     ctx.fillStyle = 'rgba(255,255,255,0.95)';
     ctx.beginPath();
-    ctx.roundRect(photoX, 15, photoW, 35, 20);
+    ctx.roundRect(width/2 - 80, 12, 160, 32, 16);
     ctx.fill();
     
     ctx.fillStyle = style.colors[0];
-    ctx.font = 'bold 16px "Playfair Display", serif';
+    ctx.font = 'bold 15px "Playfair Display", serif';
     ctx.textAlign = 'center';
-    ctx.fillText('🌸 PrettyFoto', width / 2, 40);
+    ctx.fillText('🌸 PrettyFoto', width / 2, 34);
     
-    // Style badge
+    // Style badge below photo
     ctx.fillStyle = 'white';
-    ctx.font = 'bold 14px Inter, sans-serif';
+    ctx.font = 'bold 16px Inter, sans-serif';
     ctx.textAlign = 'center';
-    ctx.fillText(`${style.emoji} ${style.name}`, width / 2, photoY + photoH + 35);
+    ctx.fillText(`${style.emoji} ${style.name}`, width / 2, photoY + photoH + 30);
     
-    // Footer
-    ctx.fillStyle = 'rgba(255,255,255,0.2)';
+    // Image strip at bottom - real photos from the collection
+    if (decorImages.length > 0) {
+        const stripY = photoY + photoH + 50;
+        const imgSize = 65;
+        const gap = 12;
+        const totalWidth = decorImages.length * imgSize + (decorImages.length - 1) * gap;
+        let startX = (width - totalWidth) / 2;
+        
+        // Strip background
+        ctx.fillStyle = 'rgba(255,255,255,0.15)';
+        ctx.beginPath();
+        ctx.roundRect(startX - 10, stripY - 5, totalWidth + 20, imgSize + 10, 12);
+        ctx.fill();
+        
+        decorImages.forEach((img, i) => {
+            const x = startX + i * (imgSize + gap);
+            
+            // Draw circular image
+            ctx.save();
+            ctx.beginPath();
+            ctx.arc(x + imgSize/2, stripY + imgSize/2, imgSize/2 - 2, 0, Math.PI * 2);
+            ctx.clip();
+            
+            // Cover fit
+            const imgRatio = img.width / img.height;
+            let sx = 0, sy = 0, sw = img.width, sh = img.height;
+            if (imgRatio > 1) {
+                sw = img.height;
+                sx = (img.width - sw) / 2;
+            } else {
+                sh = img.width;
+                sy = (img.height - sh) / 2;
+            }
+            
+            ctx.drawImage(img, sx, sy, sw, sh, x, stripY, imgSize, imgSize);
+            ctx.restore();
+            
+            // White border
+            ctx.strokeStyle = 'white';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.arc(x + imgSize/2, stripY + imgSize/2, imgSize/2 - 2, 0, Math.PI * 2);
+            ctx.stroke();
+        });
+    }
+    
+    // Footer CTA
+    ctx.fillStyle = 'rgba(255,255,255,0.25)';
     ctx.beginPath();
-    ctx.roundRect(50, height - 60, width - 100, 40, 20);
+    ctx.roundRect(width/2 - 90, height - 45, 180, 32, 16);
     ctx.fill();
     
     ctx.fillStyle = 'white';
-    ctx.font = '13px Inter, sans-serif';
-    ctx.fillText('prettyfoto.com', width / 2, height - 34);
-    
-    // Corner decorations
-    const corners = [
-        { x: 15, y: photoY + photoH + 60 },
-        { x: width - 15, y: photoY + photoH + 60 }
-    ];
-    
-    ctx.font = '30px serif';
-    ctx.textAlign = 'center';
-    corners.forEach(c => {
-        ctx.fillText(style.emoji, c.x, c.y);
-    });
+    ctx.font = 'bold 12px Inter, sans-serif';
+    ctx.fillText('Shop prints at prettyfoto.com', width / 2, height - 24);
 }
 
 function downloadFrame() {
