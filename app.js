@@ -1497,6 +1497,7 @@ let shapekuState = {
     size: 4,
     board: [],
     solution: [],
+    fixedCells: [],  // Track which cells are given clues
     images: [],
     selectedImage: null
 };
@@ -1527,13 +1528,25 @@ function startShapeku() {
     const shuffled = [...puzzles].sort(() => Math.random() - 0.5);
     shapekuState.images = shuffled.slice(0, size);
     
-    // Generate solved board
+    // Generate valid solved board
     shapekuState.solution = generateShapekuSolution(size);
     
-    // Create puzzle by removing some cells
-    shapekuState.board = shapekuState.solution.map(row => 
-        row.map(val => Math.random() > 0.5 ? val : null)
-    );
+    // Create puzzle by keeping some cells as clues (about 40%)
+    shapekuState.board = [];
+    shapekuState.fixedCells = [];
+    
+    for (let y = 0; y < size; y++) {
+        const row = [];
+        const fixedRow = [];
+        for (let x = 0; x < size; x++) {
+            // Keep about 40% of cells as clues
+            const isFixed = Math.random() < 0.4;
+            row.push(isFixed ? shapekuState.solution[y][x] : null);
+            fixedRow.push(isFixed);
+        }
+        shapekuState.board.push(row);
+        shapekuState.fixedCells.push(fixedRow);
+    }
     
     shapekuState.selectedImage = null;
     
@@ -1544,19 +1557,57 @@ function startShapeku() {
 }
 
 function generateShapekuSolution(size) {
-    // Simple valid sudoku generator for 4x4 or 6x6
+    // Generate a valid Latin square (each number once per row/column)
     const board = [];
     
-    for (let y = 0; y < size; y++) {
-        const row = [];
-        for (let x = 0; x < size; x++) {
-            // Use a simple pattern that's always valid
-            row.push((x + y * (size === 4 ? 2 : 2)) % size);
+    // For 4x4: use a known valid pattern and shuffle
+    if (size === 4) {
+        // Base valid 4x4 Latin square
+        const base = [
+            [0, 1, 2, 3],
+            [1, 2, 3, 0],
+            [2, 3, 0, 1],
+            [3, 0, 1, 2]
+        ];
+        
+        // Shuffle rows
+        const rowOrder = [0, 1, 2, 3].sort(() => Math.random() - 0.5);
+        // Shuffle columns
+        const colOrder = [0, 1, 2, 3].sort(() => Math.random() - 0.5);
+        // Shuffle symbols
+        const symbolMap = [0, 1, 2, 3].sort(() => Math.random() - 0.5);
+        
+        for (let y = 0; y < 4; y++) {
+            const row = [];
+            for (let x = 0; x < 4; x++) {
+                row.push(symbolMap[base[rowOrder[y]][colOrder[x]]]);
+            }
+            board.push(row);
         }
-        board.push(row);
+    } else {
+        // For 6x6: use a simple valid pattern
+        const base = [
+            [0, 1, 2, 3, 4, 5],
+            [2, 3, 4, 5, 0, 1],
+            [4, 5, 0, 1, 2, 3],
+            [1, 2, 3, 4, 5, 0],
+            [3, 4, 5, 0, 1, 2],
+            [5, 0, 1, 2, 3, 4]
+        ];
+        
+        const rowOrder = [0, 1, 2, 3, 4, 5].sort(() => Math.random() - 0.5);
+        const colOrder = [0, 1, 2, 3, 4, 5].sort(() => Math.random() - 0.5);
+        const symbolMap = [0, 1, 2, 3, 4, 5].sort(() => Math.random() - 0.5);
+        
+        for (let y = 0; y < 6; y++) {
+            const row = [];
+            for (let x = 0; x < 6; x++) {
+                row.push(symbolMap[base[rowOrder[y]][colOrder[x]]]);
+            }
+            board.push(row);
+        }
     }
     
-    // Shuffle rows within blocks and columns within blocks
     return board;
 }
 
@@ -1566,31 +1617,35 @@ function renderShapeku() {
     // Render palette
     const palette = document.getElementById('shapekuPalette');
     palette.innerHTML = shapekuState.images.map((img, i) => `
-        <img src="${img.image}" alt="${img.title}" class="palette-img" 
+        <img src="${img.image}" alt="${img.title}" class="palette-img ${shapekuState.selectedImage === i ? 'selected' : ''}" 
              data-index="${i}" onclick="selectShapekuImage(${i})">
     `).join('');
     
     // Render board
     const board = document.getElementById('shapekuBoard');
-    board.style.gridTemplateColumns = `repeat(${size}, 50px)`;
+    const cellSize = size === 4 ? 60 : 45;
+    board.style.gridTemplateColumns = `repeat(${size}, ${cellSize}px)`;
     board.innerHTML = '';
     
     for (let y = 0; y < size; y++) {
         for (let x = 0; x < size; x++) {
             const cell = document.createElement('div');
             cell.className = 'shapeku-cell';
+            cell.style.width = `${cellSize}px`;
+            cell.style.height = `${cellSize}px`;
             cell.dataset.x = x;
             cell.dataset.y = y;
             
             const val = shapekuState.board[y][x];
-            if (val !== null) {
+            if (val !== null && shapekuState.images[val]) {
                 const img = document.createElement('img');
                 img.src = shapekuState.images[val].image;
                 cell.appendChild(img);
-                
-                if (shapekuState.solution[y][x] === val) {
-                    cell.classList.add('fixed');
-                }
+            }
+            
+            // Mark fixed cells (given clues)
+            if (shapekuState.fixedCells[y][x]) {
+                cell.classList.add('fixed');
             }
             
             cell.onclick = () => clickShapekuCell(x, y);
@@ -1602,22 +1657,24 @@ function renderShapeku() {
 function selectShapekuImage(index) {
     playSound('click');
     shapekuState.selectedImage = index;
-    
-    document.querySelectorAll('.palette-img').forEach(img => {
-        img.classList.toggle('selected', parseInt(img.dataset.index) === index);
-    });
+    renderShapeku(); // Re-render to show selection
 }
 
 function clickShapekuCell(x, y) {
-    // Don't allow changing fixed cells
-    if (shapekuState.solution[y][x] === shapekuState.board[y][x] && shapekuState.board[y][x] !== null) {
+    // Don't allow changing fixed cells (given clues)
+    if (shapekuState.fixedCells[y][x]) {
         return;
     }
     
-    if (shapekuState.selectedImage === null) return;
-    
     playSound('click');
-    shapekuState.board[y][x] = shapekuState.selectedImage;
+    
+    // If no image selected, clear the cell
+    if (shapekuState.selectedImage === null) {
+        shapekuState.board[y][x] = null;
+    } else {
+        shapekuState.board[y][x] = shapekuState.selectedImage;
+    }
+    
     renderShapeku();
 }
 
@@ -1625,16 +1682,30 @@ function checkShapeku() {
     playSound('click');
     const size = shapekuState.size;
     let correct = true;
+    let hasEmpty = false;
     
     // Clear previous errors
     document.querySelectorAll('.shapeku-cell').forEach(c => c.classList.remove('error'));
     
+    // Check for empty cells
+    for (let y = 0; y < size; y++) {
+        for (let x = 0; x < size; x++) {
+            if (shapekuState.board[y][x] === null) {
+                hasEmpty = true;
+                document.querySelector(`.shapeku-cell[data-x="${x}"][data-y="${y}"]`).classList.add('error');
+            }
+        }
+    }
+    
+    if (hasEmpty) {
+        return; // Don't check further if there are empty cells
+    }
+    
     // Check rows
     for (let y = 0; y < size; y++) {
         const row = shapekuState.board[y];
-        if (row.includes(null) || new Set(row).size !== size) {
+        if (new Set(row).size !== size) {
             correct = false;
-            // Mark row as error
             for (let x = 0; x < size; x++) {
                 document.querySelector(`.shapeku-cell[data-x="${x}"][data-y="${y}"]`).classList.add('error');
             }
@@ -1644,7 +1715,7 @@ function checkShapeku() {
     // Check columns
     for (let x = 0; x < size; x++) {
         const col = shapekuState.board.map(row => row[x]);
-        if (col.includes(null) || new Set(col).size !== size) {
+        if (new Set(col).size !== size) {
             correct = false;
             for (let y = 0; y < size; y++) {
                 document.querySelector(`.shapeku-cell[data-x="${x}"][data-y="${y}"]`).classList.add('error');
@@ -1689,18 +1760,20 @@ function shapekuComplete() {
 // ============================================================
 
 const NATURE_WORDS = {
-    butterflies: ['BUTTERFLY', 'WINGS', 'MONARCH', 'FLUTTER', 'NECTAR', 'GARDEN'],
-    flowers: ['FLOWER', 'PETAL', 'BLOOM', 'GARDEN', 'SPRING', 'NATURE', 'COLOR', 'BEAUTY'],
-    horses: ['HORSE', 'MANE', 'GALLOP', 'FIELD', 'WILD', 'BEAUTY', 'GRACE'],
-    landscapes: ['MOUNTAIN', 'VALLEY', 'VISTA', 'NATURE', 'PEAK', 'SCENIC', 'VIEW']
+    butterflies: ['BUTTERFLY', 'MONARCH', 'SWALLOWTAIL', 'WINGS', 'FLUTTER', 'NECTAR', 'CHRYSALIS', 'CATERPILLAR', 'MIGRATION', 'ANTENNAE'],
+    flowers: ['BLOSSOM', 'PETAL', 'ORCHID', 'TULIP', 'SUNFLOWER', 'GARDEN', 'BOUQUET', 'FRAGRANCE', 'POLLINATE', 'BOTANICAL'],
+    horses: ['STALLION', 'GALLOP', 'EQUINE', 'PASTURE', 'MUSTANG', 'FOAL', 'MANE', 'BRIDLE', 'CANTER', 'THOROUGHBRED'],
+    landscapes: ['MOUNTAIN', 'VALLEY', 'HORIZON', 'PANORAMA', 'WILDERNESS', 'CANYON', 'SUMMIT', 'MEADOW', 'OVERLOOK', 'TERRAIN']
 };
 
 let wsState = {
     puzzle: null,
     grid: [],
     words: [],
+    wordPositions: [], // Store where words are placed
     foundWords: [],
     selecting: false,
+    startCell: null,
     selection: []
 };
 
@@ -1731,13 +1804,15 @@ function startWordsearch(puzzle) {
     playSound('click');
     wsState.puzzle = puzzle;
     wsState.foundWords = [];
+    wsState.wordPositions = [];
     
-    // Get words for this category
+    // Get words for this category - pick 8 random words
     const categoryWords = NATURE_WORDS[puzzle.category] || NATURE_WORDS.flowers;
-    wsState.words = categoryWords.slice(0, 5);
+    const shuffled = [...categoryWords].sort(() => Math.random() - 0.5);
+    wsState.words = shuffled.slice(0, 8);
     
-    // Generate grid
-    wsState.grid = generateWordSearchGrid(wsState.words, 10);
+    // Generate larger grid (12x12)
+    wsState.grid = generateWordSearchGrid(wsState.words, 12);
     
     document.getElementById('homeView').classList.add('hidden');
     document.getElementById('wordsearchView').classList.remove('hidden');
@@ -1753,17 +1828,23 @@ function generateWordSearchGrid(words, size) {
     // Create empty grid
     const grid = Array(size).fill(null).map(() => Array(size).fill(''));
     
+    // Sort words by length (longest first - easier to place)
+    const sortedWords = [...words].sort((a, b) => b.length - a.length);
+    
     // Place words
-    words.forEach(word => {
+    sortedWords.forEach(word => {
         placeWord(grid, word, size);
     });
     
-    // Fill empty spaces with random letters
-    const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    // Fill empty spaces with letters that appear in words (makes it harder!)
+    const wordLetters = words.join('').split('');
+    const commonLetters = 'AEIOULNSTR'; // Common letters to add confusion
+    const fillLetters = wordLetters.join('') + commonLetters;
+    
     for (let y = 0; y < size; y++) {
         for (let x = 0; x < size; x++) {
             if (!grid[y][x]) {
-                grid[y][x] = letters[Math.floor(Math.random() * letters.length)];
+                grid[y][x] = fillLetters[Math.floor(Math.random() * fillLetters.length)];
             }
         }
     }
@@ -1772,19 +1853,30 @@ function generateWordSearchGrid(words, size) {
 }
 
 function placeWord(grid, word, size) {
+    // All 8 directions: horizontal, vertical, diagonal, and their reverses
     const directions = [
-        [0, 1],  // horizontal
-        [1, 0],  // vertical
-        [1, 1],  // diagonal down
+        [0, 1],   // right
+        [0, -1],  // left
+        [1, 0],   // down
+        [-1, 0],  // up
+        [1, 1],   // diagonal down-right
+        [1, -1],  // diagonal down-left
+        [-1, 1],  // diagonal up-right
+        [-1, -1]  // diagonal up-left
     ];
     
-    for (let attempts = 0; attempts < 100; attempts++) {
-        const dir = directions[Math.floor(Math.random() * directions.length)];
+    // Shuffle directions for variety
+    const shuffledDirs = [...directions].sort(() => Math.random() - 0.5);
+    
+    for (let attempts = 0; attempts < 200; attempts++) {
+        const dir = shuffledDirs[attempts % shuffledDirs.length];
         const startX = Math.floor(Math.random() * size);
         const startY = Math.floor(Math.random() * size);
         
         // Check if word fits
         let fits = true;
+        const positions = [];
+        
         for (let i = 0; i < word.length; i++) {
             const x = startX + dir[1] * i;
             const y = startY + dir[0] * i;
@@ -1798,6 +1890,8 @@ function placeWord(grid, word, size) {
                 fits = false;
                 break;
             }
+            
+            positions.push({x, y});
         }
         
         if (fits) {
@@ -1806,35 +1900,51 @@ function placeWord(grid, word, size) {
                 const y = startY + dir[0] * i;
                 grid[y][x] = word[i];
             }
+            wsState.wordPositions.push({word, positions});
             return true;
         }
     }
+    
+    // Word couldn't be placed, remove it from list
+    const idx = wsState.words.indexOf(word);
+    if (idx > -1) wsState.words.splice(idx, 1);
     return false;
 }
 
 function renderWordsearch() {
     const size = wsState.grid.length;
+    const cellSize = size > 10 ? 24 : 28;
     
     // Render grid
     const gridEl = document.getElementById('wsGrid');
-    gridEl.style.gridTemplateColumns = `repeat(${size}, 28px)`;
+    gridEl.style.gridTemplateColumns = `repeat(${size}, ${cellSize}px)`;
     gridEl.innerHTML = '';
     
     for (let y = 0; y < size; y++) {
         for (let x = 0; x < size; x++) {
             const cell = document.createElement('div');
             cell.className = 'ws-cell';
+            cell.style.width = `${cellSize}px`;
+            cell.style.height = `${cellSize}px`;
+            cell.style.fontSize = `${cellSize > 24 ? 14 : 12}px`;
             cell.textContent = wsState.grid[y][x];
             cell.dataset.x = x;
             cell.dataset.y = y;
+            
+            // Check if this cell is part of a found word
+            for (const foundWord of wsState.foundWords) {
+                const wordPos = wsState.wordPositions.find(wp => wp.word === foundWord);
+                if (wordPos && wordPos.positions.some(p => p.x === x && p.y === y)) {
+                    cell.classList.add('found');
+                }
+            }
             
             cell.onmousedown = cell.ontouchstart = (e) => {
                 e.preventDefault();
                 startWsSelection(x, y);
             };
-            cell.onmouseenter = cell.ontouchmove = (e) => {
+            cell.onmouseenter = (e) => {
                 if (wsState.selecting) {
-                    e.preventDefault();
                     extendWsSelection(x, y);
                 }
             };
@@ -1843,9 +1953,22 @@ function renderWordsearch() {
         }
     }
     
+    // Handle touch move separately for mobile
+    gridEl.ontouchmove = (e) => {
+        if (!wsState.selecting) return;
+        e.preventDefault();
+        const touch = e.touches[0];
+        const element = document.elementFromPoint(touch.clientX, touch.clientY);
+        if (element && element.classList.contains('ws-cell')) {
+            const x = parseInt(element.dataset.x);
+            const y = parseInt(element.dataset.y);
+            extendWsSelection(x, y);
+        }
+    };
+    
     document.onmouseup = document.ontouchend = endWsSelection;
     
-    // Render word list
+    // Render word list (2 columns for more words)
     const wordList = document.getElementById('wsWordList');
     wordList.innerHTML = wsState.words.map(word => `
         <span class="ws-word ${wsState.foundWords.includes(word) ? 'found' : ''}">${word}</span>
@@ -1854,15 +1977,39 @@ function renderWordsearch() {
 
 function startWsSelection(x, y) {
     wsState.selecting = true;
+    wsState.startCell = {x, y};
     wsState.selection = [{x, y}];
     updateWsSelection();
 }
 
 function extendWsSelection(x, y) {
-    if (!wsState.selection.find(s => s.x === x && s.y === y)) {
-        wsState.selection.push({x, y});
-        updateWsSelection();
+    if (!wsState.startCell) return;
+    
+    // Build selection as a line from start to current
+    const dx = x - wsState.startCell.x;
+    const dy = y - wsState.startCell.y;
+    
+    // Determine direction (must be straight line: horizontal, vertical, or diagonal)
+    let stepX = 0, stepY = 0;
+    if (dx !== 0) stepX = dx > 0 ? 1 : -1;
+    if (dy !== 0) stepY = dy > 0 ? 1 : -1;
+    
+    // Check if it's a valid straight line
+    if (dx !== 0 && dy !== 0 && Math.abs(dx) !== Math.abs(dy)) {
+        return; // Not a valid diagonal
     }
+    
+    const steps = Math.max(Math.abs(dx), Math.abs(dy));
+    wsState.selection = [];
+    
+    for (let i = 0; i <= steps; i++) {
+        wsState.selection.push({
+            x: wsState.startCell.x + stepX * i,
+            y: wsState.startCell.y + stepY * i
+        });
+    }
+    
+    updateWsSelection();
 }
 
 function updateWsSelection() {
@@ -1871,22 +2018,24 @@ function updateWsSelection() {
     });
     
     wsState.selection.forEach(({x, y}) => {
-        document.querySelector(`.ws-cell[data-x="${x}"][data-y="${y}"]`).classList.add('selected');
+        const cell = document.querySelector(`.ws-cell[data-x="${x}"][data-y="${y}"]`);
+        if (cell) cell.classList.add('selected');
     });
 }
 
 function endWsSelection() {
     if (!wsState.selecting) return;
     wsState.selecting = false;
+    wsState.startCell = null;
     
     // Check if selection forms a word
     const selectedWord = wsState.selection.map(({x, y}) => wsState.grid[y][x]).join('');
     const reversedWord = selectedWord.split('').reverse().join('');
     
     if (wsState.words.includes(selectedWord) && !wsState.foundWords.includes(selectedWord)) {
-        foundWsWord(selectedWord);
+        foundWsWord(selectedWord, wsState.selection);
     } else if (wsState.words.includes(reversedWord) && !wsState.foundWords.includes(reversedWord)) {
-        foundWsWord(reversedWord);
+        foundWsWord(reversedWord, wsState.selection);
     } else {
         // Clear selection
         document.querySelectorAll('.ws-cell.selected').forEach(c => c.classList.remove('selected'));
@@ -1895,16 +2044,19 @@ function endWsSelection() {
     wsState.selection = [];
 }
 
-function foundWsWord(word) {
+function foundWsWord(word, selection) {
     playSound('click');
     vibrate(50);
     
     wsState.foundWords.push(word);
     
     // Mark cells as found
-    wsState.selection.forEach(({x, y}) => {
-        document.querySelector(`.ws-cell[data-x="${x}"][data-y="${y}"]`).classList.add('found');
-        document.querySelector(`.ws-cell[data-x="${x}"][data-y="${y}"]`).classList.remove('selected');
+    selection.forEach(({x, y}) => {
+        const cell = document.querySelector(`.ws-cell[data-x="${x}"][data-y="${y}"]`);
+        if (cell) {
+            cell.classList.add('found');
+            cell.classList.remove('selected');
+        }
     });
     
     // Update word list
