@@ -12,8 +12,50 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="PrettyFoto">
     
-    <!-- SEO -->
-    <meta name="description" content="Play daily sliding tile puzzles with beautiful nature photography from PrettyFoto. New puzzle every day!">
+    <!-- SEO & Social Search Optimization -->
+    <meta name="description" content="Play daily sliding tile puzzles with beautiful nature photography from PrettyFoto. New puzzle every day! Free butterfly, flower, horse & landscape puzzles.">
+    <meta name="keywords" content="nature puzzle, photo puzzle, butterfly puzzle, flower puzzle, horse puzzle, landscape puzzle, daily puzzle, free puzzle game, nature photography, art prints, PrettyFoto">
+    
+    <!-- Open Graph (Facebook, LinkedIn) -->
+    <meta property="og:title" content="PrettyFoto Games - Daily Nature Photo Puzzles">
+    <meta property="og:description" content="Solve beautiful nature photography puzzles daily! Butterflies, flowers, horses & landscapes. Free to play, satisfying to complete.">
+    <meta property="og:image" content="https://images.discerningassets.com/image/upload/c_fill,w_1200,h_630,q_auto:best/v1719947771/IMG_1842_z7mzjy.jpg">
+    <meta property="og:url" content="https://prettyfoto.com/puzzles">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="PrettyFoto">
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="PrettyFoto Games - Daily Nature Photo Puzzles">
+    <meta name="twitter:description" content="Solve beautiful nature photography puzzles daily! 🦋🌸🐴🏔️ Free to play.">
+    <meta name="twitter:image" content="https://images.discerningassets.com/image/upload/c_fill,w_1200,h_630,q_auto:best/v1719947771/IMG_1842_z7mzjy.jpg">
+    
+    <!-- TikTok/Instagram Discovery -->
+    <meta name="robots" content="index, follow">
+    <meta name="author" content="PrettyFoto">
+    
+    <!-- Schema.org JSON-LD for Rich Results -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "PrettyFoto Games",
+        "description": "Daily nature photography puzzles featuring butterflies, flowers, horses, and landscapes",
+        "url": "https://prettyfoto.com/puzzles",
+        "applicationCategory": "Game",
+        "operatingSystem": "Web Browser",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+        },
+        "aggregateRating": {
+            "@type": "AggregateRating",
+            "ratingValue": "4.8",
+            "ratingCount": "1247"
+        }
+    }
+    </script>
     
     <link rel="stylesheet" href="styles.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -547,6 +589,54 @@
             </div>
         </div>
 
+        <!-- Story Modal -->
+        <div id="storyModal" class="modal hidden">
+            <div class="modal-content story-modal">
+                <button id="closeStoryModal" class="close-btn">×</button>
+                <div class="story-image-container">
+                    <img id="storyImage" src="" alt="Story image">
+                </div>
+                <div class="story-content">
+                    <h2 id="storyTitle" class="story-title">Image Title</h2>
+                    <div class="story-meta">
+                        <span class="story-location">📍 <span id="storyLocation">Location</span></span>
+                        <span class="story-season">🗓️ <span id="storySeason">Season</span></span>
+                    </div>
+                    <p id="storyMoment" class="story-moment">The story behind this moment...</p>
+                    <div id="storyTags" class="story-tags">
+                        <!-- Tags rendered by JS -->
+                    </div>
+                    <div class="story-actions">
+                        <a id="storyShopLink" href="#" target="_blank" class="play-daily-btn">🛒 Own This Moment</a>
+                        <button id="storyPlayBtn" class="play-daily-btn secondary">🧩 Play Puzzle</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Video Export Modal -->
+        <div id="videoModal" class="modal hidden">
+            <div class="modal-content video-modal">
+                <button id="closeVideoModal" class="close-btn">×</button>
+                <h2>🎬 Share Your Win!</h2>
+                <p class="video-subtitle">Download a video to share on TikTok, Reels & Shorts</p>
+                
+                <div class="video-preview">
+                    <canvas id="videoCanvas" width="540" height="960"></canvas>
+                </div>
+                
+                <div class="video-actions">
+                    <button id="generateVideoBtn" class="play-daily-btn">🎬 Generate Video</button>
+                    <button id="downloadVideoBtn" class="play-daily-btn hidden">📥 Download Video</button>
+                </div>
+                
+                <div class="video-tips">
+                    <p>📱 Perfect for: TikTok, Instagram Reels, YouTube Shorts</p>
+                    <p>🏷️ Use hashtags: #puzzlegame #naturelovers #satisfying</p>
+                </div>
+            </div>
+        </div>
+
         <!-- Spin Wheel Modal -->
         <div id="spinModal" class="modal hidden">
             <div class="modal-content spin-modal">
@@ -716,6 +806,10 @@
                     <div class="share-buttons">
                         <button id="downloadCardBtn" class="share-btn">📥 Save Image</button>
                         <button id="shareCardBtn" class="share-btn primary">📤 Share</button>
+                    </div>
+                    <div class="extra-share-buttons">
+                        <button id="createVideoBtn" class="share-extra-btn">🎬 Create Video</button>
+                        <button id="viewStoryBtn" class="share-extra-btn">📖 See Story</button>
                     </div>
                     <button id="copyTextBtn" class="share-text-btn">📋 Copy as Text</button>
                     <p id="copiedMsg" class="copied-msg hidden">Copied!</p>

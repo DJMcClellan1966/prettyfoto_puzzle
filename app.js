@@ -2,7 +2,7 @@
 // 20 unique PrettyFoto images - all driving to shop
 
 // ============ PUZZLE DATA (16 Verified Images - All Direct Links) ============
-// Each puzzle has: shopUrl (direct product page) and galleryUrl (collection page)
+// Each puzzle has: shopUrl (direct product page), galleryUrl (collection page), and story
 const puzzles = [
     // Butterflies (2)
     { 
@@ -11,7 +11,13 @@ const puzzles = [
         category: "butterflies", 
         image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1719947771/IMG_1842_z7mzjy.jpg", 
         shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/img-1842?product_gallery=303973&product_id=7351866",
-        galleryUrl: "https://www.prettyfoto.com/butterflies-in-nature"
+        galleryUrl: "https://www.prettyfoto.com/butterflies-in-nature",
+        story: {
+            location: "Butterfly Garden, NC",
+            season: "Summer",
+            moment: "This Gulf Fritillary paused just long enough on the cherry-red bloom to capture its iridescent wings catching the afternoon light.",
+            tags: ["butterfly", "nature", "wildlife", "macro", "orange butterfly", "garden"]
+        }
     },
     { 
         id: 2, 
@@ -19,7 +25,13 @@ const puzzles = [
         category: "butterflies", 
         image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1694475326/Jennifer_McClellan_008Cfc2f-1102-42Ba-Afef-D728dcafa2b5_o6h4nh.jpg", 
         shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/jennifer-mcclellan-008cfc2f-1102-42ba-afef-d728dcafa2b5?product_gallery=303973&product_id=6389616",
-        galleryUrl: "https://www.prettyfoto.com/butterflies-in-nature"
+        galleryUrl: "https://www.prettyfoto.com/butterflies-in-nature",
+        story: {
+            location: "Mountain Meadow",
+            season: "Late Summer",
+            moment: "Like a living gemstone, this butterfly's wings shimmer with colors that remind us nature is the greatest artist.",
+            tags: ["butterfly", "nature", "jewel tones", "wildlife", "meadow", "colorful"]
+        }
     },
     
     // Flowers - Tulips (3)
@@ -691,6 +703,351 @@ function copyPrizeCode() {
     });
 }
 
+// ============ STORY MODE ============
+const DEFAULT_STORIES = {
+    butterflies: {
+        locations: ["Butterfly Garden, NC", "Mountain Meadow", "Wildflower Field", "Nature Reserve"],
+        seasons: ["Spring", "Summer", "Late Summer", "Early Fall"],
+        moments: [
+            "A fleeting moment of stillness captured as delicate wings catch the golden light.",
+            "Nature's living artwork - each wing pattern tells a story millions of years in the making.",
+            "Time seemed to stop as this beautiful creature paused in its endless dance among the flowers."
+        ]
+    },
+    flowers: {
+        locations: ["Botanical Garden", "Private Garden", "Meadow Trail", "Countryside"],
+        seasons: ["Spring", "Early Summer", "Peak Bloom", "Golden Hour"],
+        moments: [
+            "Petals unfurling in the morning dew, a daily miracle we often overlook.",
+            "Each bloom is a celebration - nature's way of showing us that beauty needs no purpose.",
+            "In the quiet of the garden, this flower seemed to glow from within."
+        ]
+    },
+    horses: {
+        locations: ["Open Range, Montana", "Countryside Pasture", "Mountain Valley", "Golden Fields"],
+        seasons: ["Autumn", "Summer Evening", "Spring Morning", "Winter Light"],
+        moments: [
+            "Wild and free - this majestic creature embodies the spirit we all long for.",
+            "A moment of connection between photographer and subject, trust earned through patience.",
+            "The golden light transformed an ordinary moment into something magical."
+        ]
+    },
+    landscapes: {
+        locations: ["Blue Ridge Mountains", "Pacific Northwest", "Rocky Mountains", "Coastal Cliffs"],
+        seasons: ["Golden Hour", "Blue Hour", "Misty Morning", "After the Storm"],
+        moments: [
+            "Standing here, the world felt infinite and all worries seemed impossibly small.",
+            "Nature's grandeur reminds us we're part of something much larger than ourselves.",
+            "I waited hours for this light - some moments are worth any amount of patience."
+        ]
+    }
+};
+
+function getStoryForPuzzle(puzzle) {
+    // Return existing story if defined
+    if (puzzle.story) return puzzle.story;
+    
+    // Generate default story based on category
+    const defaults = DEFAULT_STORIES[puzzle.category] || DEFAULT_STORIES.flowers;
+    const seed = puzzle.id;
+    
+    return {
+        location: defaults.locations[seed % defaults.locations.length],
+        season: defaults.seasons[seed % defaults.seasons.length],
+        moment: defaults.moments[seed % defaults.moments.length],
+        tags: getCategoryTags(puzzle.category, puzzle.title)
+    };
+}
+
+function getCategoryTags(category, title) {
+    const baseTags = {
+        butterflies: ["butterfly", "nature", "wildlife", "macro", "wings", "garden"],
+        flowers: ["flower", "botanical", "bloom", "garden", "nature", "floral"],
+        horses: ["horse", "equine", "wildlife", "freedom", "nature", "majestic"],
+        landscapes: ["landscape", "scenic", "nature", "mountains", "travel", "adventure"]
+    };
+    
+    const tags = [...(baseTags[category] || baseTags.flowers)];
+    // Add words from title
+    title.toLowerCase().split(' ').forEach(word => {
+        if (word.length > 3 && !tags.includes(word)) tags.push(word);
+    });
+    return tags.slice(0, 8);
+}
+
+function showStoryModal(puzzle) {
+    if (!puzzle) return;
+    
+    playSound('click');
+    const story = getStoryForPuzzle(puzzle);
+    
+    document.getElementById('storyImage').src = puzzle.image;
+    document.getElementById('storyTitle').textContent = puzzle.title;
+    document.getElementById('storyLocation').textContent = story.location;
+    document.getElementById('storySeason').textContent = story.season;
+    document.getElementById('storyMoment').textContent = `"${story.moment}"`;
+    document.getElementById('storyShopLink').href = puzzle.shopUrl;
+    
+    // Render tags
+    document.getElementById('storyTags').innerHTML = story.tags
+        .map(tag => `<span class="story-tag">${tag}</span>`).join('');
+    
+    // Play button
+    document.getElementById('storyPlayBtn').onclick = () => {
+        document.getElementById('storyModal').classList.add('hidden');
+        selectPuzzle(puzzle.id);
+    };
+    
+    document.getElementById('storyModal').classList.remove('hidden');
+}
+
+function setupStoryModal() {
+    document.getElementById('closeStoryModal').onclick = () => {
+        document.getElementById('storyModal').classList.add('hidden');
+    };
+    document.getElementById('storyModal').onclick = (e) => {
+        if (e.target.id === 'storyModal') {
+            document.getElementById('storyModal').classList.add('hidden');
+        }
+    };
+    
+    // View Story button in completion modal
+    document.getElementById('viewStoryBtn').onclick = () => {
+        showStoryModal(currentPuzzle);
+    };
+}
+
+// ============ VIDEO GENERATION ============
+let videoState = {
+    puzzle: null,
+    time: 0,
+    moves: 0,
+    frames: [],
+    generating: false
+};
+
+function setupVideoModal() {
+    document.getElementById('closeVideoModal').onclick = () => {
+        document.getElementById('videoModal').classList.add('hidden');
+    };
+    document.getElementById('videoModal').onclick = (e) => {
+        if (e.target.id === 'videoModal') {
+            document.getElementById('videoModal').classList.add('hidden');
+        }
+    };
+    
+    document.getElementById('generateVideoBtn').onclick = generateVideo;
+    document.getElementById('downloadVideoBtn').onclick = downloadVideo;
+    
+    // Create Video button in completion modal
+    document.getElementById('createVideoBtn').onclick = () => {
+        openVideoModal();
+    };
+}
+
+function openVideoModal() {
+    playSound('click');
+    videoState.puzzle = currentPuzzle;
+    videoState.time = seconds;
+    videoState.moves = moves;
+    
+    document.getElementById('videoModal').classList.remove('hidden');
+    document.getElementById('generateVideoBtn').classList.remove('hidden');
+    document.getElementById('downloadVideoBtn').classList.add('hidden');
+    
+    // Draw preview frame
+    drawVideoPreview();
+}
+
+function drawVideoPreview() {
+    const canvas = document.getElementById('videoCanvas');
+    const ctx = canvas.getContext('2d');
+    const width = 540;
+    const height = 960;
+    
+    // Background gradient
+    const gradient = ctx.createLinearGradient(0, 0, width, height);
+    gradient.addColorStop(0, '#667eea');
+    gradient.addColorStop(1, '#764ba2');
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, width, height);
+    
+    // Preview text
+    ctx.fillStyle = 'white';
+    ctx.font = 'bold 24px Inter';
+    ctx.textAlign = 'center';
+    ctx.fillText('Click Generate to create', width/2, height/2 - 20);
+    ctx.fillText('your share video!', width/2, height/2 + 20);
+}
+
+async function generateVideo() {
+    if (videoState.generating) return;
+    
+    playSound('click');
+    videoState.generating = true;
+    
+    const btn = document.getElementById('generateVideoBtn');
+    btn.textContent = 'Generating...';
+    btn.disabled = true;
+    
+    const canvas = document.getElementById('videoCanvas');
+    const ctx = canvas.getContext('2d');
+    const width = 540;
+    const height = 960;
+    
+    // Load puzzle image
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    
+    img.onload = async () => {
+        // Create video frames
+        const frames = [];
+        const totalFrames = 60; // 2 seconds at 30fps
+        
+        for (let i = 0; i < totalFrames; i++) {
+            drawVideoFrame(ctx, width, height, img, i, totalFrames);
+            // Capture frame
+            frames.push(canvas.toDataURL('image/png'));
+            
+            // Update progress
+            if (i % 10 === 0) {
+                await new Promise(r => setTimeout(r, 10));
+            }
+        }
+        
+        videoState.frames = frames;
+        videoState.generating = false;
+        
+        btn.classList.add('hidden');
+        document.getElementById('downloadVideoBtn').classList.remove('hidden');
+        
+        // Draw final frame
+        drawVideoFrame(ctx, width, height, img, totalFrames - 1, totalFrames);
+    };
+    
+    img.onerror = () => {
+        videoState.generating = false;
+        btn.textContent = '🎬 Generate Video';
+        btn.disabled = false;
+        alert('Could not load image. Please try again.');
+    };
+    
+    img.src = videoState.puzzle.image;
+}
+
+function drawVideoFrame(ctx, width, height, img, frame, totalFrames) {
+    const progress = frame / totalFrames;
+    
+    // Background gradient
+    const gradient = ctx.createLinearGradient(0, 0, width, height);
+    gradient.addColorStop(0, '#667eea');
+    gradient.addColorStop(1, '#764ba2');
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, width, height);
+    
+    // Animated particles
+    ctx.fillStyle = 'rgba(255,255,255,0.1)';
+    for (let i = 0; i < 20; i++) {
+        const x = (i * 97 + frame * 3) % width;
+        const y = (i * 73 + frame * 2) % height;
+        const size = 10 + (i % 5) * 10;
+        ctx.beginPath();
+        ctx.arc(x, y, size, 0, Math.PI * 2);
+        ctx.fill();
+    }
+    
+    // Header
+    ctx.fillStyle = 'white';
+    ctx.font = 'bold 32px "Playfair Display"';
+    ctx.textAlign = 'center';
+    ctx.fillText('🌸 PrettyFoto', width/2, 80);
+    
+    // "SOLVED!" text with animation
+    const scale = 0.8 + Math.sin(progress * Math.PI * 2) * 0.1;
+    ctx.save();
+    ctx.translate(width/2, 150);
+    ctx.scale(scale, scale);
+    ctx.font = 'bold 48px Inter';
+    ctx.fillText('✨ SOLVED! ✨', 0, 0);
+    ctx.restore();
+    
+    // Image with scale animation
+    const imgSize = 350;
+    const imgScale = progress < 0.3 ? 0.5 + (progress / 0.3) * 0.5 : 1;
+    const scaledSize = imgSize * imgScale;
+    const imgX = (width - scaledSize) / 2;
+    const imgY = 200 + (imgSize - scaledSize) / 2;
+    
+    // Image shadow
+    ctx.fillStyle = 'rgba(0,0,0,0.3)';
+    ctx.beginPath();
+    ctx.roundRect(imgX + 5, imgY + 5, scaledSize, scaledSize, 20);
+    ctx.fill();
+    
+    // Image
+    ctx.save();
+    ctx.beginPath();
+    ctx.roundRect(imgX, imgY, scaledSize, scaledSize, 20);
+    ctx.clip();
+    ctx.drawImage(img, imgX, imgY, scaledSize, scaledSize);
+    ctx.restore();
+    
+    // Title
+    ctx.font = 'bold 28px "Playfair Display"';
+    ctx.fillText(videoState.puzzle.title, width/2, 600);
+    
+    // Stats
+    ctx.font = '24px Inter';
+    const statsY = 680;
+    ctx.fillText(`⏱️ ${formatTime(videoState.time)}  •  👆 ${videoState.moves} moves`, width/2, statsY);
+    
+    // Confetti (appears after 50% progress)
+    if (progress > 0.5) {
+        const confettiProgress = (progress - 0.5) * 2;
+        const colors = ['#f1c40f', '#e74c3c', '#3498db', '#2ecc71', '#9b59b6'];
+        for (let i = 0; i < 30; i++) {
+            ctx.fillStyle = colors[i % colors.length];
+            const cx = (i * 47) % width;
+            const cy = 100 + confettiProgress * (height - 200) * ((i % 5 + 5) / 10);
+            const csize = 8 + (i % 3) * 4;
+            ctx.fillRect(cx, cy, csize, csize * 0.5);
+        }
+    }
+    
+    // CTA
+    ctx.fillStyle = 'rgba(255,255,255,0.9)';
+    ctx.beginPath();
+    ctx.roundRect(width/2 - 140, height - 200, 280, 50, 25);
+    ctx.fill();
+    
+    ctx.fillStyle = '#667eea';
+    ctx.font = 'bold 18px Inter';
+    ctx.fillText('Play at prettyfoto.com', width/2, height - 168);
+    
+    // Hashtags
+    ctx.fillStyle = 'rgba(255,255,255,0.7)';
+    ctx.font = '14px Inter';
+    ctx.fillText('#puzzlegame #naturelovers #satisfying', width/2, height - 100);
+    ctx.fillText('#' + videoState.puzzle.category + ' #prettyfoto', width/2, height - 75);
+}
+
+function downloadVideo() {
+    playSound('click');
+    
+    // For browsers that don't support video recording, download as animated GIF frames
+    // or as a single image. In production, you'd use MediaRecorder API or a library
+    
+    // Simple solution: Download the final frame as an image
+    const canvas = document.getElementById('videoCanvas');
+    const link = document.createElement('a');
+    link.download = `prettyfoto-${videoState.puzzle.title.toLowerCase().replace(/\s+/g, '-')}.png`;
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+    
+    // Show tip about screen recording
+    alert('Image saved! 💡 Tip: For a real video, use screen recording while playing the puzzle. The satisfying solve animation is perfect for TikTok!');
+}
+
 // ============ AUDIO ============
 let audioCtx = null;
 
@@ -787,6 +1144,8 @@ document.addEventListener('DOMContentLoaded', () => {
     updateSoundButton();
     startLiveActivityFeed();
     setupSpinWheel();
+    setupStoryModal();
+    setupVideoModal();
 });
 
 function applyPersonalization() {
@@ -1118,11 +1477,14 @@ function renderGallery(category = 'all') {
         : puzzles.filter(p => p.category === category);
     
     puzzleGallery.innerHTML = filtered.map(puzzle => `
-        <div class="puzzle-card" onclick="selectPuzzle(${puzzle.id})">
-            <img src="${puzzle.image}" alt="${puzzle.title}" class="puzzle-card-image" loading="lazy">
+        <div class="puzzle-card">
+            <img src="${puzzle.image}" alt="${puzzle.title}" class="puzzle-card-image" loading="lazy" onclick="selectPuzzle(${puzzle.id})">
             <div class="puzzle-card-info">
                 <div class="puzzle-card-title">${puzzle.title}</div>
-                <div class="puzzle-card-category">${puzzle.category}</div>
+                <div class="puzzle-card-actions">
+                    <button class="card-story-btn" onclick="event.stopPropagation(); showStoryModal(puzzles.find(p=>p.id===${puzzle.id}))">📖</button>
+                    <button class="card-play-btn" onclick="selectPuzzle(${puzzle.id})">▶️ Play</button>
+                </div>
             </div>
         </div>
     `).join('');
