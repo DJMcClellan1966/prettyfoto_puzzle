@@ -464,7 +464,7 @@ function showStoryModal(puzzle) {
     playSound('click');
     const story = getStoryForPuzzle(puzzle);
     
-    setImageSrcWithFallback(document.getElementById('storyImage'), puzzle.image);
+    setImageSrcWithFallback(document.getElementById('storyImage'), getThumbnailUrl(puzzle.image, 400));
     document.getElementById('storyTitle').textContent = puzzle.title;
     document.getElementById('storyLocation').textContent = story.location;
     document.getElementById('storySeason').textContent = story.season;
@@ -954,12 +954,12 @@ function playDaily() {
     }
     
     puzzleTitle.textContent = currentPuzzle.title;
-    setImageSrcWithFallback(puzzlePreview, currentPuzzle.image);
+    setImageSrcWithFallback(puzzlePreview, getThumbnailUrl(currentPuzzle.image, 400));
     shopLink.href = currentPuzzle.shopUrl;
     document.getElementById('galleryLink').href = currentPuzzle.galleryUrl;
     document.getElementById('completionShopLink').href = currentPuzzle.shopUrl;
     document.getElementById('completionGalleryLink').href = currentPuzzle.galleryUrl;
-    setImageSrcWithFallback(document.getElementById('hintImage'), currentPuzzle.image);
+    setImageSrcWithFallback(document.getElementById('hintImage'), getThumbnailUrl(currentPuzzle.image, 400));
     
     document.getElementById('dailyBadge').classList.remove('hidden');
     document.getElementById('dailyBadgeNum').textContent = getDailyPuzzleNumber();
@@ -997,12 +997,14 @@ function startCountdown() {
 }
 
 // ============ IMAGE DELIVERY ============
-// Thumbnail URL for gallery (smaller size + efficient quality) to reduce payload (~1.7MB savings)
+// Thumbnail URL: f_auto (WebP/AVIF), sized dimensions, q_auto:good. Reduces payload and improves Lighthouse.
 function getThumbnailUrl(fullUrl, width = 280) {
     if (!fullUrl || typeof fullUrl !== 'string') return fullUrl;
-    return fullUrl
+    let u = fullUrl
         .replace(/w_\d+,h_\d+/, `w_${width},h_${width}`)
         .replace(/q_auto:best/, 'q_auto:good');
+    if (u.includes('/image/upload/') && !u.includes('f_auto')) u = u.replace('/image/upload/', '/image/upload/f_auto,');
+    return u;
 }
 
 // ============ GALLERY ============
@@ -1042,12 +1044,12 @@ function selectPuzzle(id) {
     shuffleSeed = Date.now();
     
     puzzleTitle.textContent = currentPuzzle.title;
-    setImageSrcWithFallback(puzzlePreview, currentPuzzle.image);
+    setImageSrcWithFallback(puzzlePreview, getThumbnailUrl(currentPuzzle.image, 400));
     shopLink.href = currentPuzzle.shopUrl;
     document.getElementById('galleryLink').href = currentPuzzle.galleryUrl;
     document.getElementById('completionShopLink').href = currentPuzzle.shopUrl;
     document.getElementById('completionGalleryLink').href = currentPuzzle.galleryUrl;
-    setImageSrcWithFallback(document.getElementById('hintImage'), currentPuzzle.image);
+    setImageSrcWithFallback(document.getElementById('hintImage'), getThumbnailUrl(currentPuzzle.image, 400));
     
     document.getElementById('dailyBadge').classList.add('hidden');
     document.getElementById('shuffleBtn').classList.remove('hidden');
@@ -1199,7 +1201,7 @@ function createTiles() {
         shuffleTiles();
         renderBoard(tileSize);
     };
-    loadImageWithCacheFallback(currentPuzzle.image, img, done, () => {
+    loadImageWithCacheFallback(getThumbnailUrl(currentPuzzle.image, 400), img, done, () => {
         if (puzzleBoard.children.length === 0) puzzleBoard.innerHTML = '<p class="offline-hint">Image unavailable. Try again when online, or play another puzzle.</p>';
     });
 }
@@ -1407,7 +1409,7 @@ function puzzleComplete() {
     
     markPuzzleCompleted(currentPuzzle.id);
     
-    setImageSrcWithFallback(document.getElementById('completedImage'), currentPuzzle.image);
+    setImageSrcWithFallback(document.getElementById('completedImage'), getThumbnailUrl(currentPuzzle.image, 400));
     document.getElementById('finalTime').textContent = formatTime(seconds);
     document.getElementById('finalMoves').textContent = moves;
     document.getElementById('completionShopLink').href = currentPuzzle.shopUrl;

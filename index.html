@@ -58,17 +58,12 @@
     }
     </script>
     
-    <!-- LCP image origin: preconnect so image request doesn't wait for connection -->
+    <!-- Sync CSS and fonts for fast first paint (avoids main-thread blocking from async + inline script) -->
     <link rel="preconnect" href="https://images.discerningassets.com" crossorigin>
-    <!-- Non-render-blocking: CSS and fonts load async so first paint isn't delayed -->
-    <link rel="preload" href="styles.css" as="style">
-    <link rel="stylesheet" href="styles.css" media="print" onload="this.media='all'">
-    <noscript><link rel="stylesheet" href="styles.css"></noscript>
+    <link rel="stylesheet" href="styles.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <!-- Font stylesheet: display=optional avoids layout shift when fonts load (no swap reflow) -->
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=optional" rel="stylesheet" media="print" onload="this.media='all'">
-    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=optional"></noscript>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 </head>
 <body>
     <a href="#main" class="skip-link">Skip to main content</a>
@@ -124,27 +119,6 @@
                             </div>
                         </div>
                     </article>
-                    <script>
-                    (function() {
-                        var EPOCH = new Date('2026-02-03').getTime();
-                        var DAY_MS = 24 * 60 * 60 * 1000;
-                        var urls = ["https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1719947771/IMG_1842_z7mzjy.jpg","https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1694475326/Jennifer_McClellan_008Cfc2f-1102-42Ba-Afef-D728dcafa2b5_o6h4nh.jpg","https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1737159071/2N4A4426_o4lj30.jpg","https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1737159079/IMG_0594_yndoza.jpg","https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1737159079/IMG_0631_nuav1f.jpg","https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1693521613/Jennifer_McClellan_Img_0261_giehor.jpg","https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1719113391/2N4A5107_imfztx.jpg","https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1714324985/IMG_1453_ypftdw.jpg","https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1700958423/IMG_8345_maatlv.jpg","https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1719113429/2N4A5194_situp5.jpg","https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1719113491/2N4A5195_d6urme.jpg","https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1737159084/IMG_1512_q9xltq.jpg","https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1719113644/2N4A4928_ugnovr.jpg","https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1708488576/IMG_2866_b8y05a.jpg","https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1719113554/2N4A4751_ugqv2k.jpg","https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1719113577/IMG_2394_nbgkpf.jpg"];
-                        var today = new Date();
-                        today.setHours(0, 0, 0, 0);
-                        var puzzleNum = Math.floor((today.getTime() - EPOCH) / DAY_MS) + 1;
-                        var idx = (puzzleNum - 1) % urls.length;
-                        var full = urls[idx];
-                        var lcpUrl = full.replace(/w_\d+,h_\d+/, "w_400,h_400").replace(/q_auto:best/, "q_auto:good");
-                        var preload = document.createElement("link");
-                        preload.rel = "preload";
-                        preload.as = "image";
-                        preload.href = lcpUrl;
-                        preload.fetchPriority = "high";
-                        document.head.appendChild(preload);
-                        var img = document.getElementById("dailyImage");
-                        if (img) img.src = lcpUrl;
-                    })();
-                    </script>
 
                     <section class="free-play-section" aria-labelledby="gallery-heading">
                         <h2 id="gallery-heading">Explore Gallery</h2>
