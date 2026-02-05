@@ -1,5 +1,5 @@
 // PrettyFoto Puzzle - Service Worker
-const CACHE_NAME = 'prettyfoto-puzzle-v1';
+const CACHE_NAME = 'prettyfoto-puzzle-v2';
 const ASSETS_TO_CACHE = [
   '/',
   '/index.html',
@@ -37,23 +37,20 @@ self.addEventListener('fetch', (event) => {
   // Skip non-GET requests
   if (event.request.method !== 'GET') return;
   
-  // For image requests, use cache-first strategy
-  if (event.request.destination === 'image') {
+  // For image requests: cache-first, then network; on network failure fallback to cache
+  if (event.request.destination === 'image' || (event.request.url.match(/\.(jpg|jpeg|png|webp|gif)(\?|$)/i))) {
     event.respondWith(
       caches.match(event.request).then((cachedResponse) => {
-        if (cachedResponse) {
-          return cachedResponse;
-        }
-        return fetch(event.request).then((response) => {
-          // Cache images for offline use
-          if (response.ok) {
-            const responseClone = response.clone();
-            caches.open(CACHE_NAME).then((cache) => {
-              cache.put(event.request, responseClone);
-            });
-          }
-          return response;
-        });
+        if (cachedResponse) return cachedResponse;
+        return fetch(event.request)
+          .then((response) => {
+            if (response.ok) {
+              const clone = response.clone();
+              caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
+            }
+            return response;
+          })
+          .catch(() => caches.match(event.request));
       })
     );
     return;

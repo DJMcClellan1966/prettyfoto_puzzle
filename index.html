@@ -3,14 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>PrettyFoto Games - Daily Photo Puzzles & Games</title>
+    <title>PrettyFoto Puzzles – Daily Photo Puzzle</title>
     
-    <!-- PWA Meta Tags -->
+    <!-- PWA -->
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#e17055">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <meta name="apple-mobile-web-app-title" content="PrettyFoto">
+    <meta name="apple-mobile-web-app-title" content="PrettyFoto Puzzles">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%23e17055' width='100' height='100' rx='20'/><text x='50' y='55' dominant-baseline='middle' text-anchor='middle' font-size='50'>🌸</text></svg>">
     
     <!-- SEO & Social Search Optimization -->
     <meta name="description" content="Play daily sliding tile puzzles with beautiful nature photography from PrettyFoto. New puzzle every day! Free butterfly, flower, horse & landscape puzzles.">
@@ -63,650 +64,140 @@
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 </head>
 <body>
+    <a href="#main" class="skip-link">Skip to main content</a>
     <div class="app">
-        <!-- Header -->
-        <header class="header">
-            <a href="https://www.prettyfoto.com" target="_blank" class="logo">
-                <span class="logo-icon">🌸</span>
+        <header class="header" role="banner">
+            <a href="https://www.prettyfoto.com" target="_blank" rel="noopener" class="logo" aria-label="PrettyFoto home">
+                <span class="logo-icon" aria-hidden="true">🌸</span>
                 <span class="logo-text">PrettyFoto</span>
             </a>
-            <div class="header-actions">
-                <button id="statsBtn" class="header-btn" title="Statistics">📊</button>
-                <button id="soundBtn" class="header-btn" title="Toggle Sound">🔊</button>
-                <a href="https://www.prettyfoto.com/shop-art" target="_blank" class="shop-link">
-                    Shop Art →
-                </a>
-            </div>
+            <nav class="header-actions" aria-label="App actions">
+                <button id="shareAppBtn" class="header-btn" type="button" aria-label="Share app">📤</button>
+                <button id="statsBtn" class="header-btn" type="button" aria-label="View statistics">📊</button>
+                <button id="soundBtn" class="header-btn" type="button" aria-label="Toggle sound">🔊</button>
+                <a href="https://www.prettyfoto.com/shop-art" target="_blank" rel="noopener" class="shop-link">Shop Art →</a>
+            </nav>
         </header>
 
-        <!-- Main Content -->
-        <main class="main">
-            <!-- Game Mode Selector -->
-            <div class="game-mode-tabs">
-                <button class="mode-tab active" data-mode="slider">🧩 Slider</button>
-                <button class="mode-tab" data-mode="zoom">🔍 Zoom</button>
-                <button class="mode-tab" data-mode="auction">💰 Auction</button>
-                <button class="mode-tab" data-mode="personality">✨ Soul</button>
-                <button class="mode-tab" data-mode="frame">📸 Frame</button>
-            </div>
-
-            <!-- Home View -->
-            <section id="homeView" class="view">
-                <!-- ========== SLIDER GAME HOME ========== -->
+        <main id="main" class="main" role="main" aria-label="Puzzle game">
+            <section id="homeView" class="view" aria-label="Home" aria-live="polite">
                 <div id="sliderHome" class="game-home">
-                    <!-- Personalized Welcome -->
-                    <div class="personalized-welcome">
+                    <header class="personalized-welcome" aria-label="Welcome">
                         <h1 id="welcomeTitle">Welcome!</h1>
                         <p id="welcomeSubtitle">Discover beautiful nature photography</p>
-                        <button id="spinWheelBtn" class="spin-trigger-btn hidden">
-                            🎡 Daily Spin Available!
-                        </button>
-                    </div>
-                    
-                    <!-- Zen Mode & Artist Profile Bar -->
-                    <div class="zen-artist-bar">
-                        <button id="zenModeBtn" class="zen-btn">
-                            <span class="zen-icon">🧘</span>
-                            <span class="zen-text">Zen Mode</span>
-                        </button>
-                        <button id="artistBtn" class="artist-btn">
-                            <span class="artist-icon">📸</span>
-                            <span class="artist-text">Meet the Artist</span>
-                        </button>
-                    </div>
-                    
-                    <!-- For You Section (personalized) -->
-                    <div id="forYouSection" class="for-you-section hidden">
-                        <div class="for-you-header">
-                            <span class="for-you-badge">✨ For You</span>
-                            <span id="forYouCategory" class="for-you-category"></span>
-                        </div>
-                        <div id="forYouGallery" class="for-you-gallery"></div>
-                    </div>
+                    </header>
 
-                    <div class="home-header">
-                        <h2>Daily Puzzle</h2>
+                    <section class="home-header" aria-labelledby="daily-heading">
+                        <h2 id="daily-heading">Daily Puzzle</h2>
                         <p>A new puzzle every day at midnight</p>
-                    </div>
+                    </section>
 
-                    <!-- Daily Puzzle Card -->
-                    <div id="dailyCard" class="daily-card">
-                    <div class="daily-badge">
-                        <span class="daily-number">#<span id="puzzleNumber">1</span></span>
-                        <span class="daily-date" id="puzzleDate">Feb 3, 2026</span>
-                    </div>
-                    <div class="daily-image-container">
-                        <img id="dailyImage" src="" alt="Today's puzzle" class="daily-image">
-                        <div id="dailyOverlay" class="daily-overlay hidden">
-                            <span class="daily-status">✓ Completed</span>
-                        </div>
-                    </div>
-                    <div class="daily-info">
-                        <h3 id="dailyTitle">Loading...</h3>
-                        <p id="dailyCategory" class="daily-category">Nature</p>
-                    </div>
-                    <button id="playDailyBtn" class="play-daily-btn">
-                        Play Today's Puzzle
-                    </button>
-                    <div id="dailyCompleted" class="daily-completed hidden">
-                        <p>Come back tomorrow for a new puzzle!</p>
-                        <div class="countdown">
-                            <span class="countdown-label">Next puzzle in</span>
-                            <span id="countdown" class="countdown-time">00:00:00</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Collections Section -->
-                <div class="collections-section">
-                    <div class="collections-header">
-                        <h2>🏆 Collections</h2>
-                        <p>Complete sets to unlock rewards!</p>
-                    </div>
-                    <div id="collectionsGrid" class="collections-grid">
-                        <!-- Collections loaded via JavaScript -->
-                    </div>
-                </div>
-
-                <!-- Gallery Section -->
-                <div class="free-play-section">
-                    <h2>Explore Gallery</h2>
-                    <p>Beautiful nature photography puzzles</p>
-                    
-                    <!-- Category Filter -->
-                    <div class="category-filter">
-                        <button class="filter-btn active" data-category="all">All</button>
-                        <button class="filter-btn" data-category="butterflies">🦋</button>
-                        <button class="filter-btn" data-category="flowers">🌸</button>
-                        <button class="filter-btn" data-category="horses">🐴</button>
-                        <button class="filter-btn" data-category="landscapes">🏔️</button>
-                    </div>
-
-                    <!-- Puzzle Gallery Grid -->
-                    <div id="puzzleGallery" class="puzzle-gallery">
-                        <!-- Puzzles loaded via JavaScript -->
-                    </div>
-                    
-                    <!-- Shop CTA -->
-                    <div class="gallery-cta">
-                        <p>❤️ Love these images?</p>
-                        <a href="https://www.prettyfoto.com/shop-art" target="_blank" class="gallery-shop-btn">
-                            Shop Art Prints at PrettyFoto.com
-                        </a>
-                        <p class="cta-discount">Use code <strong>EVERYWHERE26</strong> for 25% off!</p>
-                    </div>
-                </div>
-                </div><!-- End sliderHome -->
-
-                <!-- ========== ZOOM IN GAME HOME ========== -->
-                <div id="zoomHome" class="game-home hidden">
-                    <div class="home-header">
-                        <h1>Daily Zoom</h1>
-                        <p>Guess the image from a tiny detail!</p>
-                    </div>
-                    
-                    <div class="game-intro-tip">
-                        <strong>How to play:</strong> You'll see a zoomed-in portion of an image. 
-                        Guess what it is! Each wrong guess zooms out a little. 
-                        Fewer zooms = higher score! 🔍
-                    </div>
-                    
-                    <div id="zoomDailyCard" class="daily-card">
+                    <article id="dailyCard" class="daily-card" aria-labelledby="dailyTitle" aria-describedby="dailyCategory">
                         <div class="daily-badge">
-                            <span class="daily-number">#<span id="zoomNumber">1</span></span>
-                            <span class="daily-date" id="zoomDate">Feb 3, 2026</span>
+                            <span class="daily-number" aria-hidden="true">#<span id="puzzleNumber">1</span></span>
+                            <time class="daily-date" id="puzzleDate" datetime="">Feb 3, 2026</time>
                         </div>
-                        <div class="daily-image-container mystery">
-                            <div class="mystery-image">🔍</div>
-                            <div id="zoomOverlay" class="daily-overlay hidden">
-                                <span class="daily-status">✓ Guessed</span>
+                        <div class="daily-image-container">
+                            <img id="dailyImage" src="" alt="Today's puzzle image" class="daily-image" width="300" height="300">
+                            <div id="dailyOverlay" class="daily-overlay hidden" aria-hidden="true">
+                                <span class="daily-status">✓ Completed</span>
                             </div>
                         </div>
                         <div class="daily-info">
-                            <h3>Mystery Image</h3>
-                            <p class="daily-category">Can you guess it?</p>
+                            <h3 id="dailyTitle">Loading...</h3>
+                            <p id="dailyCategory" class="daily-category">Nature</p>
                         </div>
-                        <button id="playZoomBtn" class="play-daily-btn">
-                            Play Today's Zoom
-                        </button>
-                    </div>
-                    
-                    <div class="free-play-section">
-                        <h2>Practice Mode</h2>
-                        <p>Test your eye for detail</p>
-                        <div id="zoomGallery" class="puzzle-gallery"></div>
-                    </div>
-                </div>
+                        <button id="playDailyBtn" class="play-daily-btn" type="button">Play Today's Puzzle</button>
+                        <p class="daily-browse-hint">Prefer to browse? Explore the gallery below — no puzzle required.</p>
+                        <div id="dailyCompleted" class="daily-completed hidden" aria-hidden="true">
+                            <p>Come back tomorrow for a new puzzle!</p>
+                            <div class="countdown" aria-live="polite">
+                                <span class="countdown-label">Next puzzle in</span>
+                                <span id="countdown" class="countdown-time" aria-label="Time until next puzzle">00:00:00</span>
+                            </div>
+                        </div>
+                    </article>
 
-                <!-- ========== PHOTO AUCTION HOME ========== -->
-                <div id="auctionHome" class="game-home hidden">
-                    <div class="home-header">
-                        <h1>💰 Photo Auction</h1>
-                        <p>Guess which photo is worth more!</p>
-                    </div>
-                    
-                    <div class="game-intro-tip">
-                        <strong>How it works:</strong> Two photos face off. 
-                        Guess which one got more views/sales on our website.
-                        Can you predict what people love? 🎯
-                    </div>
-                    
-                    <div class="auction-stats-preview">
-                        <div class="auction-stat">
-                            <span class="auction-stat-value" id="auctionBestStreak">0</span>
-                            <span class="auction-stat-label">Best Streak</span>
+                    <section class="free-play-section" aria-labelledby="gallery-heading">
+                        <h2 id="gallery-heading">Explore Gallery</h2>
+                        <p>Beautiful nature photography puzzles</p>
+                        <div class="category-filter" role="group" aria-label="Filter by category">
+                            <button type="button" class="filter-btn active" data-category="all">All</button>
+                            <button type="button" class="filter-btn" data-category="butterflies" aria-label="Butterflies">🦋</button>
+                            <button type="button" class="filter-btn" data-category="flowers" aria-label="Flowers">🌸</button>
+                            <button type="button" class="filter-btn" data-category="horses" aria-label="Horses">🐴</button>
+                            <button type="button" class="filter-btn" data-category="landscapes" aria-label="Landscapes">🏔️</button>
                         </div>
-                        <div class="auction-stat">
-                            <span class="auction-stat-value" id="auctionTotalPlays">0</span>
-                            <span class="auction-stat-label">Rounds Played</span>
+                        <div id="puzzleGallery" class="puzzle-gallery" role="list" aria-label="Puzzle gallery">
+                            <!-- Puzzles loaded via JavaScript -->
                         </div>
-                    </div>
-                    
-                    <button id="startAuctionBtn" class="play-daily-btn">
-                        🎲 Start Auction
-                    </button>
-                </div>
-
-                <!-- ========== PHOTO PERSONALITY HOME ========== -->
-                <div id="personalityHome" class="game-home hidden">
-                    <div class="home-header">
-                        <h1>✨ Nature Soul</h1>
-                        <p>Discover your nature personality!</p>
-                    </div>
-                    
-                    <div class="game-intro-tip">
-                        <strong>10 quick choices</strong> reveal which type of nature 
-                        speaks to your soul. Beautiful results to share! 🦋
-                    </div>
-                    
-                    <div class="personality-types-preview">
-                        <span class="personality-badge">🦋 The Dreamer</span>
-                        <span class="personality-badge">🏔️ The Explorer</span>
-                        <span class="personality-badge">🌸 The Nurturer</span>
-                        <span class="personality-badge">🐴 The Free Spirit</span>
-                    </div>
-                    
-                    <button id="startPersonalityBtn" class="play-daily-btn">
-                        ✨ Discover Your Soul
-                    </button>
-                    
-                    <div id="personalityResult" class="personality-result hidden">
-                        <!-- Results shown here after quiz -->
-                    </div>
-                </div>
-
-                <!-- ========== PHOTO FRAME HOME ========== -->
-                <div id="frameHome" class="game-home hidden">
-                    <div class="home-header">
-                        <h1>📸 Nature Frame</h1>
-                        <p>Frame your photo with beautiful nature art!</p>
-                    </div>
-                    
-                    <div class="game-intro-tip">
-                        <strong>Perfect for sharing!</strong> Upload a selfie or photo, 
-                        choose a nature frame, and download your branded creation.
-                    </div>
-                    
-                    <div class="frame-upload-area" id="frameUploadArea">
-                        <div class="upload-icon">📷</div>
-                        <p>Tap to upload a photo</p>
-                        <p class="upload-hint">or drag & drop</p>
-                        <input type="file" id="frameFileInput" accept="image/*" hidden>
-                    </div>
-                    
-                    <button id="frameCameraBtn" class="play-daily-btn secondary">
-                        📸 Take a Selfie
-                    </button>
-                    
-                    <div class="frame-examples">
-                        <h3>Frame Styles</h3>
-                        <div class="frame-style-preview">
-                            <div class="frame-preview-item" data-style="dreamer">🦋 Dreamer</div>
-                            <div class="frame-preview-item" data-style="explorer">🏔️ Explorer</div>
-                            <div class="frame-preview-item" data-style="nurturer">🌸 Nurturer</div>
-                            <div class="frame-preview-item" data-style="spirit">🐴 Free Spirit</div>
+                        <div class="gallery-cta">
+                            <p>❤️ Love these images?</p>
+                            <a href="https://www.prettyfoto.com/shop-art" target="_blank" rel="noopener" class="gallery-shop-btn">Shop Art Prints at PrettyFoto.com</a>
+                            <p class="cta-discount">Use code <strong>EVERYWHERE26</strong> for 25% off!</p>
                         </div>
-                    </div>
+                    </section>
                 </div>
             </section>
 
-            <!-- Puzzle View -->
-            <section id="puzzleView" class="view hidden">
-                <!-- Back & Shop buttons -->
-                <div class="puzzle-nav">
-                    <button id="backBtn" class="icon-btn">← Back</button>
+            <section id="puzzleView" class="view hidden" aria-label="Puzzle play" aria-live="polite">
+                <nav class="puzzle-nav" aria-label="Puzzle actions">
+                    <button id="backBtn" class="icon-btn" type="button">← Back</button>
                     <div class="nav-links">
-                        <a id="galleryLink" href="#" target="_blank" class="gallery-link">
-                            🖼️ See Collection
-                        </a>
-                        <a id="shopLink" href="#" target="_blank" class="shop-btn">
-                            🛒 Buy This Print
-                        </a>
+                        <a href="#" id="browseGalleryLink" class="gallery-link hidden">🖼️ Browse gallery</a>
+                        <a id="galleryLink" href="#" target="_blank" rel="noopener" class="gallery-link">🖼️ See Collection</a>
+                        <a id="shopLink" href="#" target="_blank" rel="noopener" class="shop-btn">🛒 Buy This Print</a>
                     </div>
-                </div>
-
-                <!-- Puzzle Title -->
+                </nav>
                 <div class="puzzle-title-bar">
                     <h2 id="puzzleTitle">Puzzle</h2>
-                    <span id="dailyBadge" class="daily-badge-small hidden">Daily #<span id="dailyBadgeNum">1</span></span>
+                    <span id="dailyBadge" class="daily-badge-small hidden" aria-hidden="true">Daily #<span id="dailyBadgeNum">1</span></span>
                 </div>
-
-                <!-- Difficulty Selection -->
-                <div id="difficultySelect" class="difficulty-select">
+                <div id="difficultySelect" class="difficulty-select" role="group" aria-label="Choose difficulty">
                     <div class="preview-container">
-                        <img id="puzzlePreview" src="" alt="Puzzle preview">
+                        <img id="puzzlePreview" src="" alt="Puzzle preview – study the image" width="300" height="300">
                         <p class="preview-hint">Study the image, then choose difficulty</p>
                     </div>
                     <div class="difficulty-options">
-                        <button class="difficulty-btn" data-size="3">
+                        <button type="button" class="difficulty-btn" data-size="3" aria-label="Easy, 3 by 3 grid">
                             <span class="diff-label">Easy</span>
                             <span class="diff-grid">3×3</span>
                         </button>
-                        <button class="difficulty-btn recommended" data-size="4">
+                        <button type="button" class="difficulty-btn recommended" data-size="4" aria-label="Medium, 4 by 4 grid">
                             <span class="diff-label">Medium</span>
                             <span class="diff-grid">4×4</span>
                         </button>
-                        <button class="difficulty-btn" data-size="5">
+                        <button type="button" class="difficulty-btn" data-size="5" aria-label="Hard, 5 by 5 grid">
                             <span class="diff-label">Hard</span>
                             <span class="diff-grid">5×5</span>
                         </button>
                     </div>
                 </div>
-
-                <!-- Game Area -->
-                <div id="gameArea" class="game-area hidden">
-                    <!-- Stats Bar -->
-                    <div class="stats-bar">
+                <div id="gameArea" class="game-area hidden" role="region" aria-label="Game area" aria-hidden="true">
+                    <div class="stats-bar" role="status" aria-live="polite" aria-atomic="true">
                         <div class="stat">
-                            <span class="stat-icon">⏱️</span>
-                            <span id="timer" class="stat-value">0:00</span>
+                            <span class="stat-icon" aria-hidden="true">⏱️</span>
+                            <span id="timer" class="stat-value" aria-label="Elapsed time">0:00</span>
                         </div>
                         <div class="stat">
-                            <span class="stat-icon">👆</span>
-                            <span id="moves" class="stat-value">0</span>
+                            <span class="stat-icon" aria-hidden="true">👆</span>
+                            <span id="moves" class="stat-value" aria-label="Number of moves">0</span>
                         </div>
-                        <button id="hintBtn" class="hint-btn">👁️</button>
+                        <button id="hintBtn" class="hint-btn" type="button" aria-label="Show hint image">👁️</button>
                     </div>
-
-                    <!-- Puzzle Board -->
                     <div class="puzzle-container">
-                        <div id="puzzleBoard" class="puzzle-board">
-                            <!-- Tiles generated here -->
+                        <div id="puzzleBoard" class="puzzle-board" role="application" aria-label="Sliding tile puzzle board">
+                            <!-- Tiles generated by JavaScript -->
                         </div>
                     </div>
-
-                    <!-- Shuffle button (non-daily only) -->
-                    <button id="shuffleBtn" class="shuffle-btn hidden">🔀 Shuffle Again</button>
-                </div>
-            </section>
-
-            <!-- ========== ZOOM IN GAME VIEW ========== -->
-            <section id="zoomView" class="view hidden">
-                <div class="puzzle-nav">
-                    <button id="zoomBackBtn" class="icon-btn">← Back</button>
-                    <span id="zoomDailyBadge" class="daily-badge-small hidden">Daily #<span id="zoomBadgeNum">1</span></span>
-                </div>
-                
-                <div class="zoom-container">
-                    <div class="zoom-level-indicator">
-                        <span>Zoom Level: </span>
-                        <div class="zoom-dots">
-                            <span class="zoom-dot active" data-level="1"></span>
-                            <span class="zoom-dot" data-level="2"></span>
-                            <span class="zoom-dot" data-level="3"></span>
-                            <span class="zoom-dot" data-level="4"></span>
-                            <span class="zoom-dot" data-level="5"></span>
-                        </div>
-                    </div>
-                    
-                    <div class="zoom-image-container">
-                        <div id="zoomImageWrapper" class="zoom-image-wrapper">
-                            <img id="zoomImage" src="" alt="Guess the image">
-                        </div>
-                    </div>
-                    
-                    <div class="zoom-options">
-                        <p class="zoom-prompt">What is this image?</p>
-                        <div id="zoomChoices" class="zoom-choices">
-                            <!-- Options generated by JS -->
-                        </div>
-                    </div>
-                    
-                    <button id="zoomOutBtn" class="zoom-out-btn">🔍 Zoom Out (use a guess)</button>
-                </div>
-            </section>
-
-            <!-- ========== AUCTION GAME VIEW ========== -->
-            <section id="auctionView" class="view hidden">
-                <div class="puzzle-nav">
-                    <button id="auctionBackBtn" class="icon-btn">← Back</button>
-                    <span class="auction-streak">🔥 <span id="auctionCurrentStreak">0</span></span>
-                </div>
-                
-                <div class="auction-container">
-                    <h2 class="auction-question">Which photo is worth MORE?</h2>
-                    <p class="auction-hint">Based on actual views & popularity</p>
-                    
-                    <div class="auction-cards">
-                        <div id="auctionCard1" class="auction-card" onclick="selectAuctionCard(0)">
-                            <img id="auctionImg1" src="" alt="Option 1">
-                            <p id="auctionTitle1" class="auction-title"></p>
-                            <div id="auctionValue1" class="auction-value hidden">
-                                <span class="value-label">Popularity</span>
-                                <span class="value-score"></span>
-                            </div>
-                        </div>
-                        
-                        <div class="auction-vs">💰</div>
-                        
-                        <div id="auctionCard2" class="auction-card" onclick="selectAuctionCard(1)">
-                            <img id="auctionImg2" src="" alt="Option 2">
-                            <p id="auctionTitle2" class="auction-title"></p>
-                            <div id="auctionValue2" class="auction-value hidden">
-                                <span class="value-label">Popularity</span>
-                                <span class="value-score"></span>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div id="auctionFeedback" class="auction-feedback hidden">
-                        <p class="feedback-text"></p>
-                        <button id="auctionNextBtn" class="play-daily-btn">Next Round →</button>
-                    </div>
-                </div>
-            </section>
-
-            <!-- ========== PERSONALITY QUIZ VIEW ========== -->
-            <section id="personalityView" class="view hidden">
-                <div class="puzzle-nav">
-                    <button id="personalityBackBtn" class="icon-btn">← Back</button>
-                    <span id="personalityProgress">1 of 10</span>
-                </div>
-                
-                <div class="personality-container">
-                    <h2 class="personality-question">Which speaks to your soul?</h2>
-                    
-                    <div class="personality-cards">
-                        <div id="personalityCard1" class="personality-card" onclick="selectPersonality(0)">
-                            <img id="personalityImg1" src="" alt="Option 1">
-                        </div>
-                        <div id="personalityCard2" class="personality-card" onclick="selectPersonality(1)">
-                            <img id="personalityImg2" src="" alt="Option 2">
-                        </div>
-                    </div>
-                    
-                    <p class="personality-hint">Trust your instinct - tap what draws you!</p>
-                </div>
-            </section>
-            
-            <!-- ========== PERSONALITY RESULT VIEW ========== -->
-            <section id="personalityResultView" class="view hidden">
-                <div class="personality-result-container">
-                    <h2>Your Nature Soul is...</h2>
-                    
-                    <div id="soulResultCard" class="soul-result-card">
-                        <div class="soul-emoji" id="soulEmoji">🦋</div>
-                        <h1 class="soul-title" id="soulTitle">The Dreamer</h1>
-                        <p class="soul-description" id="soulDescription">
-                            You see beauty in delicate details...
-                        </p>
-                    </div>
-                    
-                    <div class="soul-traits">
-                        <h3>Your Traits</h3>
-                        <div id="soulTraits" class="traits-list"></div>
-                    </div>
-                    
-                    <div class="soul-match">
-                        <h3>Your Perfect Match</h3>
-                        <div id="soulMatch" class="soul-match-images"></div>
-                        <a id="soulShopLink" href="#" target="_blank" class="play-daily-btn">
-                            🛒 Shop Your Style
-                        </a>
-                    </div>
-                    
-                    <div class="soul-share">
-                        <button id="retakeSoulBtn" class="share-btn">🔄 Retake Quiz</button>
-                    </div>
-                </div>
-            </section>
-
-            <!-- ========== PHOTO FRAME VIEW ========== -->
-            <section id="frameView" class="view hidden">
-                <div class="puzzle-nav">
-                    <button id="frameBackBtn" class="icon-btn">← Back</button>
-                    <button id="frameNewBtn" class="icon-btn">🔄 New Photo</button>
-                </div>
-                
-                <div class="frame-container">
-                    <div class="frame-canvas-wrapper">
-                        <canvas id="frameCanvas" width="400" height="500"></canvas>
-                    </div>
-                    
-                    <div class="frame-style-selector">
-                        <h3>Choose Your Frame</h3>
-                        <div class="frame-styles">
-                            <button class="frame-style-btn active" data-style="dreamer">
-                                <span class="style-emoji">🦋</span>
-                                <span class="style-name">Dreamer</span>
-                            </button>
-                            <button class="frame-style-btn" data-style="explorer">
-                                <span class="style-emoji">🏔️</span>
-                                <span class="style-name">Explorer</span>
-                            </button>
-                            <button class="frame-style-btn" data-style="nurturer">
-                                <span class="style-emoji">🌸</span>
-                                <span class="style-name">Nurturer</span>
-                            </button>
-                            <button class="frame-style-btn" data-style="spirit">
-                                <span class="style-emoji">🐴</span>
-                                <span class="style-name">Spirit</span>
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <div class="frame-actions">
-                        <button id="downloadFrameBtn" class="share-btn">📥 Save Image</button>
-                    </div>
-                    
-                    <p class="frame-cta">
-                        Love nature art? <a href="https://www.prettyfoto.com/shop-art" target="_blank">Shop prints →</a>
-                    </p>
+                    <button id="shuffleBtn" class="shuffle-btn hidden" type="button">🔀 Shuffle Again</button>
                 </div>
             </section>
         </main>
-        
-        <!-- Camera Modal -->
-        <div id="cameraModal" class="modal hidden">
-            <div class="modal-content camera-modal">
-                <button id="closeCameraBtn" class="close-btn">×</button>
-                <h2>Take a Selfie</h2>
-                <div class="camera-container">
-                    <video id="cameraVideo" autoplay playsinline></video>
-                    <canvas id="cameraCapture" hidden></canvas>
-                </div>
-                <div class="camera-controls">
-                    <button id="switchCameraBtn" class="icon-btn">🔄</button>
-                    <button id="captureBtn" class="capture-btn">📸</button>
-                    <div class="spacer"></div>
-                </div>
-            </div>
-        </div>
 
-        <!-- Zen Mode Modal -->
-        <div id="zenModal" class="modal hidden">
-            <div class="modal-content zen-modal">
-                <button id="closeZenModal" class="close-btn">×</button>
-                <div class="zen-header">
-                    <span class="zen-lotus">🧘</span>
-                    <h2>Zen Mode</h2>
-                    <p>A peaceful puzzling experience</p>
-                </div>
-                
-                <div class="zen-options">
-                    <div class="zen-option">
-                        <div class="zen-option-info">
-                            <span class="option-title">Hide Timer & Moves</span>
-                            <span class="option-desc">No pressure, just enjoy</span>
-                        </div>
-                        <label class="toggle-switch">
-                            <input type="checkbox" id="zenHideStats" checked>
-                            <span class="toggle-slider"></span>
-                        </label>
-                    </div>
-                    
-                    <div class="zen-option">
-                        <div class="zen-option-info">
-                            <span class="option-title">Softer Colors</span>
-                            <span class="option-desc">Calming visual palette</span>
-                        </div>
-                        <label class="toggle-switch">
-                            <input type="checkbox" id="zenSoftColors" checked>
-                            <span class="toggle-slider"></span>
-                        </label>
-                    </div>
-                    
-                    <div class="zen-divider"></div>
-                    
-                    <div class="zen-sound-section">
-                        <span class="option-title">Ambient Sounds</span>
-                        <div class="ambient-sounds">
-                            <button class="ambient-btn" data-sound="none">🔇 None</button>
-                            <button class="ambient-btn active" data-sound="rain">🌧️ Rain</button>
-                            <button class="ambient-btn" data-sound="forest">🌲 Forest</button>
-                            <button class="ambient-btn" data-sound="ocean">🌊 Ocean</button>
-                            <button class="ambient-btn" data-sound="fireplace">🔥 Fire</button>
-                        </div>
-                    </div>
-                </div>
-                
-                <button id="startZenBtn" class="play-daily-btn">🧘 Enter Zen Mode</button>
-                
-                <p class="zen-tip">Perfect for unwinding after a long day</p>
-            </div>
-        </div>
-
-        <!-- Artist Profile Modal -->
-        <div id="artistModal" class="modal hidden">
-            <div class="modal-content artist-modal">
-                <button id="closeArtistModal" class="close-btn">×</button>
-                
-                <div class="artist-header">
-                    <div class="artist-photo">
-                        <span class="artist-photo-placeholder">📷</span>
-                    </div>
-                    <div class="artist-intro">
-                        <h2>Jennifer McClellan</h2>
-                        <p class="artist-tagline">Nature & Fine Art Photographer</p>
-                        <p class="artist-location">📍 North Carolina, USA</p>
-                    </div>
-                </div>
-                
-                <div class="artist-bio">
-                    <h3>Behind the Lens</h3>
-                    <p>For over 15 years, I've been capturing the fleeting beauty of nature—from the delicate wings of butterflies to the majestic spirit of wild horses.</p>
-                    <p>Every image tells a story of patience, wonder, and the deep connection I feel with the natural world. My goal is to help you bring that same sense of peace and beauty into your home.</p>
-                </div>
-                
-                <div class="artist-stats">
-                    <div class="artist-stat">
-                        <span class="stat-number">15+</span>
-                        <span class="stat-label">Years</span>
-                    </div>
-                    <div class="artist-stat">
-                        <span class="stat-number">1000+</span>
-                        <span class="stat-label">Images</span>
-                    </div>
-                    <div class="artist-stat">
-                        <span class="stat-number">500+</span>
-                        <span class="stat-label">Happy Collectors</span>
-                    </div>
-                </div>
-                
-                <div class="artist-equipment">
-                    <h3>Equipment</h3>
-                    <div class="equipment-list">
-                        <span class="equipment-item">📷 Canon EOS R5</span>
-                        <span class="equipment-item">🔭 100-400mm Lens</span>
-                        <span class="equipment-item">🌸 100mm Macro</span>
-                    </div>
-                </div>
-                
-                <div class="artist-quote">
-                    <blockquote>"I believe every home deserves a window to nature's beauty."</blockquote>
-                </div>
-                
-                <div class="artist-cta">
-                    <a href="https://www.prettyfoto.com/about" target="_blank" class="play-daily-btn">Learn More About Me</a>
-                    <a href="https://www.prettyfoto.com/shop-art" target="_blank" class="play-daily-btn secondary">Browse My Collections</a>
-                </div>
-            </div>
-        </div>
-
-        <!-- Story Modal -->
-        <div id="storyModal" class="modal hidden">
+        <div id="storyModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="storyTitle" aria-hidden="true">
             <div class="modal-content story-modal">
-                <button id="closeStoryModal" class="close-btn">×</button>
+                <button id="closeStoryModal" class="close-btn" type="button" aria-label="Close story">×</button>
                 <div class="story-image-container">
                     <img id="storyImage" src="" alt="Story image">
                 </div>
@@ -728,51 +219,11 @@
             </div>
         </div>
 
-        <!-- Spin Wheel Modal -->
-        <div id="spinModal" class="modal hidden">
-            <div class="modal-content spin-modal">
-                <button id="closeSpinModal" class="close-btn">×</button>
-                <h2>🎡 Daily Spin!</h2>
-                <p class="spin-subtitle">Spin to win a prize!</p>
-                
-                <div class="wheel-container">
-                    <div class="wheel-pointer">▼</div>
-                    <div id="spinWheel" class="spin-wheel">
-                        <div class="wheel-segment" data-prize="10%" style="--i:0">10% OFF</div>
-                        <div class="wheel-segment" data-prize="try" style="--i:1">Try Again</div>
-                        <div class="wheel-segment" data-prize="15%" style="--i:2">15% OFF</div>
-                        <div class="wheel-segment" data-prize="xp" style="--i:3">+50 XP</div>
-                        <div class="wheel-segment" data-prize="20%" style="--i:4">20% OFF</div>
-                        <div class="wheel-segment" data-prize="frame" style="--i:5">Free Frame</div>
-                        <div class="wheel-segment" data-prize="25%" style="--i:6">25% OFF</div>
-                        <div class="wheel-segment" data-prize="xp" style="--i:7">+100 XP</div>
-                    </div>
-                </div>
-                
-                <button id="spinBtn" class="play-daily-btn spin-btn">
-                    🎰 SPIN NOW!
-                </button>
-                
-                <div id="spinResult" class="spin-result hidden">
-                    <div class="result-emoji" id="resultEmoji">🎉</div>
-                    <h3 id="resultTitle">You Won!</h3>
-                    <p id="resultText">Your prize details here</p>
-                    <div id="prizeCode" class="prize-code hidden">
-                        <span>Use code:</span>
-                        <strong id="codeText">SPIN15</strong>
-                        <button id="copyCodeBtn" class="copy-code-btn">📋</button>
-                    </div>
-                    <button id="spinDoneBtn" class="play-daily-btn">Awesome!</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Onboarding Modal -->
-        <div id="onboardingModal" class="modal hidden">
+        <div id="onboardingModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="onboardingHeading" aria-hidden="true">
             <div class="modal-content onboarding-modal">
                 <div class="onboarding-slide active" data-slide="1">
-                    <div class="onboarding-icon">🧩</div>
-                    <h2>Welcome to PrettyFoto Puzzles!</h2>
+                    <div class="onboarding-icon" aria-hidden="true">🧩</div>
+                    <h2 id="onboardingHeading">Welcome to PrettyFoto Puzzles!</h2>
                     <p>Solve beautiful nature photo puzzles</p>
                 </div>
                 <div class="onboarding-slide" data-slide="2">
@@ -791,29 +242,27 @@
                         <span class="dot" data-slide="2"></span>
                         <span class="dot" data-slide="3"></span>
                     </div>
-                    <button id="onboardingNext" class="onboarding-btn">Next</button>
+                    <button id="onboardingNext" class="onboarding-btn" type="button">Next</button>
                 </div>
             </div>
         </div>
 
-        <!-- Email Capture Modal -->
-        <div id="emailModal" class="modal hidden">
+        <div id="emailModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="emailModalHeading" aria-hidden="true">
             <div class="modal-content email-modal">
-                <button id="closeEmail" class="close-btn">×</button>
-                <div class="email-icon">🎁</div>
-                <h2>Nice Solve!</h2>
+                <button id="closeEmail" class="close-btn" type="button" aria-label="Close">×</button>
+                <div class="email-icon" aria-hidden="true">🎁</div>
+                <h2 id="emailModalHeading">Nice Solve!</h2>
                 <p>Get <strong>25% off</strong> your first art print!</p>
                 <p class="email-subtext">Use code: <strong>EVERYWHERE26</strong></p>
                 <a href="https://www.prettyfoto.com/shop-art" target="_blank" class="email-shop-btn">Shop Now →</a>
-                <button id="skipEmail" class="skip-link">Maybe later</button>
+                <button id="skipEmail" class="skip-link" type="button">Maybe later</button>
             </div>
         </div>
 
-        <!-- Stats Modal -->
-        <div id="statsModal" class="modal hidden">
+        <div id="statsModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="statsModalHeading" aria-hidden="true">
             <div class="modal-content stats-modal">
-                <button id="closeStats" class="close-btn">×</button>
-                <h2>Statistics</h2>
+                <button id="closeStats" class="close-btn" type="button" aria-label="Close statistics">×</button>
+                <h2 id="statsModalHeading">Statistics</h2>
                 <div class="stats-grid">
                     <div class="stat-box">
                         <span class="stat-box-value" id="statPlayed">0</span>
@@ -867,12 +316,11 @@
             </div>
         </div>
 
-        <!-- Completion Modal -->
-        <div id="completionModal" class="modal hidden">
+        <div id="completionModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="completionHeading" aria-hidden="true">
             <div class="modal-content">
                 <div class="completion-header">
-                    <span class="completion-icon">🎉</span>
-                    <h2>Solved!</h2>
+                    <span class="completion-icon" aria-hidden="true">🎉</span>
+                    <h2 id="completionHeading">Solved!</h2>
                 </div>
                 <div class="completion-image">
                     <img id="completedImage" src="" alt="Completed puzzle">
@@ -888,9 +336,12 @@
                     </div>
                 </div>
                 
-                <!-- See Story (non-social) -->
+                <!-- See Story + Share -->
                 <div id="shareSection" class="share-section">
-                    <button id="viewStoryBtn" class="share-extra-btn">📖 See Story</button>
+                    <div class="share-section-buttons">
+                        <button id="viewStoryBtn" class="share-extra-btn">📖 See Story</button>
+                        <button id="shareResultBtn" class="share-extra-btn">📤 Share to Instagram, Facebook & more</button>
+                    </div>
                 </div>
 
                 <!-- Shop CTA - Always visible -->
@@ -914,22 +365,18 @@
             </div>
         </div>
 
-        <!-- Hint Modal -->
-        <div id="hintModal" class="modal hidden">
+        <div id="hintModal" class="modal hidden" role="dialog" aria-modal="true" aria-label="Hint – reference image" aria-hidden="true">
             <div class="modal-content hint-modal">
-                <img id="hintImage" src="" alt="Reference">
+                <img id="hintImage" src="" alt="Reference image for current puzzle">
                 <p>Tap anywhere to close</p>
             </div>
         </div>
 
+        <canvas id="confetti" class="confetti-canvas" aria-hidden="true"></canvas>
 
-        <!-- Confetti Canvas -->
-        <canvas id="confetti" class="confetti-canvas"></canvas>
-
-        <!-- Footer -->
-        <footer class="footer">
-            <p>Photos by <a href="https://www.prettyfoto.com" target="_blank">PrettyFoto.com</a> • <a href="https://www.prettyfoto.com/shop-art" target="_blank">Shop Art</a></p>
-            <button id="installBtn" class="install-btn hidden">📲 Install App</button>
+        <footer class="footer" role="contentinfo">
+            <p>Photos by <a href="https://www.prettyfoto.com" target="_blank" rel="noopener">PrettyFoto.com</a> · <a href="https://www.prettyfoto.com/shop-art" target="_blank" rel="noopener">Shop Art</a></p>
+            <button id="installBtn" class="install-btn hidden" type="button" aria-label="Install app">📲 Install App</button>
         </footer>
     </div>
 

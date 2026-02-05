@@ -221,16 +221,8 @@ let userPrefs = {
         horses: 0,
         landscapes: 0
     },
-    // Game mode engagement
-    gamePlays: {
-        slider: 0,
-        zoom: 0,
-        auction: 0,
-        personality: 0,
-        frame: 0
-    },
-    // User's personality result
-    natureSoul: null, // 'dreamer', 'explorer', 'nurturer', 'freeSpirit'
+    gamePlays: { slider: 0 },
+    natureSoul: null,
     // Favorites
     favoriteImages: [],
     // Visit tracking
@@ -249,7 +241,7 @@ function loadPrefs() {
         userPrefs = { ...userPrefs, ...loaded };
         // Ensure nested objects exist
         userPrefs.categoryPlays = userPrefs.categoryPlays || { butterflies: 0, flowers: 0, horses: 0, landscapes: 0 };
-        userPrefs.gamePlays = userPrefs.gamePlays || { slider: 0, zoom: 0, auction: 0, personality: 0, frame: 0 };
+        userPrefs.gamePlays = userPrefs.gamePlays || { slider: 0 };
         userPrefs.favoriteImages = userPrefs.favoriteImages || [];
     }
     // Track visit
@@ -278,15 +270,7 @@ function trackGamePlay(game) {
 }
 
 function updatePreferredGame() {
-    let maxPlays = 0;
-    let preferred = 'slider';
-    for (const [game, plays] of Object.entries(userPrefs.gamePlays)) {
-        if (plays > maxPlays) {
-            maxPlays = plays;
-            preferred = game;
-        }
-    }
-    userPrefs.preferredGame = preferred;
+    userPrefs.preferredGame = 'slider';
 }
 
 function getFavoriteCategory() {
@@ -299,23 +283,6 @@ function getFavoriteCategory() {
         }
     }
     return maxPlays > 0 ? favorite : null;
-}
-
-function getPersonalizedImages(count = 4) {
-    const favCat = getFavoriteCategory();
-    if (!favCat) return puzzles.slice(0, count);
-    
-    // Mix: 60% from favorite category, 40% others
-    const favImages = puzzles.filter(p => p.category === favCat);
-    const otherImages = puzzles.filter(p => p.category !== favCat);
-    
-    const favCount = Math.ceil(count * 0.6);
-    const otherCount = count - favCount;
-    
-    const shuffledFav = [...favImages].sort(() => Math.random() - 0.5);
-    const shuffledOther = [...otherImages].sort(() => Math.random() - 0.5);
-    
-    return [...shuffledFav.slice(0, favCount), ...shuffledOther.slice(0, otherCount)];
 }
 
 function getWelcomeMessage() {
@@ -408,82 +375,6 @@ function isFavorite(puzzleId) {
     return userPrefs.favoriteImages.includes(puzzleId);
 }
 
-// ============ COLLECTIONS ============
-const COLLECTIONS = {
-    butterflies: {
-        emoji: '🦋',
-        name: 'Butterfly Dreams',
-        reward: '20% off butterfly prints',
-        rewardCode: 'BUTTERFLY20'
-    },
-    flowers: {
-        emoji: '🌸',
-        name: 'Garden Glory',
-        reward: '20% off flower prints',
-        rewardCode: 'FLOWER20'
-    },
-    horses: {
-        emoji: '🐴',
-        name: 'Wild & Free',
-        reward: '20% off horse prints',
-        rewardCode: 'HORSE20'
-    },
-    landscapes: {
-        emoji: '🏔️',
-        name: 'Horizon Hunter',
-        reward: '20% off landscape prints',
-        rewardCode: 'LANDSCAPE20'
-    }
-};
-
-function getCollectionProgress() {
-    const progress = {};
-    
-    for (const category of Object.keys(COLLECTIONS)) {
-        const totalInCategory = puzzles.filter(p => p.category === category).length;
-        const completed = userPrefs.completedPuzzles ? 
-            userPrefs.completedPuzzles.filter(id => {
-                const puzzle = puzzles.find(p => p.id === id);
-                return puzzle && puzzle.category === category;
-            }).length : 0;
-        
-        progress[category] = {
-            completed,
-            total: totalInCategory,
-            percent: totalInCategory > 0 ? Math.round((completed / totalInCategory) * 100) : 0
-        };
-    }
-    
-    return progress;
-}
-
-function renderCollections() {
-    const grid = document.getElementById('collectionsGrid');
-    if (!grid) return;
-    
-    const progress = getCollectionProgress();
-    
-    grid.innerHTML = Object.entries(COLLECTIONS).map(([category, data]) => {
-        const p = progress[category];
-        const isComplete = p.completed >= p.total && p.total > 0;
-        
-        return `
-            <div class="collection-card ${isComplete ? 'completed' : ''}" onclick="showCollectionDetail('${category}')">
-                ${isComplete ? '<span class="collection-badge">✓ Complete</span>' : ''}
-                <div class="collection-emoji">${data.emoji}</div>
-                <div class="collection-name">${data.name}</div>
-                <div class="collection-progress">${p.completed}/${p.total} solved</div>
-                <div class="collection-bar">
-                    <div class="collection-bar-fill" style="width: ${p.percent}%"></div>
-                </div>
-                <div class="collection-reward">
-                    ${isComplete ? `🎁 Use code: ${data.rewardCode}` : `🎁 ${data.reward}`}
-                </div>
-            </div>
-        `;
-    }).join('');
-}
-
 function markPuzzleCompleted(puzzleId) {
     if (!userPrefs.completedPuzzles) {
         userPrefs.completedPuzzles = [];
@@ -491,319 +382,7 @@ function markPuzzleCompleted(puzzleId) {
     if (!userPrefs.completedPuzzles.includes(puzzleId)) {
         userPrefs.completedPuzzles.push(puzzleId);
         savePrefs();
-        renderCollections();
     }
-}
-
-function showCollectionDetail(category) {
-    playSound('click');
-    // Filter gallery to show only this category
-    document.querySelectorAll('.filter-btn').forEach(btn => {
-        btn.classList.toggle('active', btn.dataset.category === category);
-    });
-    renderGallery(category);
-    
-    // Scroll to gallery
-    document.querySelector('.free-play-section').scrollIntoView({ behavior: 'smooth' });
-}
-
-// ============ SPIN WHEEL ============
-const SPIN_PRIZES = [
-    { id: '10%', label: '10% OFF', emoji: '🎟️', code: 'SPIN10', message: 'Use code SPIN10 at checkout!' },
-    { id: 'try', label: 'Try Again', emoji: '🔄', code: null, message: 'Better luck next time! Come back tomorrow.' },
-    { id: '15%', label: '15% OFF', emoji: '🎟️', code: 'SPIN15', message: 'Use code SPIN15 at checkout!' },
-    { id: 'xp', label: '+50 XP', emoji: '⭐', code: null, message: 'Bonus XP added to your account!' },
-    { id: '20%', label: '20% OFF', emoji: '🎉', code: 'SPIN20', message: 'Use code SPIN20 at checkout!' },
-    { id: 'frame', label: 'Free Frame', emoji: '🖼️', code: null, message: 'Premium Gold frame unlocked!' },
-    { id: '25%', label: '25% OFF', emoji: '🏆', code: 'SPIN25', message: 'Amazing! Use code SPIN25 at checkout!' },
-    { id: 'xp2', label: '+100 XP', emoji: '🌟', code: null, message: 'Big XP bonus added!' }
-];
-
-let spinState = {
-    canSpin: false,
-    spinning: false,
-    lastSpinDate: null
-};
-
-function setupSpinWheel() {
-    // Load spin state
-    const savedSpin = localStorage.getItem('prettyfoto_spin');
-    if (savedSpin) {
-        spinState = JSON.parse(savedSpin);
-    }
-    
-    // Check if can spin today
-    const today = getTodayString();
-    spinState.canSpin = spinState.lastSpinDate !== today;
-    
-    // Show spin button if available
-    const spinBtn = document.getElementById('spinWheelBtn');
-    if (spinBtn) {
-        spinBtn.classList.toggle('hidden', !spinState.canSpin);
-        spinBtn.onclick = openSpinModal;
-    }
-    
-    // Setup modal
-    document.getElementById('closeSpinModal').onclick = closeSpinModal;
-    document.getElementById('spinBtn').onclick = doSpin;
-    document.getElementById('spinDoneBtn').onclick = closeSpinModal;
-    document.getElementById('copyCodeBtn').onclick = copyPrizeCode;
-    
-    // Close on backdrop click
-    document.getElementById('spinModal').onclick = (e) => {
-        if (e.target.id === 'spinModal') closeSpinModal();
-    };
-}
-
-function openSpinModal() {
-    playSound('click');
-    document.getElementById('spinModal').classList.remove('hidden');
-    document.getElementById('spinResult').classList.add('hidden');
-    document.getElementById('spinBtn').classList.remove('hidden');
-    document.getElementById('spinBtn').disabled = false;
-    document.getElementById('spinWheel').style.transform = 'rotate(0deg)';
-}
-
-function closeSpinModal() {
-    document.getElementById('spinModal').classList.add('hidden');
-}
-
-function doSpin() {
-    if (spinState.spinning || !spinState.canSpin) return;
-    
-    playSound('click');
-    spinState.spinning = true;
-    
-    const spinBtn = document.getElementById('spinBtn');
-    spinBtn.disabled = true;
-    spinBtn.textContent = 'Spinning...';
-    
-    // Weighted random - make discounts less common
-    const weights = [15, 20, 12, 18, 8, 5, 3, 19]; // Total 100
-    let random = Math.random() * 100;
-    let prizeIndex = 0;
-    for (let i = 0; i < weights.length; i++) {
-        random -= weights[i];
-        if (random <= 0) {
-            prizeIndex = i;
-            break;
-        }
-    }
-    
-    const prize = SPIN_PRIZES[prizeIndex];
-    
-    // Calculate rotation
-    const segmentAngle = 360 / 8;
-    const prizeAngle = prizeIndex * segmentAngle + segmentAngle / 2;
-    const spins = 5 + Math.random() * 3; // 5-8 full spins
-    const finalRotation = spins * 360 + (360 - prizeAngle);
-    
-    const wheel = document.getElementById('spinWheel');
-    wheel.style.transform = `rotate(${finalRotation}deg)`;
-    
-    // Show result after spin
-    setTimeout(() => {
-        spinState.spinning = false;
-        spinState.canSpin = false;
-        spinState.lastSpinDate = getTodayString();
-        localStorage.setItem('prettyfoto_spin', JSON.stringify(spinState));
-        
-        showSpinResult(prize);
-        
-        // Hide spin button
-        document.getElementById('spinWheelBtn').classList.add('hidden');
-    }, 4500);
-}
-
-function showSpinResult(prize) {
-    playSound('win');
-    
-    document.getElementById('spinBtn').classList.add('hidden');
-    document.getElementById('spinResult').classList.remove('hidden');
-    
-    document.getElementById('resultEmoji').textContent = prize.emoji;
-    document.getElementById('resultTitle').textContent = prize.label + '!';
-    document.getElementById('resultText').textContent = prize.message;
-    
-    if (prize.code) {
-        document.getElementById('prizeCode').classList.remove('hidden');
-        document.getElementById('codeText').textContent = prize.code;
-    } else {
-        document.getElementById('prizeCode').classList.add('hidden');
-    }
-    
-    // Apply bonus XP if applicable
-    if (prize.id === 'xp' || prize.id === 'xp2') {
-        const xpAmount = prize.id === 'xp' ? 50 : 100;
-        userPrefs.bonusXP = (userPrefs.bonusXP || 0) + xpAmount;
-        savePrefs();
-    }
-    
-    // Unlock frame if won
-    if (prize.id === 'frame') {
-        userPrefs.unlockedFrames = userPrefs.unlockedFrames || [];
-        if (!userPrefs.unlockedFrames.includes('gold')) {
-            userPrefs.unlockedFrames.push('gold');
-            savePrefs();
-        }
-    }
-    
-    showConfetti();
-}
-
-function copyPrizeCode() {
-    playSound('click');
-    const code = document.getElementById('codeText').textContent;
-    navigator.clipboard.writeText(code).then(() => {
-        document.getElementById('copyCodeBtn').textContent = '✓';
-        setTimeout(() => {
-            document.getElementById('copyCodeBtn').textContent = '📋';
-        }, 2000);
-    });
-}
-
-// ============ ZEN MODE ============
-let zenState = {
-    active: false,
-    hideStats: true,
-    softColors: true,
-    ambientSound: 'rain',
-    audioElement: null
-};
-
-const AMBIENT_SOUNDS = {
-    none: null,
-    rain: 'https://assets.mixkit.co/active_storage/sfx/2515/2515-preview.mp3',
-    forest: 'https://assets.mixkit.co/active_storage/sfx/2517/2517-preview.mp3',
-    ocean: 'https://assets.mixkit.co/active_storage/sfx/2516/2516-preview.mp3',
-    fireplace: 'https://assets.mixkit.co/active_storage/sfx/2512/2512-preview.mp3'
-};
-
-function setupZenMode() {
-    // Load saved preferences
-    const saved = localStorage.getItem('prettyfoto_zen');
-    if (saved) {
-        zenState = { ...zenState, ...JSON.parse(saved) };
-    }
-    
-    // Zen Mode button
-    document.getElementById('zenModeBtn').onclick = openZenModal;
-    document.getElementById('closeZenModal').onclick = closeZenModal;
-    document.getElementById('zenModal').onclick = (e) => {
-        if (e.target.id === 'zenModal') closeZenModal();
-    };
-    
-    // Toggle switches
-    document.getElementById('zenHideStats').checked = zenState.hideStats;
-    document.getElementById('zenSoftColors').checked = zenState.softColors;
-    
-    document.getElementById('zenHideStats').onchange = (e) => {
-        zenState.hideStats = e.target.checked;
-        saveZenState();
-    };
-    
-    document.getElementById('zenSoftColors').onchange = (e) => {
-        zenState.softColors = e.target.checked;
-        saveZenState();
-    };
-    
-    // Ambient sound buttons
-    document.querySelectorAll('.ambient-btn').forEach(btn => {
-        if (btn.dataset.sound === zenState.ambientSound) {
-            btn.classList.add('active');
-        }
-        btn.onclick = () => selectAmbientSound(btn.dataset.sound);
-    });
-    
-    // Start Zen button
-    document.getElementById('startZenBtn').onclick = enterZenMode;
-}
-
-function openZenModal() {
-    playSound('click');
-    document.getElementById('zenModal').classList.remove('hidden');
-}
-
-function closeZenModal() {
-    document.getElementById('zenModal').classList.add('hidden');
-}
-
-function selectAmbientSound(sound) {
-    playSound('click');
-    zenState.ambientSound = sound;
-    saveZenState();
-    
-    document.querySelectorAll('.ambient-btn').forEach(btn => {
-        btn.classList.toggle('active', btn.dataset.sound === sound);
-    });
-}
-
-function saveZenState() {
-    localStorage.setItem('prettyfoto_zen', JSON.stringify(zenState));
-}
-
-function enterZenMode() {
-    playSound('click');
-    zenState.active = true;
-    
-    // Apply visual changes
-    if (zenState.softColors) {
-        document.querySelector('.app').classList.add('zen-active');
-    }
-    
-    // Start ambient sound
-    if (zenState.ambientSound !== 'none' && AMBIENT_SOUNDS[zenState.ambientSound]) {
-        startAmbientSound(zenState.ambientSound);
-    }
-    
-    closeZenModal();
-    
-    // Start a puzzle
-    playDaily();
-}
-
-function startAmbientSound(sound) {
-    stopAmbientSound();
-    
-    if (!AMBIENT_SOUNDS[sound]) return;
-    
-    zenState.audioElement = new Audio(AMBIENT_SOUNDS[sound]);
-    zenState.audioElement.loop = true;
-    zenState.audioElement.volume = 0.3;
-    zenState.audioElement.play().catch(() => {
-        // Autoplay blocked - that's okay
-    });
-}
-
-function stopAmbientSound() {
-    if (zenState.audioElement) {
-        zenState.audioElement.pause();
-        zenState.audioElement = null;
-    }
-}
-
-function exitZenMode() {
-    zenState.active = false;
-    document.querySelector('.app').classList.remove('zen-active');
-    stopAmbientSound();
-}
-
-// ============ ARTIST PROFILE ============
-function setupArtistProfile() {
-    document.getElementById('artistBtn').onclick = openArtistModal;
-    document.getElementById('closeArtistModal').onclick = closeArtistModal;
-    document.getElementById('artistModal').onclick = (e) => {
-        if (e.target.id === 'artistModal') closeArtistModal();
-    };
-}
-
-function openArtistModal() {
-    playSound('click');
-    document.getElementById('artistModal').classList.remove('hidden');
-}
-
-function closeArtistModal() {
-    document.getElementById('artistModal').classList.add('hidden');
 }
 
 // ============ STORY MODE ============
@@ -884,7 +463,7 @@ function showStoryModal(puzzle) {
     playSound('click');
     const story = getStoryForPuzzle(puzzle);
     
-    document.getElementById('storyImage').src = puzzle.image;
+    setImageSrcWithFallback(document.getElementById('storyImage'), puzzle.image);
     document.getElementById('storyTitle').textContent = puzzle.title;
     document.getElementById('storyLocation').textContent = story.location;
     document.getElementById('storySeason').textContent = story.season;
@@ -897,20 +476,28 @@ function showStoryModal(puzzle) {
     
     // Play button
     document.getElementById('storyPlayBtn').onclick = () => {
-        document.getElementById('storyModal').classList.add('hidden');
+        const s = document.getElementById('storyModal');
+        s.classList.add('hidden');
+        setModalAria(s, false);
         selectPuzzle(puzzle.id);
     };
     
-    document.getElementById('storyModal').classList.remove('hidden');
+    const sm = document.getElementById('storyModal');
+    sm.classList.remove('hidden');
+    setModalAria(sm, true);
 }
 
 function setupStoryModal() {
     document.getElementById('closeStoryModal').onclick = () => {
-        document.getElementById('storyModal').classList.add('hidden');
+        const s = document.getElementById('storyModal');
+        s.classList.add('hidden');
+        setModalAria(s, false);
     };
     document.getElementById('storyModal').onclick = (e) => {
         if (e.target.id === 'storyModal') {
-            document.getElementById('storyModal').classList.add('hidden');
+            const s = document.getElementById('storyModal');
+            s.classList.add('hidden');
+            setModalAria(s, false);
         }
     };
     
@@ -999,26 +586,31 @@ const hintModal = document.getElementById('hintModal');
 const statsModal = document.getElementById('statsModal');
 const onboardingModal = document.getElementById('onboardingModal');
 const emailModal = document.getElementById('emailModal');
+
+function setModalAria(modal, open) {
+    if (modal) modal.setAttribute('aria-hidden', open ? 'false' : 'true');
+}
+function setViewAria(view, hidden) {
+    if (view) view.setAttribute('aria-hidden', hidden ? 'true' : 'false');
+}
 const confettiCanvas = document.getElementById('confetti');
 
 // ============ INITIALIZATION ============
 document.addEventListener('DOMContentLoaded', () => {
     loadStats();
     loadPrefs();
+    setViewAria(homeView, false);
+    setViewAria(puzzleView, true);
     registerServiceWorker();
     applyPersonalization();
     setupDailyPuzzle();
     renderGallery();
-    renderCollections();
     setupEventListeners();
     startCountdown();
     checkOnboarding();
     setupPWAInstall();
     updateSoundButton();
-    setupSpinWheel();
     setupStoryModal();
-    setupZenMode();
-    setupArtistProfile();
 });
 
 function applyPersonalization() {
@@ -1030,52 +622,76 @@ function applyPersonalization() {
     document.getElementById('welcomeTitle').textContent = welcome.title;
     document.getElementById('welcomeSubtitle').textContent = welcome.subtitle;
     
-    // Show "For You" section if user has preferences
-    const favCat = getFavoriteCategory();
-    if (favCat || userPrefs.visitCount > 2) {
-        showForYouSection();
-    }
 }
 
-function showForYouSection() {
-    const section = document.getElementById('forYouSection');
-    const gallery = document.getElementById('forYouGallery');
-    const catLabel = document.getElementById('forYouCategory');
-    
-    const favCat = getFavoriteCategory();
-    const images = getPersonalizedImages(4);
-    
-    if (favCat) {
-        const catEmojis = { butterflies: '🦋', flowers: '🌸', horses: '🐴', landscapes: '🏔️' };
-        catLabel.textContent = `${catEmojis[favCat] || ''} Based on your favorites`;
-    } else {
-        catLabel.textContent = 'Recommended for you';
-    }
-    
-    gallery.innerHTML = images.map(p => `
-        <div class="for-you-item" onclick="selectPuzzle(${p.id})">
-            <img src="${p.image}" alt="${p.title}" loading="lazy">
-            <button class="fav-btn ${isFavorite(p.id) ? 'active' : ''}" 
-                    onclick="event.stopPropagation(); toggleFavoriteBtn(${p.id}, this)">
-                ${isFavorite(p.id) ? '❤️' : '🤍'}
-            </button>
-        </div>
-    `).join('');
-    
-    section.classList.remove('hidden');
-}
-
-function toggleFavoriteBtn(puzzleId, btn) {
-    playSound('click');
-    const isFav = toggleFavorite(puzzleId);
-    btn.textContent = isFav ? '❤️' : '🤍';
-    btn.classList.toggle('active', isFav);
-}
+const PWA_CACHE_NAME = 'prettyfoto-puzzle-v2';
 
 function registerServiceWorker() {
     if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('sw.js').catch(() => {});
+        navigator.serviceWorker.register('sw.js').then(() => {
+            if (navigator.serviceWorker.controller) {
+                precachePuzzleImages();
+            } else {
+                navigator.serviceWorker.ready.then(precachePuzzleImages);
+            }
+        }).catch(() => {});
     }
+}
+
+// Precache external puzzle images for offline; run in background with limited concurrency
+function precachePuzzleImages() {
+    if (!('caches' in window)) return;
+    const urls = [...new Set(puzzles.map((p) => p.image))];
+    const concurrency = 3;
+    let index = 0;
+    function next() {
+        if (index >= urls.length) return;
+        const url = urls[index++];
+        fetch(url, { mode: 'cors' })
+            .then((r) => r.ok ? r : Promise.reject())
+            .then((r) => {
+                const clone = r.clone();
+                return caches.open(PWA_CACHE_NAME).then((cache) => cache.put(url, clone)).then(() => r);
+            })
+            .then(() => next(), () => next());
+    }
+    for (let i = 0; i < concurrency; i++) next();
+}
+
+// If image load fails (e.g. offline), try serving from cache
+function loadImageWithCacheFallback(url, img, onload, onerror) {
+    img.onload = onload;
+    img.onerror = () => {
+        if (!('caches' in window)) {
+            if (onerror) onerror();
+            return;
+        }
+        caches.match(url).then((res) => {
+            if (!res) {
+                if (onerror) onerror();
+                return;
+            }
+            res.blob().then((blob) => {
+                img.src = URL.createObjectURL(blob);
+                img.onerror = onerror;
+            });
+        });
+    };
+    img.crossOrigin = 'anonymous';
+    img.src = url;
+}
+
+// Set img element src with cache fallback for offline
+function setImageSrcWithFallback(element, url) {
+    if (!element || !url) return;
+    element.onerror = function onImgError() {
+        element.onerror = null;
+        if (!('caches' in window)) return;
+        caches.match(url).then((res) => {
+            if (res) res.blob().then((blob) => { element.src = URL.createObjectURL(blob); });
+        });
+    };
+    element.src = url;
 }
 
 function setupPWAInstall() {
@@ -1098,6 +714,7 @@ function setupPWAInstall() {
 function checkOnboarding() {
     if (!stats.hasSeenOnboarding) {
         onboardingModal.classList.remove('hidden');
+        setModalAria(onboardingModal, true);
     }
 }
 
@@ -1107,13 +724,33 @@ function setupEventListeners() {
     
     // Stats button
     document.getElementById('statsBtn').addEventListener('click', showStats);
-    document.getElementById('closeStats').addEventListener('click', () => statsModal.classList.add('hidden'));
+    document.getElementById('closeStats').addEventListener('click', () => {
+        statsModal.classList.add('hidden');
+        setModalAria(statsModal, false);
+    });
     
     // Daily play button
     document.getElementById('playDailyBtn').addEventListener('click', playDaily);
     
+    // Share app (header) - for Instagram, Facebook, etc.
+    document.getElementById('shareAppBtn').addEventListener('click', () => shareApp());
+    
+    // Share from completion modal (with result message)
+    document.getElementById('shareResultBtn').addEventListener('click', () => {
+        const message = isDaily
+            ? "I just completed today's PrettyFoto puzzle! 🧩 New puzzle every day — try it:"
+            : "Just finished a nature photo puzzle from PrettyFoto! 🧩 Try it:";
+        shareApp({ text: message });
+    });
+    
     // Back button
     document.getElementById('backBtn').addEventListener('click', goHome);
+    
+    // Browse gallery (escape hatch when daily is too hard)
+    document.getElementById('browseGalleryLink').addEventListener('click', (e) => {
+        e.preventDefault();
+        goHomeAndShowGallery();
+    });
     
     // Category filters
     document.querySelectorAll('.filter-btn').forEach(btn => {
@@ -1151,6 +788,7 @@ function setupEventListeners() {
     // Completion modal buttons
     document.getElementById('playAgainBtn').addEventListener('click', () => {
         completionModal.classList.add('hidden');
+        setModalAria(completionModal, false);
         if (isDaily) {
             goHome();
         } else {
@@ -1160,6 +798,7 @@ function setupEventListeners() {
     
     document.getElementById('newPuzzleBtn').addEventListener('click', () => {
         completionModal.classList.add('hidden');
+        setModalAria(completionModal, false);
         goHome();
     });
     
@@ -1172,6 +811,7 @@ function setupEventListeners() {
             updateOnboardingSlide(currentSlide);
         } else {
             onboardingModal.classList.add('hidden');
+            setModalAria(onboardingModal, false);
             stats.hasSeenOnboarding = true;
             saveStats();
         }
@@ -1185,9 +825,13 @@ function setupEventListeners() {
     });
     
     // Email/Promo modal
-    document.getElementById('closeEmail').addEventListener('click', () => emailModal.classList.add('hidden'));
+    document.getElementById('closeEmail').addEventListener('click', () => {
+        emailModal.classList.add('hidden');
+        setModalAria(emailModal, false);
+    });
     document.getElementById('skipEmail').addEventListener('click', () => {
         emailModal.classList.add('hidden');
+        setModalAria(emailModal, false);
         stats.hasSeenPromo = true;
         saveStats();
     });
@@ -1201,12 +845,21 @@ function setupEventListeners() {
     });
     
     // Close modals
-    hintModal.addEventListener('click', () => hintModal.classList.add('hidden'));
+    hintModal.addEventListener('click', () => {
+        hintModal.classList.add('hidden');
+        setModalAria(hintModal, false);
+    });
     statsModal.addEventListener('click', (e) => {
-        if (e.target === statsModal) statsModal.classList.add('hidden');
+        if (e.target === statsModal) {
+            statsModal.classList.add('hidden');
+            setModalAria(statsModal, false);
+        }
     });
     completionModal.addEventListener('click', (e) => {
-        if (e.target === completionModal) completionModal.classList.add('hidden');
+        if (e.target === completionModal) {
+            completionModal.classList.add('hidden');
+            setModalAria(completionModal, false);
+        }
     });
 }
 
@@ -1258,7 +911,7 @@ function setupDailyPuzzle() {
     document.getElementById('puzzleDate').textContent = today.toLocaleDateString('en-US', { 
         month: 'short', day: 'numeric', year: 'numeric' 
     });
-    document.getElementById('dailyImage').src = daily.image;
+    setImageSrcWithFallback(document.getElementById('dailyImage'), daily.image);
     document.getElementById('dailyTitle').textContent = daily.title;
     document.getElementById('dailyCategory').textContent = daily.category;
     
@@ -1286,7 +939,7 @@ function playDaily() {
     playSound('click');
     isDaily = true;
     currentPuzzle = getDailyPuzzle();
-    gridSize = 4;
+    gridSize = 3; // Easier default so more people complete the daily without frustration
     shuffleSeed = getDailyPuzzleNumber();
     
     // Track behavior - daily started
@@ -1298,19 +951,22 @@ function playDaily() {
     }
     
     puzzleTitle.textContent = currentPuzzle.title;
-    puzzlePreview.src = currentPuzzle.image;
+    setImageSrcWithFallback(puzzlePreview, currentPuzzle.image);
     shopLink.href = currentPuzzle.shopUrl;
     document.getElementById('galleryLink').href = currentPuzzle.galleryUrl;
     document.getElementById('completionShopLink').href = currentPuzzle.shopUrl;
     document.getElementById('completionGalleryLink').href = currentPuzzle.galleryUrl;
-    document.getElementById('hintImage').src = currentPuzzle.image;
+    setImageSrcWithFallback(document.getElementById('hintImage'), currentPuzzle.image);
     
     document.getElementById('dailyBadge').classList.remove('hidden');
     document.getElementById('dailyBadgeNum').textContent = getDailyPuzzleNumber();
     document.getElementById('shuffleBtn').classList.add('hidden');
+    document.getElementById('browseGalleryLink').classList.remove('hidden');
     
     homeView.classList.add('hidden');
     puzzleView.classList.remove('hidden');
+    setViewAria(homeView, true);
+    setViewAria(puzzleView, false);
     difficultySelect.classList.add('hidden');
     gameArea.classList.remove('hidden');
     
@@ -1374,18 +1030,21 @@ function selectPuzzle(id) {
     shuffleSeed = Date.now();
     
     puzzleTitle.textContent = currentPuzzle.title;
-    puzzlePreview.src = currentPuzzle.image;
+    setImageSrcWithFallback(puzzlePreview, currentPuzzle.image);
     shopLink.href = currentPuzzle.shopUrl;
     document.getElementById('galleryLink').href = currentPuzzle.galleryUrl;
     document.getElementById('completionShopLink').href = currentPuzzle.shopUrl;
     document.getElementById('completionGalleryLink').href = currentPuzzle.galleryUrl;
-    document.getElementById('hintImage').src = currentPuzzle.image;
+    setImageSrcWithFallback(document.getElementById('hintImage'), currentPuzzle.image);
     
     document.getElementById('dailyBadge').classList.add('hidden');
     document.getElementById('shuffleBtn').classList.remove('hidden');
+    document.getElementById('browseGalleryLink').classList.add('hidden');
     
     homeView.classList.add('hidden');
     puzzleView.classList.remove('hidden');
+    setViewAria(homeView, true);
+    setViewAria(puzzleView, false);
     difficultySelect.classList.remove('hidden');
     gameArea.classList.add('hidden');
     
@@ -1396,13 +1055,81 @@ function goHome() {
     playSound('click');
     puzzleView.classList.add('hidden');
     homeView.classList.remove('hidden');
+    setViewAria(puzzleView, true);
+    setViewAria(homeView, false);
     resetGame();
     setupDailyPuzzle();
-    
-    // Exit Zen Mode when going home
-    if (zenState.active) {
-        exitZenMode();
+}
+
+function goHomeAndShowGallery() {
+    goHome();
+    requestAnimationFrame(() => {
+        const gallery = document.querySelector('.free-play-section');
+        if (gallery) gallery.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+}
+
+// ============ SHARING (Instagram, Facebook, etc.) ============
+function getShareUrl() {
+    // Use canonical URL when possible so shared links show correct OG preview
+    const canonical = 'https://prettyfoto.com/puzzles';
+    if (typeof window !== 'undefined' && window.location && window.location.origin !== 'file://') {
+        try {
+            const url = new URL(window.location.href);
+            if (url.origin.includes('prettyfoto.com')) return url.origin + (url.pathname || '/puzzles');
+        } catch (_) {}
     }
+    return canonical;
+}
+
+function shareApp(options = {}) {
+    const url = getShareUrl();
+    const title = options.title || 'PrettyFoto Daily Puzzles';
+    const text = options.text || "Daily nature photo puzzles — new puzzle every day! 🧩🌸";
+    const shareData = { title, text, url };
+
+    if (typeof navigator !== 'undefined' && navigator.share) {
+        navigator.share(shareData).catch(() => copyShareFallback(url, text));
+    } else {
+        copyShareFallback(url, text);
+    }
+}
+
+function copyShareFallback(url, text) {
+    const full = text ? `${text}\n${url}` : url;
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(full).then(() => showShareToast('Link copied! Paste it in Instagram, Facebook, or any app.'));
+    } else {
+        const ta = document.createElement('textarea');
+        ta.value = full;
+        ta.setAttribute('readonly', '');
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.select();
+        try {
+            document.execCommand('copy');
+            showShareToast('Link copied! Paste it in Instagram, Facebook, or any app.');
+        } catch (_) {
+            showShareToast('Share: ' + url);
+        }
+        document.body.removeChild(ta);
+    }
+}
+
+function showShareToast(message) {
+    const existing = document.getElementById('shareToast');
+    if (existing) existing.remove();
+    const el = document.createElement('div');
+    el.id = 'shareToast';
+    el.className = 'share-toast';
+    el.textContent = message;
+    document.body.appendChild(el);
+    requestAnimationFrame(() => el.classList.add('show'));
+    setTimeout(() => {
+        el.classList.remove('show');
+        setTimeout(() => el.remove(), 300);
+    }, 3000);
 }
 
 // ============ GAME LOGIC ============
@@ -1443,8 +1170,7 @@ function createTiles() {
     emptyIndex = totalTiles - 1;
     
     const img = new Image();
-    img.crossOrigin = 'anonymous';
-    img.onload = () => {
+    const done = () => {
         for (let i = 0; i < totalTiles; i++) {
             const canvas = document.createElement('canvas');
             canvas.width = tileSize * 2;
@@ -1458,16 +1184,62 @@ function createTiles() {
             ctx.drawImage(img, col * srcSize, row * srcSize, srcSize, srcSize, 0, 0, canvas.width, canvas.height);
             tileImages[i] = canvas.toDataURL('image/jpeg', 0.9);
         }
-        
         shuffleTiles();
         renderBoard(tileSize);
     };
-    img.src = currentPuzzle.image;
+    loadImageWithCacheFallback(currentPuzzle.image, img, done, () => {
+        if (puzzleBoard.children.length === 0) puzzleBoard.innerHTML = '<p class="offline-hint">Image unavailable. Try again when online, or play another puzzle.</p>';
+    });
 }
 
 function seededRandom(seed) {
     const x = Math.sin(seed++) * 10000;
     return x - Math.floor(x);
+}
+
+// Count inversions in permutation of non-blank tiles (row-major order).
+// Solvable iff (inversions + row_of_blank_from_bottom) is even.
+function countInversions() {
+    const totalTiles = gridSize * gridSize;
+    const blank = totalTiles - 1;
+    const arr = [];
+    for (let i = 0; i < totalTiles; i++) {
+        if (tiles[i] !== blank) arr.push(tiles[i]);
+    }
+    let inv = 0;
+    for (let i = 0; i < arr.length; i++) {
+        for (let j = i + 1; j < arr.length; j++) {
+            if (arr[i] > arr[j]) inv++;
+        }
+    }
+    return inv;
+}
+
+function isSolvable() {
+    const totalTiles = gridSize * gridSize;
+    const blank = totalTiles - 1;
+    const inversions = countInversions();
+    const emptyRow = Math.floor(emptyIndex / gridSize);
+    const emptyRowFromBottom = gridSize - 1 - emptyRow;
+    return (inversions + emptyRowFromBottom) % 2 === 0;
+}
+
+// If puzzle is unsolvable, swap two non-blank tiles to flip parity.
+function ensureSolvable() {
+    if (isSolvable()) return;
+    const totalTiles = gridSize * gridSize;
+    const blank = totalTiles - 1;
+    let a = -1, b = -1;
+    for (let i = 0; i < totalTiles && b === -1; i++) {
+        if (tiles[i] === blank) continue;
+        if (a === -1) { a = i; continue; }
+        b = i;
+    }
+    if (a !== -1 && b !== -1) {
+        const t = tiles[a];
+        tiles[a] = tiles[b];
+        tiles[b] = t;
+    }
 }
 
 function shuffleTiles() {
@@ -1487,6 +1259,8 @@ function shuffleTiles() {
         tiles[randomNeighbor] = totalTiles - 1;
         emptyIndex = randomNeighbor;
     }
+    
+    ensureSolvable();
     
     if (puzzleBoard.children.length > 0) {
         const tileSize = puzzleBoard.children[0].offsetWidth;
@@ -1618,10 +1392,9 @@ function puzzleComplete() {
         trackCategoryPlay(currentPuzzle.category);
     }
     
-    // Track for collections
     markPuzzleCompleted(currentPuzzle.id);
     
-    document.getElementById('completedImage').src = currentPuzzle.image;
+    setImageSrcWithFallback(document.getElementById('completedImage'), currentPuzzle.image);
     document.getElementById('finalTime').textContent = formatTime(seconds);
     document.getElementById('finalMoves').textContent = moves;
     document.getElementById('completionShopLink').href = currentPuzzle.shopUrl;
@@ -1670,7 +1443,10 @@ function puzzleComplete() {
         
         // Show promo after first completion
         if (!stats.hasSeenPromo && stats.played === 1) {
-            setTimeout(() => emailModal.classList.remove('hidden'), 2000);
+            setTimeout(() => {
+                emailModal.classList.remove('hidden');
+                setModalAria(emailModal, true);
+            }, 2000);
         }
     } else {
         document.getElementById('shareSection').classList.remove('hidden');
@@ -1816,11 +1592,13 @@ function showStats() {
     document.getElementById('analyticsInsight').textContent = insight;
     
     statsModal.classList.remove('hidden');
+    setModalAria(statsModal, true);
 }
 
 function showHint() {
     playSound('click');
     hintModal.classList.remove('hidden');
+    setModalAria(hintModal, true);
 }
 
 // ============ RESIZE ============
@@ -1867,1367 +1645,9 @@ function switchGameMode(mode) {
     const homeEl = document.getElementById(homeId);
     if (homeEl) {
         homeEl.classList.remove('hidden');
-        
-        // Initialize the game mode
-        switch(mode) {
-            case 'slider':
-                setupDailyPuzzle();
-                break;
-            case 'zoom':
-                setupZoomHome();
-                break;
-            case 'auction':
-                setupAuctionHome();
-                break;
-            case 'personality':
-                setupPersonalityHome();
-                break;
-            case 'frame':
-                setupFrameHome();
-                break;
+        if (mode === 'slider') {
+            setupDailyPuzzle();
         }
     }
 }
 
-// ============================================================
-// ==================== PHOTO AUCTION =========================
-// ============================================================
-
-let auctionState = {
-    currentPair: [],
-    currentStreak: 0,
-    bestStreak: 0,
-    totalPlays: 0,
-    revealed: false
-};
-
-// Simulated popularity scores (would come from real data in production)
-function getPopularityScore(puzzle) {
-    // Generate consistent "popularity" based on puzzle properties
-    const seed = puzzle.id * 7 + puzzle.title.length * 13;
-    return Math.floor(seededRandom(seed) * 900 + 100); // 100-999
-}
-
-function setupAuctionHome() {
-    // Load saved stats
-    const savedAuction = localStorage.getItem('auctionStats');
-    if (savedAuction) {
-        const data = JSON.parse(savedAuction);
-        auctionState.bestStreak = data.bestStreak || 0;
-        auctionState.totalPlays = data.totalPlays || 0;
-    }
-    
-    document.getElementById('auctionBestStreak').textContent = auctionState.bestStreak;
-    document.getElementById('auctionTotalPlays').textContent = auctionState.totalPlays;
-    
-    document.getElementById('startAuctionBtn').onclick = startAuction;
-    document.getElementById('auctionBackBtn').onclick = () => {
-        document.getElementById('auctionView').classList.add('hidden');
-        document.getElementById('homeView').classList.remove('hidden');
-    };
-    document.getElementById('auctionNextBtn').onclick = nextAuctionRound;
-}
-
-function startAuction() {
-    playSound('click');
-    auctionState.currentStreak = 0;
-    auctionState.revealed = false;
-    
-    document.getElementById('auctionCurrentStreak').textContent = '0';
-    document.getElementById('homeView').classList.add('hidden');
-    document.getElementById('auctionView').classList.remove('hidden');
-    
-    loadAuctionPair();
-}
-
-function loadAuctionPair() {
-    auctionState.revealed = false;
-    
-    // Pick two random different puzzles
-    const shuffled = [...puzzles].sort(() => Math.random() - 0.5);
-    auctionState.currentPair = [shuffled[0], shuffled[1]];
-    
-    const [p1, p2] = auctionState.currentPair;
-    
-    document.getElementById('auctionImg1').src = p1.image;
-    document.getElementById('auctionTitle1').textContent = p1.title;
-    document.getElementById('auctionImg2').src = p2.image;
-    document.getElementById('auctionTitle2').textContent = p2.title;
-    
-    // Reset card states
-    document.getElementById('auctionCard1').className = 'auction-card';
-    document.getElementById('auctionCard2').className = 'auction-card';
-    document.getElementById('auctionValue1').classList.add('hidden');
-    document.getElementById('auctionValue2').classList.add('hidden');
-    document.getElementById('auctionFeedback').classList.add('hidden');
-}
-
-function selectAuctionCard(index) {
-    if (auctionState.revealed) return;
-    
-    playSound('click');
-    auctionState.revealed = true;
-    auctionState.totalPlays++;
-    
-    // Track for personalization
-    trackGamePlay('auction');
-    
-    const [p1, p2] = auctionState.currentPair;
-    const score1 = getPopularityScore(p1);
-    const score2 = getPopularityScore(p2);
-    
-    const winnerIndex = score1 >= score2 ? 0 : 1;
-    const userCorrect = index === winnerIndex;
-    
-    // Show values
-    document.querySelector('#auctionValue1 .value-score').textContent = score1;
-    document.querySelector('#auctionValue2 .value-score').textContent = score2;
-    document.getElementById('auctionValue1').classList.remove('hidden');
-    document.getElementById('auctionValue2').classList.remove('hidden');
-    
-    // Mark winner/loser
-    document.getElementById('auctionCard1').classList.add(winnerIndex === 0 ? 'winner' : 'loser');
-    document.getElementById('auctionCard2').classList.add(winnerIndex === 1 ? 'winner' : 'loser');
-    document.getElementById(`auctionCard${index + 1}`).classList.add('selected');
-    
-    // Show feedback
-    const feedback = document.getElementById('auctionFeedback');
-    const feedbackText = feedback.querySelector('.feedback-text');
-    
-    if (userCorrect) {
-        auctionState.currentStreak++;
-        if (auctionState.currentStreak > auctionState.bestStreak) {
-            auctionState.bestStreak = auctionState.currentStreak;
-        }
-        feedbackText.textContent = `✓ Correct! Streak: ${auctionState.currentStreak} 🔥`;
-        feedbackText.className = 'feedback-text correct';
-        playSound('success');
-    } else {
-        feedbackText.textContent = `✗ Wrong! The ${winnerIndex === 0 ? 'left' : 'right'} photo was more popular. Streak ended at ${auctionState.currentStreak}.`;
-        feedbackText.className = 'feedback-text wrong';
-        auctionState.currentStreak = 0;
-        vibrate(100);
-    }
-    
-    document.getElementById('auctionCurrentStreak').textContent = auctionState.currentStreak;
-    feedback.classList.remove('hidden');
-    
-    // Save stats
-    localStorage.setItem('auctionStats', JSON.stringify({
-        bestStreak: auctionState.bestStreak,
-        totalPlays: auctionState.totalPlays
-    }));
-}
-
-function nextAuctionRound() {
-    playSound('click');
-    loadAuctionPair();
-}
-
-// ============================================================
-// ==================== ZOOM IN GAME ==========================
-// ============================================================
-
-let zoomState = {
-    puzzle: null,
-    isDaily: false,
-    currentZoom: 1,      // 1 = most zoomed, 5 = full image
-    maxZoom: 5,
-    guessesUsed: 0,
-    options: [],
-    correctAnswer: null,
-    offsetX: 0,
-    offsetY: 0,
-    completed: false
-};
-
-function setupZoomHome() {
-    const daily = getDailyPuzzle();
-    document.getElementById('zoomNumber').textContent = getDailyPuzzleNumber();
-    document.getElementById('zoomDate').textContent = new Date().toLocaleDateString('en-US', { 
-        month: 'short', day: 'numeric', year: 'numeric' 
-    });
-    
-    document.getElementById('playZoomBtn').onclick = () => startZoom(daily, true);
-    document.getElementById('zoomBackBtn').onclick = () => {
-        document.getElementById('zoomView').classList.add('hidden');
-        document.getElementById('homeView').classList.remove('hidden');
-    };
-    document.getElementById('zoomOutBtn').onclick = zoomOut;
-    
-    // Render gallery
-    const gallery = document.getElementById('zoomGallery');
-    gallery.innerHTML = puzzles.slice(0, 8).map(p => `
-        <div class="puzzle-card" onclick="startZoom(puzzles.find(x => x.id === ${p.id}), false)">
-            <img src="${p.image}" alt="${p.title}" class="puzzle-card-image" loading="lazy">
-            <div class="puzzle-card-info">
-                <div class="puzzle-card-title">${p.title}</div>
-            </div>
-        </div>
-    `).join('');
-}
-
-function startZoom(puzzle, isDaily) {
-    playSound('click');
-    zoomState.puzzle = puzzle;
-    zoomState.isDaily = isDaily;
-    zoomState.currentZoom = 1;
-    zoomState.guessesUsed = 0;
-    zoomState.completed = false;
-    zoomState.correctAnswer = puzzle.id;
-    
-    // Random offset for zoomed view (between 20-80% of image)
-    zoomState.offsetX = 20 + Math.random() * 60;
-    zoomState.offsetY = 20 + Math.random() * 60;
-    
-    // Generate 4 options (1 correct + 3 random)
-    const otherPuzzles = puzzles.filter(p => p.id !== puzzle.id);
-    const shuffledOthers = otherPuzzles.sort(() => Math.random() - 0.5).slice(0, 3);
-    zoomState.options = [puzzle, ...shuffledOthers].sort(() => Math.random() - 0.5);
-    
-    if (isDaily) {
-        document.getElementById('zoomDailyBadge').classList.remove('hidden');
-        document.getElementById('zoomBadgeNum').textContent = getDailyPuzzleNumber();
-    } else {
-        document.getElementById('zoomDailyBadge').classList.add('hidden');
-    }
-    
-    document.getElementById('homeView').classList.add('hidden');
-    document.getElementById('zoomView').classList.remove('hidden');
-    
-    renderZoom();
-}
-
-function renderZoom() {
-    const img = document.getElementById('zoomImage');
-    const wrapper = document.getElementById('zoomImageWrapper');
-    
-    img.src = zoomState.puzzle.image;
-    
-    // Calculate zoom level (1 = 800%, 5 = 100%)
-    const zoomLevels = [8, 5, 3, 1.8, 1];
-    const scale = zoomLevels[zoomState.currentZoom - 1];
-    
-    const containerSize = 280;
-    const imgSize = containerSize * scale;
-    
-    // Position image so the interesting part is visible
-    const offsetX = (zoomState.offsetX / 100) * (imgSize - containerSize);
-    const offsetY = (zoomState.offsetY / 100) * (imgSize - containerSize);
-    
-    img.style.width = `${imgSize}px`;
-    img.style.height = `${imgSize}px`;
-    img.style.left = `-${offsetX}px`;
-    img.style.top = `-${offsetY}px`;
-    
-    // Update zoom dots
-    document.querySelectorAll('.zoom-dot').forEach((dot, i) => {
-        dot.classList.remove('active', 'used');
-        if (i + 1 === zoomState.currentZoom) {
-            dot.classList.add('active');
-        } else if (i + 1 < zoomState.currentZoom) {
-            dot.classList.add('used');
-        }
-    });
-    
-    // Render choices
-    const choices = document.getElementById('zoomChoices');
-    choices.innerHTML = zoomState.options.map(p => `
-        <button class="zoom-choice" data-id="${p.id}" onclick="makeZoomGuess(${p.id})">
-            ${p.title}
-        </button>
-    `).join('');
-    
-    // Update zoom out button
-    const zoomOutBtn = document.getElementById('zoomOutBtn');
-    if (zoomState.currentZoom >= zoomState.maxZoom) {
-        zoomOutBtn.disabled = true;
-        zoomOutBtn.textContent = 'Fully zoomed out';
-    } else {
-        zoomOutBtn.disabled = false;
-        zoomOutBtn.textContent = `🔍 Zoom Out (${zoomState.maxZoom - zoomState.currentZoom} left)`;
-    }
-}
-
-function makeZoomGuess(id) {
-    if (zoomState.completed) return;
-    
-    playSound('click');
-    zoomState.guessesUsed++;
-    
-    const choiceBtn = document.querySelector(`.zoom-choice[data-id="${id}"]`);
-    
-    if (id === zoomState.correctAnswer) {
-        // Correct!
-        choiceBtn.classList.add('correct');
-        zoomState.completed = true;
-        zoomComplete();
-    } else {
-        // Wrong - disable this choice and zoom out
-        choiceBtn.classList.add('wrong');
-        choiceBtn.classList.add('disabled');
-        vibrate(100);
-        
-        // Auto zoom out on wrong guess
-        if (zoomState.currentZoom < zoomState.maxZoom) {
-            setTimeout(() => {
-                zoomState.currentZoom++;
-                renderZoom();
-                // Re-disable already wrong choices
-                document.querySelectorAll('.zoom-choice.wrong').forEach(btn => {
-                    btn.classList.add('disabled');
-                });
-            }, 500);
-        }
-    }
-}
-
-function zoomOut() {
-    if (zoomState.currentZoom >= zoomState.maxZoom || zoomState.completed) return;
-    
-    playSound('click');
-    zoomState.guessesUsed++;
-    zoomState.currentZoom++;
-    renderZoom();
-}
-
-function zoomComplete() {
-    playSound('win');
-    showConfetti();
-    vibrate([100, 50, 100, 50, 200]);
-    
-    // Track for personalization
-    trackGamePlay('zoom');
-    if (zoomState.puzzle && zoomState.puzzle.category) {
-        trackCategoryPlay(zoomState.puzzle.category);
-    }
-    
-    // Track for collections
-    markPuzzleCompleted(zoomState.puzzle.id);
-    
-    // Calculate score based on zoom level when guessed
-    const score = zoomState.maxZoom - zoomState.currentZoom + 1;
-    const rating = score === 5 ? '🏆 Perfect! First try!' :
-                   score === 4 ? '⭐ Excellent!' :
-                   score === 3 ? '👍 Great!' :
-                   score === 2 ? '✅ Good!' : '🎉 Got it!';
-    
-    setTimeout(() => {
-        document.getElementById('completedImage').src = zoomState.puzzle.image;
-        document.getElementById('finalTime').textContent = rating;
-        document.getElementById('finalMoves').textContent = `${zoomState.guessesUsed} guesses`;
-        document.getElementById('completionShopLink').href = zoomState.puzzle.shopUrl;
-        document.getElementById('completionGalleryLink').href = zoomState.puzzle.galleryUrl;
-        
-        document.getElementById('shareSection').classList.remove('hidden');
-        completionModal.classList.remove('hidden');
-        
-        document.getElementById('playAgainBtn').onclick = () => {
-            completionModal.classList.add('hidden');
-            // Pick a new random puzzle for replay
-            const newPuzzle = puzzles[Math.floor(Math.random() * puzzles.length)];
-            startZoom(newPuzzle, false);
-        };
-        
-        document.getElementById('newPuzzleBtn').onclick = () => {
-            completionModal.classList.add('hidden');
-            document.getElementById('zoomView').classList.add('hidden');
-            document.getElementById('homeView').classList.remove('hidden');
-        };
-    }, 800);
-}
-
-// ============================================================
-// ==================== PERSONALITY QUIZ ======================
-// ============================================================
-
-const PERSONALITY_TYPES = {
-    dreamer: {
-        emoji: '🦋',
-        title: 'The Dreamer',
-        description: 'You see beauty in delicate details and find magic in fleeting moments. Your soul is drawn to the ethereal and transformative nature of butterflies - symbols of change and hope.',
-        traits: ['Creative', 'Sensitive', 'Imaginative', 'Hopeful'],
-        categories: ['butterflies'],
-        color: '#9b59b6'
-    },
-    explorer: {
-        emoji: '🏔️',
-        title: 'The Explorer',
-        description: 'Vast horizons call to your adventurous spirit. You find peace in grand landscapes and feel most alive when surrounded by the raw majesty of nature.',
-        traits: ['Adventurous', 'Independent', 'Curious', 'Bold'],
-        categories: ['landscapes'],
-        color: '#3498db'
-    },
-    nurturer: {
-        emoji: '🌸',
-        title: 'The Nurturer',
-        description: 'Your heart blooms with compassion and warmth. Like flowers, you bring color and joy to those around you, finding fulfillment in growth and beauty.',
-        traits: ['Caring', 'Gentle', 'Patient', 'Generous'],
-        categories: ['flowers'],
-        color: '#e91e63'
-    },
-    freeSpirit: {
-        emoji: '🐴',
-        title: 'The Free Spirit',
-        description: 'Untamed and authentic, you value freedom above all else. Like wild horses, your spirit cannot be contained - you follow your own path with grace and power.',
-        traits: ['Free', 'Authentic', 'Strong', 'Passionate'],
-        categories: ['horses'],
-        color: '#e67e22'
-    }
-};
-
-let personalityState = {
-    currentQuestion: 0,
-    totalQuestions: 10,
-    comparisons: [],
-    scores: {
-        butterflies: 0,
-        flowers: 0,
-        horses: 0,
-        landscapes: 0
-    }
-};
-
-function setupPersonalityHome() {
-    document.getElementById('startPersonalityBtn').onclick = startPersonality;
-    document.getElementById('personalityBackBtn').onclick = () => {
-        document.getElementById('personalityView').classList.add('hidden');
-        document.getElementById('homeView').classList.remove('hidden');
-    };
-    document.getElementById('retakeSoulBtn').onclick = () => {
-        document.getElementById('personalityResultView').classList.add('hidden');
-        startPersonality();
-    };
-}
-
-function startPersonality() {
-    playSound('click');
-    
-    // Reset state
-    personalityState = {
-        currentQuestion: 0,
-        totalQuestions: 10,
-        comparisons: generatePersonalityPairs(),
-        scores: { butterflies: 0, flowers: 0, horses: 0, landscapes: 0 }
-    };
-    
-    document.getElementById('homeView').classList.add('hidden');
-    document.getElementById('personalityView').classList.remove('hidden');
-    document.getElementById('personalityResultView').classList.add('hidden');
-    
-    showPersonalityQuestion();
-}
-
-function generatePersonalityPairs() {
-    const pairs = [];
-    const usedImages = new Set();
-    const categories = ['butterflies', 'flowers', 'horses', 'landscapes'];
-    
-    // Create pools of available images per category
-    const pools = {};
-    for (const cat of categories) {
-        pools[cat] = puzzles.filter(p => p.category === cat).sort(() => Math.random() - 0.5);
-    }
-    
-    // Generate 10 pairs, each comparing different categories
-    // Ensure no image is repeated
-    for (let i = 0; i < 10; i++) {
-        // Shuffle category pairs for variety
-        const catPairs = [
-            ['butterflies', 'flowers'],
-            ['butterflies', 'horses'],
-            ['butterflies', 'landscapes'],
-            ['flowers', 'horses'],
-            ['flowers', 'landscapes'],
-            ['horses', 'landscapes']
-        ];
-        
-        // Pick a category pair we haven't exhausted
-        const shuffledCatPairs = catPairs.sort(() => Math.random() - 0.5);
-        let foundPair = false;
-        
-        for (const [cat1, cat2] of shuffledCatPairs) {
-            // Find unused images from each category
-            const available1 = pools[cat1].filter(p => !usedImages.has(p.id));
-            const available2 = pools[cat2].filter(p => !usedImages.has(p.id));
-            
-            if (available1.length > 0 && available2.length > 0) {
-                const img1 = available1[0];
-                const img2 = available2[0];
-                
-                usedImages.add(img1.id);
-                usedImages.add(img2.id);
-                
-                pairs.push([img1, img2]);
-                foundPair = true;
-                break;
-            }
-        }
-        
-        // Fallback if we've used all images - reset and allow reuse
-        if (!foundPair) {
-            usedImages.clear();
-            const shuffled = [...puzzles].sort(() => Math.random() - 0.5);
-            const img1 = shuffled[0];
-            const img2 = shuffled[1];
-            usedImages.add(img1.id);
-            usedImages.add(img2.id);
-            pairs.push([img1, img2]);
-        }
-    }
-    
-    return pairs;
-}
-
-function showPersonalityQuestion() {
-    if (personalityState.currentQuestion >= personalityState.comparisons.length) {
-        finishPersonality();
-        return;
-    }
-    
-    const [img1, img2] = personalityState.comparisons[personalityState.currentQuestion];
-    
-    document.getElementById('personalityProgress').textContent = 
-        `${personalityState.currentQuestion + 1} of ${personalityState.totalQuestions}`;
-    
-    document.getElementById('personalityImg1').src = img1.image;
-    document.getElementById('personalityImg2').src = img2.image;
-    
-    // Reset card states
-    document.getElementById('personalityCard1').classList.remove('selected');
-    document.getElementById('personalityCard2').classList.remove('selected');
-}
-
-function selectPersonality(index) {
-    playSound('click');
-    vibrate(10);
-    
-    const [img1, img2] = personalityState.comparisons[personalityState.currentQuestion];
-    const selected = index === 0 ? img1 : img2;
-    
-    // Add score for the selected category
-    if (selected.category && personalityState.scores.hasOwnProperty(selected.category)) {
-        personalityState.scores[selected.category]++;
-    }
-    
-    // Show selection briefly
-    document.getElementById(`personalityCard${index + 1}`).classList.add('selected');
-    
-    setTimeout(() => {
-        personalityState.currentQuestion++;
-        showPersonalityQuestion();
-    }, 300);
-}
-
-function finishPersonality() {
-    playSound('win');
-    showConfetti();
-    
-    // Track for personalization
-    trackGamePlay('personality');
-    
-    // Determine personality type based on highest scoring category
-    const scores = personalityState.scores;
-    let topCategory = 'butterflies';
-    let topScore = 0;
-    
-    for (const [cat, score] of Object.entries(scores)) {
-        if (score > topScore) {
-            topScore = score;
-            topCategory = cat;
-        }
-    }
-    
-    // Map category to personality type
-    const typeMap = {
-        butterflies: 'dreamer',
-        flowers: 'nurturer',
-        horses: 'freeSpirit',
-        landscapes: 'explorer'
-    };
-    
-    const personalityType = PERSONALITY_TYPES[typeMap[topCategory]];
-    
-    // Save to user preferences for personalization
-    userPrefs.natureSoul = typeMap[topCategory];
-    savePrefs();
-    applyPersonalizedTheme(); // Apply new theme colors immediately
-    
-    // Show result view
-    document.getElementById('personalityView').classList.add('hidden');
-    document.getElementById('personalityResultView').classList.remove('hidden');
-    
-    // Populate result
-    document.getElementById('soulEmoji').textContent = personalityType.emoji;
-    document.getElementById('soulTitle').textContent = personalityType.title;
-    document.getElementById('soulDescription').textContent = personalityType.description;
-    
-    // Set card color
-    document.getElementById('soulResultCard').style.background = 
-        `linear-gradient(135deg, ${personalityType.color} 0%, ${adjustColor(personalityType.color, -30)} 100%)`;
-    
-    // Traits
-    document.getElementById('soulTraits').innerHTML = personalityType.traits
-        .map(t => `<span class="trait-tag">${t}</span>`).join('');
-    
-    // Matching images
-    const matchingImages = puzzles.filter(p => 
-        personalityType.categories.includes(p.category)
-    ).slice(0, 3);
-    
-    document.getElementById('soulMatch').innerHTML = matchingImages
-        .map(img => `<img src="${img.image}" alt="${img.title}">`).join('');
-    
-    // Shop link
-    const catLinks = {
-        butterflies: 'https://www.prettyfoto.com/gallery-butterflies',
-        flowers: 'https://www.prettyfoto.com/gallery-flowers',
-        horses: 'https://www.prettyfoto.com/gallery-horses',
-        landscapes: 'https://www.prettyfoto.com/gallery-mountains'
-    };
-    document.getElementById('soulShopLink').href = catLinks[topCategory] || 'https://www.prettyfoto.com/shop-art';
-    
-    // Store result for sharing
-    personalityState.result = {
-        type: typeMap[topCategory],
-        ...personalityType,
-        matchingImages
-    };
-}
-
-function adjustColor(hex, amount) {
-    // Simple color adjustment
-    const num = parseInt(hex.replace('#', ''), 16);
-    const r = Math.min(255, Math.max(0, (num >> 16) + amount));
-    const g = Math.min(255, Math.max(0, ((num >> 8) & 0x00FF) + amount));
-    const b = Math.min(255, Math.max(0, (num & 0x0000FF) + amount));
-    return `#${(r << 16 | g << 8 | b).toString(16).padStart(6, '0')}`;
-}
-
-// ============================================================
-// ==================== PHOTO FRAME ===========================
-// ============================================================
-
-const FRAME_STYLES = {
-    dreamer: {
-        emoji: '🦋',
-        name: 'Dreamer',
-        colors: ['#9b59b6', '#8e44ad'],
-        accent: '#e8daef',
-        category: 'butterflies'
-    },
-    explorer: {
-        emoji: '🏔️',
-        name: 'Explorer',
-        colors: ['#3498db', '#2980b9'],
-        accent: '#d6eaf8',
-        category: 'landscapes'
-    },
-    nurturer: {
-        emoji: '🌸',
-        name: 'Nurturer',
-        colors: ['#e91e63', '#c2185b'],
-        accent: '#fce4ec',
-        category: 'flowers'
-    },
-    spirit: {
-        emoji: '🐴',
-        name: 'Free Spirit',
-        colors: ['#e67e22', '#d35400'],
-        accent: '#fdebd0',
-        category: 'horses'
-    }
-};
-
-let frameState = {
-    userImage: null,
-    currentStyle: 'dreamer',
-    stream: null,
-    facingMode: 'user'
-};
-
-function setupFrameHome() {
-    const uploadArea = document.getElementById('frameUploadArea');
-    const fileInput = document.getElementById('frameFileInput');
-    
-    // Click to upload
-    uploadArea.onclick = () => fileInput.click();
-    
-    // File selected
-    fileInput.onchange = (e) => {
-        if (e.target.files[0]) {
-            loadUserImage(e.target.files[0]);
-        }
-    };
-    
-    // Drag and drop
-    uploadArea.ondragover = (e) => {
-        e.preventDefault();
-        uploadArea.classList.add('dragover');
-    };
-    uploadArea.ondragleave = () => uploadArea.classList.remove('dragover');
-    uploadArea.ondrop = (e) => {
-        e.preventDefault();
-        uploadArea.classList.remove('dragover');
-        if (e.dataTransfer.files[0]) {
-            loadUserImage(e.dataTransfer.files[0]);
-        }
-    };
-    
-    // Camera button
-    document.getElementById('frameCameraBtn').onclick = openCamera;
-    
-    // Frame view buttons
-    document.getElementById('frameBackBtn').onclick = () => {
-        document.getElementById('frameView').classList.add('hidden');
-        document.getElementById('homeView').classList.remove('hidden');
-    };
-    document.getElementById('frameNewBtn').onclick = () => {
-        document.getElementById('frameView').classList.add('hidden');
-        document.getElementById('homeView').classList.remove('hidden');
-    };
-    document.getElementById('downloadFrameBtn').onclick = downloadFrame;
-    
-    // Style buttons
-    document.querySelectorAll('.frame-style-btn').forEach(btn => {
-        btn.onclick = () => {
-            document.querySelectorAll('.frame-style-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            frameState.currentStyle = btn.dataset.style;
-            renderFrame();
-        };
-    });
-    
-    // Camera modal
-    document.getElementById('closeCameraBtn').onclick = closeCamera;
-    document.getElementById('switchCameraBtn').onclick = switchCamera;
-    document.getElementById('captureBtn').onclick = capturePhoto;
-}
-
-function loadUserImage(file) {
-    const reader = new FileReader();
-    reader.onload = (e) => {
-        const img = new Image();
-        img.onload = () => {
-            frameState.userImage = img;
-            showFrameEditor();
-        };
-        img.src = e.target.result;
-    };
-    reader.readAsDataURL(file);
-}
-
-function showFrameEditor() {
-    playSound('click');
-    document.getElementById('homeView').classList.add('hidden');
-    document.getElementById('frameView').classList.remove('hidden');
-    renderFrame();
-}
-
-function renderFrame() {
-    const canvas = document.getElementById('frameCanvas');
-    const ctx = canvas.getContext('2d');
-    const style = FRAME_STYLES[frameState.currentStyle];
-    
-    const width = 400;
-    const height = 520;
-    canvas.width = width;
-    canvas.height = height;
-    
-    // Get images for this style's category
-    const styleImages = puzzles.filter(p => p.category === style.category).slice(0, 4);
-    
-    // Load all decoration images first, then render
-    const imagesToLoad = styleImages.map(p => {
-        const img = new Image();
-        img.crossOrigin = 'anonymous';
-        img.src = p.image;
-        return img;
-    });
-    
-    // Wait for images to load (or timeout)
-    let loadedCount = 0;
-    const maxWait = setTimeout(() => drawFrameContent(ctx, width, height, style, []), 2000);
-    
-    imagesToLoad.forEach(img => {
-        img.onload = img.onerror = () => {
-            loadedCount++;
-            if (loadedCount === imagesToLoad.length) {
-                clearTimeout(maxWait);
-                drawFrameContent(ctx, width, height, style, imagesToLoad);
-            }
-        };
-    });
-    
-    // If no images in category, render immediately
-    if (imagesToLoad.length === 0) {
-        clearTimeout(maxWait);
-        drawFrameContent(ctx, width, height, style, []);
-    }
-}
-
-function drawFrameContent(ctx, width, height, style, decorImages) {
-    // Background gradient
-    const gradient = ctx.createLinearGradient(0, 0, width, height);
-    gradient.addColorStop(0, style.colors[0]);
-    gradient.addColorStop(1, style.colors[1]);
-    ctx.fillStyle = gradient;
-    ctx.fillRect(0, 0, width, height);
-    
-    // Decorative circles (subtle)
-    ctx.fillStyle = 'rgba(255,255,255,0.08)';
-    for (let i = 0; i < 15; i++) {
-        const x = Math.random() * width;
-        const y = Math.random() * height;
-        const size = Math.random() * 40 + 20;
-        ctx.beginPath();
-        ctx.arc(x, y, size, 0, Math.PI * 2);
-        ctx.fill();
-    }
-    
-    // Photo area
-    const photoX = 30;
-    const photoY = 55;
-    const photoW = width - 60;
-    const photoH = 280;
-    
-    // White frame border
-    ctx.fillStyle = 'white';
-    ctx.beginPath();
-    ctx.roundRect(photoX - 5, photoY - 5, photoW + 10, photoH + 10, 16);
-    ctx.fill();
-    
-    // Draw user photo
-    if (frameState.userImage) {
-        ctx.save();
-        ctx.beginPath();
-        ctx.roundRect(photoX, photoY, photoW, photoH, 12);
-        ctx.clip();
-        
-        const img = frameState.userImage;
-        const imgRatio = img.width / img.height;
-        const frameRatio = photoW / photoH;
-        
-        let sx = 0, sy = 0, sw = img.width, sh = img.height;
-        if (imgRatio > frameRatio) {
-            sw = img.height * frameRatio;
-            sx = (img.width - sw) / 2;
-        } else {
-            sh = img.width / frameRatio;
-            sy = (img.height - sh) / 2;
-        }
-        
-        ctx.drawImage(img, sx, sy, sw, sh, photoX, photoY, photoW, photoH);
-        ctx.restore();
-    } else {
-        // Placeholder
-        ctx.fillStyle = '#f0f0f0';
-        ctx.beginPath();
-        ctx.roundRect(photoX, photoY, photoW, photoH, 12);
-        ctx.fill();
-    }
-    
-    // Header with logo
-    ctx.fillStyle = 'rgba(255,255,255,0.95)';
-    ctx.beginPath();
-    ctx.roundRect(width/2 - 80, 12, 160, 32, 16);
-    ctx.fill();
-    
-    ctx.fillStyle = style.colors[0];
-    ctx.font = 'bold 15px "Playfair Display", serif';
-    ctx.textAlign = 'center';
-    ctx.fillText('🌸 PrettyFoto', width / 2, 34);
-    
-    // Style badge below photo
-    ctx.fillStyle = 'white';
-    ctx.font = 'bold 16px Inter, sans-serif';
-    ctx.textAlign = 'center';
-    ctx.fillText(`${style.emoji} ${style.name}`, width / 2, photoY + photoH + 30);
-    
-    // Image strip at bottom - real photos from the collection
-    if (decorImages.length > 0) {
-        const stripY = photoY + photoH + 50;
-        const imgSize = 65;
-        const gap = 12;
-        const totalWidth = decorImages.length * imgSize + (decorImages.length - 1) * gap;
-        let startX = (width - totalWidth) / 2;
-        
-        // Strip background
-        ctx.fillStyle = 'rgba(255,255,255,0.15)';
-        ctx.beginPath();
-        ctx.roundRect(startX - 10, stripY - 5, totalWidth + 20, imgSize + 10, 12);
-        ctx.fill();
-        
-        decorImages.forEach((img, i) => {
-            const x = startX + i * (imgSize + gap);
-            
-            // Draw circular image
-            ctx.save();
-            ctx.beginPath();
-            ctx.arc(x + imgSize/2, stripY + imgSize/2, imgSize/2 - 2, 0, Math.PI * 2);
-            ctx.clip();
-            
-            // Cover fit
-            const imgRatio = img.width / img.height;
-            let sx = 0, sy = 0, sw = img.width, sh = img.height;
-            if (imgRatio > 1) {
-                sw = img.height;
-                sx = (img.width - sw) / 2;
-            } else {
-                sh = img.width;
-                sy = (img.height - sh) / 2;
-            }
-            
-            ctx.drawImage(img, sx, sy, sw, sh, x, stripY, imgSize, imgSize);
-            ctx.restore();
-            
-            // White border
-            ctx.strokeStyle = 'white';
-            ctx.lineWidth = 3;
-            ctx.beginPath();
-            ctx.arc(x + imgSize/2, stripY + imgSize/2, imgSize/2 - 2, 0, Math.PI * 2);
-            ctx.stroke();
-        });
-    }
-    
-    // Footer CTA
-    ctx.fillStyle = 'rgba(255,255,255,0.25)';
-    ctx.beginPath();
-    ctx.roundRect(width/2 - 90, height - 45, 180, 32, 16);
-    ctx.fill();
-    
-    ctx.fillStyle = 'white';
-    ctx.font = 'bold 12px Inter, sans-serif';
-    ctx.fillText('Shop prints at prettyfoto.com', width / 2, height - 24);
-}
-
-function downloadFrame() {
-    playSound('click');
-    
-    // Track for personalization
-    trackGamePlay('frame');
-    
-    const canvas = document.getElementById('frameCanvas');
-    const link = document.createElement('a');
-    link.download = `prettyfoto-${frameState.currentStyle}-frame.png`;
-    link.href = canvas.toDataURL('image/png');
-    link.click();
-}
-
-// Camera functions
-async function openCamera() {
-    playSound('click');
-    const modal = document.getElementById('cameraModal');
-    const video = document.getElementById('cameraVideo');
-    
-    try {
-        frameState.stream = await navigator.mediaDevices.getUserMedia({
-            video: { facingMode: frameState.facingMode }
-        });
-        video.srcObject = frameState.stream;
-        modal.classList.remove('hidden');
-    } catch (err) {
-        alert('Could not access camera. Please check permissions.');
-    }
-}
-
-function closeCamera() {
-    const modal = document.getElementById('cameraModal');
-    const video = document.getElementById('cameraVideo');
-    
-    if (frameState.stream) {
-        frameState.stream.getTracks().forEach(track => track.stop());
-        frameState.stream = null;
-    }
-    video.srcObject = null;
-    modal.classList.add('hidden');
-}
-
-async function switchCamera() {
-    playSound('click');
-    frameState.facingMode = frameState.facingMode === 'user' ? 'environment' : 'user';
-    
-    if (frameState.stream) {
-        frameState.stream.getTracks().forEach(track => track.stop());
-    }
-    
-    const video = document.getElementById('cameraVideo');
-    try {
-        frameState.stream = await navigator.mediaDevices.getUserMedia({
-            video: { facingMode: frameState.facingMode }
-        });
-        video.srcObject = frameState.stream;
-    } catch (err) {
-        console.error('Could not switch camera');
-    }
-}
-
-function capturePhoto() {
-    playSound('click');
-    const video = document.getElementById('cameraVideo');
-    const canvas = document.getElementById('cameraCapture');
-    
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
-    
-    const ctx = canvas.getContext('2d');
-    // Mirror the capture for selfie mode
-    if (frameState.facingMode === 'user') {
-        ctx.translate(canvas.width, 0);
-        ctx.scale(-1, 1);
-    }
-    ctx.drawImage(video, 0, 0);
-    
-    // Convert to image
-    const img = new Image();
-    img.onload = () => {
-        frameState.userImage = img;
-        closeCamera();
-        showFrameEditor();
-    };
-    img.src = canvas.toDataURL('image/png');
-}
-
-// ============================================================
-// ==================== WORD SEARCH ===========================
-// ============================================================
-
-const NATURE_WORDS = {
-    butterflies: ['BUTTERFLY', 'MONARCH', 'SWALLOWTAIL', 'WINGS', 'FLUTTER', 'NECTAR', 'CHRYSALIS', 'CATERPILLAR', 'MIGRATION', 'ANTENNAE'],
-    flowers: ['BLOSSOM', 'PETAL', 'ORCHID', 'TULIP', 'SUNFLOWER', 'GARDEN', 'BOUQUET', 'FRAGRANCE', 'POLLINATE', 'BOTANICAL'],
-    horses: ['STALLION', 'GALLOP', 'EQUINE', 'PASTURE', 'MUSTANG', 'FOAL', 'MANE', 'BRIDLE', 'CANTER', 'THOROUGHBRED'],
-    landscapes: ['MOUNTAIN', 'VALLEY', 'HORIZON', 'PANORAMA', 'WILDERNESS', 'CANYON', 'SUMMIT', 'MEADOW', 'OVERLOOK', 'TERRAIN']
-};
-
-let wsState = {
-    puzzle: null,
-    grid: [],
-    words: [],
-    wordPositions: [], // Store where words are placed
-    foundWords: [],
-    selecting: false,
-    startCell: null,
-    selection: []
-};
-
-function setupWordsearchHome() {
-    const preview = puzzles[0];
-    document.getElementById('wsPreviewImage').src = preview.image;
-    document.getElementById('wsPreviewTitle').textContent = preview.title;
-    
-    document.getElementById('startWordsearchBtn').onclick = () => startWordsearch(preview);
-    document.getElementById('wsBackBtn').onclick = () => {
-        document.getElementById('wordsearchView').classList.add('hidden');
-        document.getElementById('homeView').classList.remove('hidden');
-    };
-    
-    // Render gallery
-    const gallery = document.getElementById('wordsearchGallery');
-    gallery.innerHTML = puzzles.slice(0, 8).map(p => `
-        <div class="puzzle-card" onclick="startWordsearch(puzzles.find(x => x.id === ${p.id}))">
-            <img src="${p.image}" alt="${p.title}" class="puzzle-card-image" loading="lazy">
-            <div class="puzzle-card-info">
-                <div class="puzzle-card-title">${p.title}</div>
-            </div>
-        </div>
-    `).join('');
-}
-
-function startWordsearch(puzzle) {
-    playSound('click');
-    wsState.puzzle = puzzle;
-    wsState.foundWords = [];
-    wsState.wordPositions = [];
-    
-    // Get words for this category - pick 8 random words
-    const categoryWords = NATURE_WORDS[puzzle.category] || NATURE_WORDS.flowers;
-    const shuffled = [...categoryWords].sort(() => Math.random() - 0.5);
-    wsState.words = shuffled.slice(0, 8);
-    
-    // Generate larger grid (12x12)
-    wsState.grid = generateWordSearchGrid(wsState.words, 12);
-    
-    document.getElementById('homeView').classList.add('hidden');
-    document.getElementById('wordsearchView').classList.remove('hidden');
-    
-    document.getElementById('wsGameImage').src = puzzle.image;
-    document.getElementById('wsGameTitle').textContent = puzzle.title;
-    document.getElementById('wsShopLink').href = puzzle.shopUrl;
-    
-    renderWordsearch();
-}
-
-function generateWordSearchGrid(words, size) {
-    // Create empty grid
-    const grid = Array(size).fill(null).map(() => Array(size).fill(''));
-    
-    // Sort words by length (longest first - easier to place)
-    const sortedWords = [...words].sort((a, b) => b.length - a.length);
-    
-    // Place words
-    sortedWords.forEach(word => {
-        placeWord(grid, word, size);
-    });
-    
-    // Fill empty spaces with letters that appear in words (makes it harder!)
-    const wordLetters = words.join('').split('');
-    const commonLetters = 'AEIOULNSTR'; // Common letters to add confusion
-    const fillLetters = wordLetters.join('') + commonLetters;
-    
-    for (let y = 0; y < size; y++) {
-        for (let x = 0; x < size; x++) {
-            if (!grid[y][x]) {
-                grid[y][x] = fillLetters[Math.floor(Math.random() * fillLetters.length)];
-            }
-        }
-    }
-    
-    return grid;
-}
-
-function placeWord(grid, word, size) {
-    // All 8 directions: horizontal, vertical, diagonal, and their reverses
-    const directions = [
-        [0, 1],   // right
-        [0, -1],  // left
-        [1, 0],   // down
-        [-1, 0],  // up
-        [1, 1],   // diagonal down-right
-        [1, -1],  // diagonal down-left
-        [-1, 1],  // diagonal up-right
-        [-1, -1]  // diagonal up-left
-    ];
-    
-    // Shuffle directions for variety
-    const shuffledDirs = [...directions].sort(() => Math.random() - 0.5);
-    
-    for (let attempts = 0; attempts < 200; attempts++) {
-        const dir = shuffledDirs[attempts % shuffledDirs.length];
-        const startX = Math.floor(Math.random() * size);
-        const startY = Math.floor(Math.random() * size);
-        
-        // Check if word fits
-        let fits = true;
-        const positions = [];
-        
-        for (let i = 0; i < word.length; i++) {
-            const x = startX + dir[1] * i;
-            const y = startY + dir[0] * i;
-            
-            if (x < 0 || x >= size || y < 0 || y >= size) {
-                fits = false;
-                break;
-            }
-            
-            if (grid[y][x] && grid[y][x] !== word[i]) {
-                fits = false;
-                break;
-            }
-            
-            positions.push({x, y});
-        }
-        
-        if (fits) {
-            for (let i = 0; i < word.length; i++) {
-                const x = startX + dir[1] * i;
-                const y = startY + dir[0] * i;
-                grid[y][x] = word[i];
-            }
-            wsState.wordPositions.push({word, positions});
-            return true;
-        }
-    }
-    
-    // Word couldn't be placed, remove it from list
-    const idx = wsState.words.indexOf(word);
-    if (idx > -1) wsState.words.splice(idx, 1);
-    return false;
-}
-
-function renderWordsearch() {
-    const size = wsState.grid.length;
-    const cellSize = size > 10 ? 24 : 28;
-    
-    // Render grid
-    const gridEl = document.getElementById('wsGrid');
-    gridEl.style.gridTemplateColumns = `repeat(${size}, ${cellSize}px)`;
-    gridEl.innerHTML = '';
-    
-    for (let y = 0; y < size; y++) {
-        for (let x = 0; x < size; x++) {
-            const cell = document.createElement('div');
-            cell.className = 'ws-cell';
-            cell.style.width = `${cellSize}px`;
-            cell.style.height = `${cellSize}px`;
-            cell.style.fontSize = `${cellSize > 24 ? 14 : 12}px`;
-            cell.textContent = wsState.grid[y][x];
-            cell.dataset.x = x;
-            cell.dataset.y = y;
-            
-            // Check if this cell is part of a found word
-            for (const foundWord of wsState.foundWords) {
-                const wordPos = wsState.wordPositions.find(wp => wp.word === foundWord);
-                if (wordPos && wordPos.positions.some(p => p.x === x && p.y === y)) {
-                    cell.classList.add('found');
-                }
-            }
-            
-            cell.onmousedown = cell.ontouchstart = (e) => {
-                e.preventDefault();
-                startWsSelection(x, y);
-            };
-            cell.onmouseenter = (e) => {
-                if (wsState.selecting) {
-                    extendWsSelection(x, y);
-                }
-            };
-            
-            gridEl.appendChild(cell);
-        }
-    }
-    
-    // Handle touch move separately for mobile
-    gridEl.ontouchmove = (e) => {
-        if (!wsState.selecting) return;
-        e.preventDefault();
-        const touch = e.touches[0];
-        const element = document.elementFromPoint(touch.clientX, touch.clientY);
-        if (element && element.classList.contains('ws-cell')) {
-            const x = parseInt(element.dataset.x);
-            const y = parseInt(element.dataset.y);
-            extendWsSelection(x, y);
-        }
-    };
-    
-    document.onmouseup = document.ontouchend = endWsSelection;
-    
-    // Render word list (2 columns for more words)
-    const wordList = document.getElementById('wsWordList');
-    wordList.innerHTML = wsState.words.map(word => `
-        <span class="ws-word ${wsState.foundWords.includes(word) ? 'found' : ''}">${word}</span>
-    `).join('');
-}
-
-function startWsSelection(x, y) {
-    wsState.selecting = true;
-    wsState.startCell = {x, y};
-    wsState.selection = [{x, y}];
-    updateWsSelection();
-}
-
-function extendWsSelection(x, y) {
-    if (!wsState.startCell) return;
-    
-    // Build selection as a line from start to current
-    const dx = x - wsState.startCell.x;
-    const dy = y - wsState.startCell.y;
-    
-    // Determine direction (must be straight line: horizontal, vertical, or diagonal)
-    let stepX = 0, stepY = 0;
-    if (dx !== 0) stepX = dx > 0 ? 1 : -1;
-    if (dy !== 0) stepY = dy > 0 ? 1 : -1;
-    
-    // Check if it's a valid straight line
-    if (dx !== 0 && dy !== 0 && Math.abs(dx) !== Math.abs(dy)) {
-        return; // Not a valid diagonal
-    }
-    
-    const steps = Math.max(Math.abs(dx), Math.abs(dy));
-    wsState.selection = [];
-    
-    for (let i = 0; i <= steps; i++) {
-        wsState.selection.push({
-            x: wsState.startCell.x + stepX * i,
-            y: wsState.startCell.y + stepY * i
-        });
-    }
-    
-    updateWsSelection();
-}
-
-function updateWsSelection() {
-    document.querySelectorAll('.ws-cell').forEach(cell => {
-        cell.classList.remove('selected');
-    });
-    
-    wsState.selection.forEach(({x, y}) => {
-        const cell = document.querySelector(`.ws-cell[data-x="${x}"][data-y="${y}"]`);
-        if (cell) cell.classList.add('selected');
-    });
-}
-
-function endWsSelection() {
-    if (!wsState.selecting) return;
-    wsState.selecting = false;
-    wsState.startCell = null;
-    
-    // Check if selection forms a word
-    const selectedWord = wsState.selection.map(({x, y}) => wsState.grid[y][x]).join('');
-    const reversedWord = selectedWord.split('').reverse().join('');
-    
-    if (wsState.words.includes(selectedWord) && !wsState.foundWords.includes(selectedWord)) {
-        foundWsWord(selectedWord, wsState.selection);
-    } else if (wsState.words.includes(reversedWord) && !wsState.foundWords.includes(reversedWord)) {
-        foundWsWord(reversedWord, wsState.selection);
-    } else {
-        // Clear selection
-        document.querySelectorAll('.ws-cell.selected').forEach(c => c.classList.remove('selected'));
-    }
-    
-    wsState.selection = [];
-}
-
-function foundWsWord(word, selection) {
-    playSound('click');
-    vibrate(50);
-    
-    wsState.foundWords.push(word);
-    
-    // Mark cells as found
-    selection.forEach(({x, y}) => {
-        const cell = document.querySelector(`.ws-cell[data-x="${x}"][data-y="${y}"]`);
-        if (cell) {
-            cell.classList.add('found');
-            cell.classList.remove('selected');
-        }
-    });
-    
-    // Update word list
-    document.querySelectorAll('.ws-word').forEach(el => {
-        if (el.textContent === word) el.classList.add('found');
-    });
-    
-    // Check if complete
-    if (wsState.foundWords.length === wsState.words.length) {
-        wordsearchComplete();
-    }
-}
-
-function wordsearchComplete() {
-    playSound('win');
-    showConfetti();
-    
-    document.getElementById('completedImage').src = wsState.puzzle.image;
-    document.getElementById('finalTime').textContent = '🔤 Found all!';
-    document.getElementById('finalMoves').textContent = wsState.foundWords.length + ' words';
-    document.getElementById('completionShopLink').href = wsState.puzzle.shopUrl;
-    document.getElementById('completionGalleryLink').href = wsState.puzzle.galleryUrl;
-    document.getElementById('shareSection').classList.remove('hidden');
-    setTimeout(() => completionModal.classList.remove('hidden'), 500);
-    
-    document.getElementById('playAgainBtn').onclick = () => {
-        completionModal.classList.add('hidden');
-        startWordsearch(wsState.puzzle);
-    };
-    
-    document.getElementById('newPuzzleBtn').onclick = () => {
-        completionModal.classList.add('hidden');
-        document.getElementById('wordsearchView').classList.add('hidden');
-        document.getElementById('homeView').classList.remove('hidden');
-    };
-}
-
-// ============ INITIALIZE NEW GAMES ============
-document.addEventListener('DOMContentLoaded', () => {
-    setupGameModeTabs();
-});

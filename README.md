@@ -1,144 +1,83 @@
 # 🌸 PrettyFoto Puzzles
 
-A Wordle-style daily sliding tile puzzle game featuring beautiful nature photography from [PrettyFoto.com](https://www.prettyfoto.com).
+A daily sliding tile puzzle game featuring nature photography from [PrettyFoto.com](https://www.prettyfoto.com). One new puzzle every day; play from the gallery at any difficulty.
 
 ## ✨ Features
 
-### Daily Puzzle (Like Wordle!)
-- **New puzzle every day** at midnight
-- **Same puzzle for everyone** - compete with friends!
-- **Statistics tracking** - games played, win streak, best streak
-- **Shareable results** - share your score with emoji summary
-- **Countdown timer** to next puzzle
+### Core gameplay
+- **Daily puzzle** – New puzzle at midnight (3×3 for an easier solve).
+- **Gallery** – Browse by category (butterflies, flowers, horses, landscapes); pick any image and difficulty.
+- **Difficulty** – Easy (3×3), Medium (4×4), Hard (5×5).
+- **Hint** – Peek at the full image; tap tiles next to the empty space to slide.
+- **Stats** – Played, won, streak, best streak; play patterns (daily vs gallery).
+- **See Story** – Short story and metadata for each image; links to shop.
 
-### 17 Puzzle Images
-- 🦋 Butterflies (3 images)
-- 🌸 Flowers - tulips, orchids, water lilies, sunflowers, cherry blossoms (10 images)
-- 🐴 Horses (2 images)
-- 🏔️ Mountain landscapes (2 images)
-- All images link directly to purchasable art prints
-
-### Sound Effects & Haptics
-- Satisfying tile slide sounds
-- Victory fanfare on completion
-- Haptic feedback on mobile devices
-- Toggle sound on/off in header
+### Accessibility & markup
+- **Semantic HTML** – `<main>`, `<section>`, `<article>`, `<nav>`, `<header>`, `<footer>`, landmarks.
+- **ARIA** – `role="banner"`, `role="main"`, `role="dialog"`, `aria-modal`, `aria-label`, `aria-labelledby`, `aria-live` for timer/moves, `aria-hidden` synced when showing/hiding views and modals.
+- **Skip link** – “Skip to main content” for keyboard/screen reader users.
+- **Button types and labels** – Icon buttons have `aria-label`; dialogs have clear titles.
 
 ### Progressive Web App (PWA)
-- **Install on home screen** - works like a native app
-- **Offline support** - cached for offline play
-- **Fast loading** - service worker caching
+- **Install** – Add to home screen (install prompt when supported).
+- **Manifest** – `manifest.json` with name, short_name, theme_color, background_color, icons (any + maskable), `start_url`, `scope`, `display: standalone`.
+- **Offline** – Service worker caches app shell (HTML, CSS, JS, manifest) and uses cache-first for images with network fallback.
+- **Precache** – Puzzle images are fetched and cached in the background after load for offline play.
+- **Apple** – `apple-mobile-web-app-capable`, `apple-mobile-web-app-title`, `apple-touch-icon` in HTML.
 
-### Shop Integration
-- Direct product page links (not gallery pages)
-- "Buy This Print" button during gameplay
-- "Shop This Print - 25% Off" on completion
-- Prominent discount code display (EVERYWHERE26)
+### Other
+- **Sound** – Slide and win sounds; toggle in header.
+- **Haptics** – Light vibration on slide/win when supported.
+- **Share** – Web Share API (or copy link) from header and completion modal; Open Graph / Twitter Card meta for link previews.
+- **Shop** – Direct product links and discount code (EVERYWHERE26) in completion and gallery.
 
-### Gameplay
-- **Tap to slide** - mobile-optimized controls
-- **3 difficulty levels** - 3×3, 4×4, 5×5
-- **Hint button** - peek at reference image
-- **Confetti celebration** on completion
+## 🎮 How to play
 
-## 🎮 How to Play
-
-1. **Daily Puzzle**: Play the featured puzzle of the day (4×4)
-2. **Free Play**: Practice with any puzzle at any difficulty
-3. **Tap to Slide**: Tap any tile next to the empty space
-4. **Complete the Image**: Arrange all tiles correctly
-5. **Share Your Score**: Share results with friends!
-
-## 📤 Sharing Format
-
-```
-🌸 PrettyFoto Puzzle #42
-
-⭐ Excellent!
-⏱️ 2:45
-👆 67 moves
-🔥 5 day streak
-
-Play at prettyfoto.com/puzzles
-```
-
-## 🛠️ Tech Stack
-
-- **HTML5** - Semantic markup with PWA meta tags
-- **CSS3** - Mobile-first responsive design
-- **Vanilla JavaScript** - No frameworks, fast loading
-- **Web Audio API** - Sound effects without external files
-- **Canvas API** - Image slicing & confetti animation
-- **Service Worker** - Offline caching
-- **LocalStorage** - Stats persistence
+1. **Daily** – Tap “Play Today’s Puzzle” (3×3). Or use “Browse gallery” from the puzzle screen to pick another image.
+2. **Gallery** – Filter by category, tap a card to choose that image and then Easy / Medium / Hard.
+3. **Solve** – Tap a tile next to the empty space to slide it. Match the full image to win.
+4. **After solve** – See Story, Share, or go to Shop / Browse collection.
 
 ## 📁 Files
 
 ```
 puzzle/
-├── index.html      # Main HTML with PWA support
-├── styles.css      # Mobile-first styles
-├── app.js          # Game logic & puzzle data
-├── manifest.json   # PWA manifest
-├── sw.js           # Service worker for offline
+├── index.html      # Semantic HTML + ARIA, PWA meta, skip link
+├── styles.css      # Layout and visuals
+├── app.js          # Game logic, puzzle data, SW precache, ARIA sync
+├── manifest.json   # PWA manifest (icons, scope, start_url)
+├── sw.js           # Service worker (cache shell + images, fetch fallback)
 └── README.md       # This file
 ```
 
+## 🛠️ Tech stack
+
+- **HTML5** – Semantic structure, ARIA, PWA meta and links.
+- **CSS3** – Mobile-first, custom properties, responsive.
+- **JavaScript** – Vanilla; Web Audio, Canvas (tiles, confetti), Cache API, optional Web Share.
+- **Service worker** – Install/activate, fetch with cache-first for images and fallback for app shell.
+
 ## 🚀 Deployment
 
-### Option 1: Netlify (Easiest)
-1. Go to [netlify.com/drop](https://app.netlify.com/drop)
-2. Drag the entire folder onto the page
-3. Get your live URL instantly!
-
-### Option 2: GitHub Pages
-1. Push to GitHub
-2. Go to Settings → Pages
-3. Select "main" branch
-4. Your site will be live at `username.github.io/repo-name`
-
-### Option 3: Any Web Host
-Upload all files to your web server. No build step required!
+- **Netlify** – Drag folder to [netlify.com/drop](https://app.netlify.com/drop).
+- **GitHub Pages** – Push repo, enable Pages on main branch.
+- **Any host** – Upload all files; use HTTPS so the service worker and manifest work.
 
 ## ⚙️ Customization
 
-### Adding More Puzzles
-Edit the `puzzles` array in `app.js`:
+- **Puzzles** – Edit the `puzzles` array in `app.js` (id, title, category, image, shopUrl, galleryUrl, story).
+- **Daily epoch** – Change `EPOCH` in `app.js` for the first daily puzzle date.
 
-```javascript
-{
-    id: 18,
-    title: "Your Title",
-    category: "flowers", // butterflies, flowers, horses, landscapes
-    image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/YOUR_IMAGE_ID.jpg",
-    shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/your-product?product_gallery=xxx&product_id=xxx"
-}
-```
+## 📱 Sharing (Instagram, Facebook, etc.)
 
-**Note**: Use direct product URLs (with `product_gallery` and `product_id` parameters) for best user experience.
-
-### Changing the Start Date
-Modify the `EPOCH` constant in `app.js`:
-
-```javascript
-const EPOCH = new Date('2026-02-03').getTime();
-```
-
-## 📱 Browser Support
-
-- Chrome/Edge (latest)
-- Safari (latest)
-- Firefox (latest)
-- Mobile Safari (iOS 12+)
-- Chrome for Android
+- **Share button** – Opens system share (or copies link) so users can paste the URL in Stories, DMs, or posts.
+- **Link previews** – OG and Twitter meta tags so shared links show title, description, and image.
 
 ## 📄 License
 
-Images © [PrettyFoto.com](https://www.prettyfoto.com) - Jennifer McClellan
+Images © [PrettyFoto.com](https://www.prettyfoto.com) – Jennifer McClellan
 
 ## 🔗 Links
 
-- 🌐 [PrettyFoto.com](https://www.prettyfoto.com)
-- 🛒 [Shop Art](https://www.prettyfoto.com/shop-art)
-- 📘 [Facebook](https://www.facebook.com/profile.php?id=61550723549342)
-- 📸 [Instagram](https://www.instagram.com/jennifer_at_prettyfoto/)
+- [PrettyFoto.com](https://www.prettyfoto.com) · [Shop Art](https://www.prettyfoto.com/shop-art)
+- [Facebook](https://www.facebook.com/profile.php?id=61550723549342) · [Instagram](https://www.instagram.com/jennifer_at_prettyfoto/)
