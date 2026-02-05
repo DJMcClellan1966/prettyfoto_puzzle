@@ -65,13 +65,22 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 
-    <!-- Google Analytics (GA4): replace G-XXXXXXXXXX with your Measurement ID -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-DGHJ7TQ3Y3"></script>
+    <!-- Google Analytics (GA4) – loaded only after consent (GDPR) -->
     <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){ dataLayer.push(arguments); }
-        gtag('js', new Date());
-        gtag('config', 'G-DGHJ7TQ3Y3');
+        window.loadGA = function() {
+            if (window.gtagLoaded) return;
+            window.gtagLoaded = true;
+            var s = document.createElement('script');
+            s.async = true;
+            s.src = 'https://www.googletagmanager.com/gtag/js?id=G-DGHJ7TQ3Y3';
+            document.head.appendChild(s);
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){ dataLayer.push(arguments); }
+            window.gtag = gtag;
+            gtag('js', new Date());
+            gtag('config', 'G-DGHJ7TQ3Y3', { send_page_view: true });
+        };
+        if (localStorage.getItem('gaConsent') === 'accepted') window.loadGA();
     </script>
 </head>
 <body>
@@ -83,9 +92,9 @@
                 <span class="logo-text">PrettyFoto</span>
             </a>
             <nav class="header-actions" aria-label="App actions">
-                <button id="shareAppBtn" class="header-btn" type="button" aria-label="Share app">📤</button>
-                <button id="statsBtn" class="header-btn" type="button" aria-label="View statistics">📊</button>
-                <button id="soundBtn" class="header-btn" type="button" aria-label="Toggle sound">🔊</button>
+                <button id="shareAppBtn" class="header-btn" type="button" aria-label="Share app" title="Share app">📤</button>
+                <button id="statsBtn" class="header-btn" type="button" aria-label="View statistics" title="View statistics">📊</button>
+                <button id="soundBtn" class="header-btn" type="button" aria-label="Toggle sound" title="Toggle sound">🔊</button>
                 <a href="https://www.prettyfoto.com/shop-art" target="_blank" rel="noopener" class="shop-link">Shop Art →</a>
             </nav>
         </header>
@@ -118,7 +127,7 @@
                             <h3 id="dailyTitle">Loading...</h3>
                             <p id="dailyCategory" class="daily-category">Nature</p>
                         </div>
-                        <button id="playDailyBtn" class="play-daily-btn" type="button">Play Today's Puzzle</button>
+                        <button id="playDailyBtn" class="play-daily-btn" type="button" title="Play today’s daily puzzle (3×3)">Play Today's Puzzle</button>
                         <p class="daily-browse-hint">Prefer to browse? Explore the gallery below — no puzzle required.</p>
                         <div id="dailyCompleted" class="daily-completed hidden" aria-hidden="true">
                             <p>Come back tomorrow for a new puzzle!</p>
@@ -133,11 +142,11 @@
                         <h2 id="gallery-heading">Explore Gallery</h2>
                         <p>Beautiful nature photography puzzles</p>
                         <div class="category-filter" role="group" aria-label="Filter by category">
-                            <button type="button" class="filter-btn active" data-category="all">All</button>
-                            <button type="button" class="filter-btn" data-category="butterflies" aria-label="Butterflies">🦋</button>
-                            <button type="button" class="filter-btn" data-category="flowers" aria-label="Flowers">🌸</button>
-                            <button type="button" class="filter-btn" data-category="horses" aria-label="Horses">🐴</button>
-                            <button type="button" class="filter-btn" data-category="landscapes" aria-label="Landscapes">🏔️</button>
+                            <button type="button" class="filter-btn active" data-category="all" title="Show all puzzles">All</button>
+                            <button type="button" class="filter-btn" data-category="butterflies" aria-label="Butterflies" title="Filter: Butterflies">🦋</button>
+                            <button type="button" class="filter-btn" data-category="flowers" aria-label="Flowers" title="Filter: Flowers">🌸</button>
+                            <button type="button" class="filter-btn" data-category="horses" aria-label="Horses" title="Filter: Horses">🐴</button>
+                            <button type="button" class="filter-btn" data-category="landscapes" aria-label="Landscapes" title="Filter: Landscapes">🏔️</button>
                         </div>
                         <div id="puzzleGallery" class="puzzle-gallery" aria-label="Puzzle gallery">
                             <!-- Puzzles loaded via JavaScript -->
@@ -153,7 +162,7 @@
 
             <section id="puzzleView" class="view hidden" aria-label="Puzzle play" aria-live="polite">
                 <nav class="puzzle-nav" aria-label="Puzzle actions">
-                    <button id="backBtn" class="icon-btn" type="button">← Back</button>
+                    <button id="backBtn" class="icon-btn" type="button" title="Back to home">← Back</button>
                     <div class="nav-links">
                         <a href="#" id="browseGalleryLink" class="gallery-link hidden">🖼️ Browse gallery</a>
                         <a id="galleryLink" href="#" target="_blank" rel="noopener" class="gallery-link">🖼️ See Collection</a>
@@ -170,15 +179,15 @@
                         <p class="preview-hint">Study the image, then choose difficulty</p>
                     </div>
                     <div class="difficulty-options">
-                        <button type="button" class="difficulty-btn" data-size="3" aria-label="Easy, 3 by 3 grid">
+                        <button type="button" class="difficulty-btn" data-size="3" aria-label="Easy, 3 by 3 grid" title="Easy: 3×3 grid">
                             <span class="diff-label">Easy</span>
                             <span class="diff-grid">3×3</span>
                         </button>
-                        <button type="button" class="difficulty-btn recommended" data-size="4" aria-label="Medium, 4 by 4 grid">
+                        <button type="button" class="difficulty-btn recommended" data-size="4" aria-label="Medium, 4 by 4 grid" title="Medium: 4×4 grid">
                             <span class="diff-label">Medium</span>
                             <span class="diff-grid">4×4</span>
                         </button>
-                        <button type="button" class="difficulty-btn" data-size="5" aria-label="Hard, 5 by 5 grid">
+                        <button type="button" class="difficulty-btn" data-size="5" aria-label="Hard, 5 by 5 grid" title="Hard: 5×5 grid">
                             <span class="diff-label">Hard</span>
                             <span class="diff-grid">5×5</span>
                         </button>
@@ -194,14 +203,14 @@
                             <span class="stat-icon" aria-hidden="true">👆</span>
                             <span id="moves" class="stat-value" aria-label="Number of moves">0</span>
                         </div>
-                        <button id="hintBtn" class="hint-btn" type="button" aria-label="Show hint image">👁️</button>
+                        <button id="hintBtn" class="hint-btn" type="button" aria-label="Show hint image" title="Show full image hint">👁️</button>
                     </div>
                     <div class="puzzle-container">
                         <div id="puzzleBoard" class="puzzle-board" role="group" aria-label="Sliding tile puzzle board">
                             <!-- Tiles generated by JavaScript -->
                         </div>
                     </div>
-                    <button id="shuffleBtn" class="shuffle-btn hidden" type="button">🔀 Shuffle Again</button>
+                    <button id="shuffleBtn" class="shuffle-btn hidden" type="button" title="Shuffle the puzzle again">🔀 Shuffle Again</button>
                 </div>
             </section>
         </main>
@@ -224,7 +233,7 @@
                     </div>
                     <div class="story-actions">
                         <a id="storyShopLink" href="#" target="_blank" class="play-daily-btn">🛒 Own This Moment</a>
-                        <button id="storyPlayBtn" class="play-daily-btn secondary">🧩 Play Puzzle</button>
+                        <button id="storyPlayBtn" class="play-daily-btn secondary" title="Play puzzle with this image">🧩 Play Puzzle</button>
                     </div>
                 </div>
             </div>
@@ -260,7 +269,7 @@
 
         <div id="emailModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="emailModalHeading" aria-hidden="true">
             <div class="modal-content email-modal">
-                <button id="closeEmail" class="close-btn" type="button" aria-label="Close">×</button>
+                <button id="closeEmail" class="close-btn" type="button" aria-label="Close" title="Close">×</button>
                 <div class="email-icon" aria-hidden="true">🎁</div>
                 <h2 id="emailModalHeading">Nice Solve!</h2>
                 <p>Get <strong>25% off</strong> your first art print!</p>
@@ -272,7 +281,7 @@
 
         <div id="statsModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="statsModalHeading" aria-hidden="true">
             <div class="modal-content stats-modal">
-                <button id="closeStats" class="close-btn" type="button" aria-label="Close statistics">×</button>
+                <button id="closeStats" class="close-btn" type="button" aria-label="Close statistics" title="Close">×</button>
                 <h2 id="statsModalHeading">Statistics</h2>
                 <div class="stats-grid">
                     <div class="stat-box">
@@ -370,8 +379,8 @@
                 </div>
                 
                 <div class="completion-actions">
-                    <button id="playAgainBtn" class="cta-btn secondary">Play Again</button>
-                    <button id="newPuzzleBtn" class="cta-btn secondary">New Puzzle</button>
+                    <button id="playAgainBtn" class="cta-btn secondary" title="Play the same puzzle again">Play Again</button>
+                    <button id="newPuzzleBtn" class="cta-btn secondary" title="Choose a new puzzle">New Puzzle</button>
                 </div>
             </div>
         </div>
@@ -386,10 +395,37 @@
         <canvas id="confetti" class="confetti-canvas" aria-hidden="true"></canvas>
 
         <footer class="footer" role="contentinfo">
-            <p>Photos by <a href="https://www.prettyfoto.com" target="_blank" rel="noopener">PrettyFoto.com</a> · <a href="https://www.prettyfoto.com/shop-art" target="_blank" rel="noopener">Shop Art</a></p>
-            <button id="installBtn" class="install-btn hidden" type="button" aria-label="Install app">📲 Install App</button>
+            <p>Photos by <a href="https://www.prettyfoto.com" target="_blank" rel="noopener">PrettyFoto.com</a> · <a href="https://www.prettyfoto.com/shop-art" target="_blank" rel="noopener">Shop Art</a> · <a href="privacy.html" target="_blank" rel="noopener">Privacy</a></p>
+            <button id="installBtn" class="install-btn hidden" type="button" aria-label="Install app" title="Install app on your device">📲 Install App</button>
         </footer>
     </div>
+
+    <!-- Cookie / analytics consent banner (GDPR) -->
+    <div id="consentBanner" class="consent-banner hidden" role="dialog" aria-label="Cookie consent" aria-describedby="consentBannerDesc">
+        <p id="consentBannerDesc">We use analytics to improve the app. No personal data is sold. See <a href="privacy.html" target="_blank" rel="noopener">Privacy</a>.</p>
+        <div class="consent-banner-actions">
+            <button id="consentAccept" type="button" class="consent-btn accept" title="Accept analytics cookies">Accept</button>
+            <button id="consentDecline" type="button" class="consent-btn decline" title="Decline analytics cookies">Decline</button>
+        </div>
+    </div>
+    <script>
+        (function() {
+            var key = 'gaConsent';
+            var banner = document.getElementById('consentBanner');
+            if (!banner) return;
+            if (localStorage.getItem(key)) { banner.classList.add('hidden'); return; }
+            banner.classList.remove('hidden');
+            document.getElementById('consentAccept').onclick = function() {
+                localStorage.setItem(key, 'accepted');
+                banner.classList.add('hidden');
+                if (window.loadGA) window.loadGA();
+            };
+            document.getElementById('consentDecline').onclick = function() {
+                localStorage.setItem(key, 'declined');
+                banner.classList.add('hidden');
+            };
+        })();
+    </script>
 
     <script src="app.min.js" defer></script>
 </body>
