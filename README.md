@@ -44,7 +44,8 @@ A daily sliding tile puzzle game featuring nature photography from [PrettyFoto.c
 puzzle/
 ├── index.html      # Semantic HTML + ARIA, PWA meta, skip link
 ├── styles.css      # Layout and visuals
-├── app.js          # Game logic, puzzle data, SW precache, ARIA sync
+├── app.js          # Source (edit this)
+├── app.min.js      # Minified bundle (loads in production)
 ├── manifest.json   # PWA manifest (icons, scope, start_url)
 ├── sw.js           # Service worker (cache shell + images, fetch fallback)
 └── README.md       # This file
@@ -67,6 +68,7 @@ puzzle/
 
 - **Puzzles** – Edit the `puzzles` array in `app.js` (id, title, category, image, shopUrl, galleryUrl, story).
 - **Daily epoch** – Change `EPOCH` in `app.js` for the first daily puzzle date.
+- **Re-minify JS** – After editing `app.js`, run: `npx terser app.js -o app.min.js -c -m`
 
 ## 📱 Sharing (Instagram, Facebook, etc.)
 

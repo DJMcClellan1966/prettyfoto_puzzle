@@ -177,6 +177,7 @@ let seconds = 0;
 let timerInterval = null;
 let gameStarted = false;
 let tileImages = [];
+let cachedTileSize = 0; // avoid forced reflow: cache from renderBoard, reuse in shuffle/completion
 let shuffleSeed = 0;
 let soundEnabled = true;
 let deferredPrompt = null;
@@ -911,7 +912,9 @@ function setupDailyPuzzle() {
     document.getElementById('puzzleDate').textContent = today.toLocaleDateString('en-US', { 
         month: 'short', day: 'numeric', year: 'numeric' 
     });
-    setImageSrcWithFallback(document.getElementById('dailyImage'), daily.image);
+    const dailyImgEl = document.getElementById('dailyImage');
+    dailyImgEl.fetchPriority = 'high';
+    setImageSrcWithFallback(dailyImgEl, getThumbnailUrl(daily.image, 400));
     document.getElementById('dailyTitle').textContent = daily.title;
     document.getElementById('dailyCategory').textContent = daily.category;
     
@@ -993,6 +996,15 @@ function startCountdown() {
     setInterval(update, 1000);
 }
 
+// ============ IMAGE DELIVERY ============
+// Thumbnail URL for gallery (smaller size + efficient quality) to reduce payload (~1.7MB savings)
+function getThumbnailUrl(fullUrl, width = 280) {
+    if (!fullUrl || typeof fullUrl !== 'string') return fullUrl;
+    return fullUrl
+        .replace(/w_\d+,h_\d+/, `w_${width},h_${width}`)
+        .replace(/q_auto:best/, 'q_auto:good');
+}
+
 // ============ GALLERY ============
 function renderGallery(category = 'all') {
     const filtered = category === 'all' 
@@ -1001,7 +1013,7 @@ function renderGallery(category = 'all') {
     
     puzzleGallery.innerHTML = filtered.map(puzzle => `
         <div class="puzzle-card">
-            <img src="${puzzle.image}" alt="${puzzle.title}" class="puzzle-card-image" loading="lazy" onclick="selectPuzzle(${puzzle.id})">
+            <img src="${getThumbnailUrl(puzzle.image)}" alt="${puzzle.title}" class="puzzle-card-image" loading="lazy" decoding="async" width="280" height="280" onclick="selectPuzzle(${puzzle.id})">
             <div class="puzzle-card-info">
                 <div class="puzzle-card-title">${puzzle.title}</div>
                 <div class="puzzle-card-actions">
@@ -1262,9 +1274,8 @@ function shuffleTiles() {
     
     ensureSolvable();
     
-    if (puzzleBoard.children.length > 0) {
-        const tileSize = puzzleBoard.children[0].offsetWidth;
-        renderBoard(tileSize);
+    if (cachedTileSize > 0) {
+        renderBoard(cachedTileSize);
     }
 }
 
@@ -1282,6 +1293,7 @@ function getMovableNeighbors(emptyIdx) {
 }
 
 function renderBoard(tileSize) {
+    cachedTileSize = tileSize;
     const totalTiles = gridSize * gridSize;
     puzzleBoard.innerHTML = '';
     
@@ -1324,7 +1336,8 @@ function handleTileClick(position) {
     }
     
     const tile = puzzleBoard.children[position];
-    const tileSize = tile.offsetWidth + 3;
+    const tileW = tile.offsetWidth;
+    const tileSizeWithGap = tileW + 3;
     
     const posRow = Math.floor(position / gridSize);
     const posCol = position % gridSize;
@@ -1332,7 +1345,7 @@ function handleTileClick(position) {
     const emptyCol = emptyIndex % gridSize;
     
     tile.classList.add('sliding');
-    tile.style.transform = `translate(${(emptyCol - posCol) * tileSize}px, ${(emptyRow - posRow) * tileSize}px)`;
+    tile.style.transform = `translate(${(emptyCol - posCol) * tileSizeWithGap}px, ${(emptyRow - posRow) * tileSizeWithGap}px)`;
     
     setTimeout(() => {
         tiles[emptyIndex] = tiles[position];
@@ -1342,7 +1355,7 @@ function handleTileClick(position) {
         moves++;
         updateGameStats();
         
-        renderBoard(tile.offsetWidth);
+        renderBoard(tileW);
         
         if (checkWin()) setTimeout(puzzleComplete, 300);
     }, 120);
@@ -1461,7 +1474,7 @@ function puzzleComplete() {
 
 function renderCompletedBoard() {
     const totalTiles = gridSize * gridSize;
-    const tileSize = puzzleBoard.children[0].offsetWidth;
+    const tileSize = cachedTileSize || 80;
     
     puzzleBoard.innerHTML = '';
     for (let i = 0; i < totalTiles; i++) {

@@ -14,9 +14,10 @@
     --text-dim: #5a6268;
     --accent: #e17055;
     --accent-dark: #d63031;
+    --accent-text: #b53430; /* accent for text on light bg (WCAG AA) */
     --accent-light: #fab1a0;
     --success: #00b894;
-    --gold: #fdcb6e;
+    --gold: #b8860b; /* dark amber for text (WCAG AA on light) */
     --border: #dfe6e9;
     --shadow: 0 2px 12px rgba(0,0,0,0.08);
     --shadow-lg: 0 8px 30px rgba(0,0,0,0.12);
@@ -164,7 +165,7 @@ body {
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    background: linear-gradient(135deg, var(--accent) 0%, var(--accent-dark) 100%);
+    background: linear-gradient(135deg, #c0392b 0%, var(--accent-dark) 100%);
     color: white;
     padding: 6px 14px;
     border-radius: 20px;
@@ -222,7 +223,7 @@ body {
 }
 
 .daily-category {
-    color: var(--accent);
+    color: var(--accent-text);
     font-size: 12px;
     text-transform: uppercase;
     letter-spacing: 1px;
@@ -283,7 +284,7 @@ body {
     font-size: 28px;
     font-weight: 700;
     font-family: 'Inter', monospace;
-    color: var(--accent);
+    color: var(--accent-text);
 }
 
 /* Free Play Section */
@@ -422,7 +423,7 @@ body {
     align-items: center;
     justify-content: center;
     font-size: 10px;
-    color: var(--accent);
+    color: var(--accent-text);
     box-shadow: var(--shadow);
 }
 
@@ -985,7 +986,7 @@ body {
     display: block;
     font-size: 24px;
     font-weight: 700;
-    color: var(--accent);
+    color: var(--accent-text);
 }
 
 .stat-box-label {
@@ -1074,7 +1075,7 @@ body {
     display: block;
     font-size: 20px;
     font-weight: 700;
-    color: #6c5ce7;
+    color: #4c3fbf;
 }
 
 .analytics-label {
@@ -1142,7 +1143,7 @@ body {
     display: block;
     font-size: 28px;
     font-weight: 700;
-    color: var(--accent);
+    color: var(--accent-text);
 }
 
 .comp-stat-label {
@@ -1217,8 +1218,8 @@ body {
 }
 
 .share-text-btn:hover {
-    border-color: var(--accent);
-    color: var(--accent);
+    border-color: var(--accent-dark);
+    color: var(--accent-text);
 }
 
 .copied-msg {
@@ -1333,7 +1334,7 @@ body {
 }
 
 .footer a {
-    color: var(--accent);
+    color: var(--accent-text);
     text-decoration: none;
     font-weight: 500;
 }
@@ -1341,9 +1342,9 @@ body {
 .install-btn {
     padding: 10px 20px;
     background: var(--bg-card);
-    border: 2px solid var(--accent);
+    border: 2px solid var(--accent-dark);
     border-radius: 25px;
-    color: var(--accent);
+    color: var(--accent-text);
     font-size: 14px;
     font-weight: 600;
     cursor: pointer;
@@ -1385,7 +1386,7 @@ body {
 .help-section h3 {
     font-size: 14px;
     margin-bottom: 8px;
-    color: var(--accent);
+    color: var(--accent-text);
 }
 
 .help-section p {
@@ -1459,7 +1460,7 @@ body {
 }
 
 .game-intro-tip strong {
-    color: #0369a1;
+    color: #025a8e;
 }
 
 .play-daily-btn.secondary {
@@ -1477,7 +1478,7 @@ body {
     text-align: center;
     margin-bottom: 20px;
     padding: 16px;
-    background: linear-gradient(135deg, var(--accent) 0%, var(--accent-dark) 100%);
+    background: linear-gradient(135deg, #c0392b 0%, var(--accent-dark) 100%);
     border-radius: var(--radius);
     color: white;
 }
@@ -1644,8 +1645,8 @@ body {
 }
 
 .share-extra-btn:hover {
-    border-color: var(--accent);
-    color: var(--accent);
+    border-color: var(--accent-dark);
+    color: var(--accent-text);
 }
 
 /* ============ RESPONSIVE ============ */
