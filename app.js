@@ -168,259 +168,7 @@ const puzzles = [
         image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1719113577/IMG_2394_nbgkpf.jpg", 
         shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/img-2394?product_gallery=303977&product_id=7331099",
         galleryUrl: "https://www.prettyfoto.com/mountains"
-    },
-    
-    // Additional Butterflies
-    { 
-        id: 17, 
-        title: "Garden Visitor", 
-        category: "butterflies",
-        featuredWeek: 3,
-        image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1719947771/IMG_1842_z7mzjy.jpg", 
-        shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/img-1842?product_gallery=303973&product_id=7351866",
-        galleryUrl: "https://www.prettyfoto.com/butterflies-in-nature",
-        story: {
-            location: "Garden",
-            season: "Summer",
-            moment: "A delicate butterfly exploring vibrant blooms",
-            tags: ["butterfly", "garden", "nature", "summer"]
-        }
-    },
-    { 
-        id: 18, 
-        title: "Wings of Wonder", 
-        category: "butterflies",
-        featuredWeek: 4,
-        image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1694475326/Jennifer_McClellan_008Cfc2f-1102-42Ba-Afef-D728dcafa2b5_o6h4nh.jpg", 
-        shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/jennifer-mcclellan-008cfc2f-1102-42ba-afef-d728dcafa2b5?product_gallery=303973&product_id=6389616",
-        galleryUrl: "https://www.prettyfoto.com/butterflies-in-nature",
-        story: {
-            location: "Wildflower Field",
-            season: "Spring",
-            moment: "Nature's artistry on display",
-            tags: ["butterfly", "wildflower", "spring", "nature"]
-        }
-    },
-    
-    // Additional Flowers
-    { 
-        id: 19, 
-        title: "Pink Perfection", 
-        category: "flowers", 
-        image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1737159071/2N4A4426_o4lj30.jpg", 
-        shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/2n4a4426?product_gallery=302625&product_id=7841076",
-        galleryUrl: "https://www.prettyfoto.com/tulips"
-    },
-    { 
-        id: 20, 
-        title: "Tulip Dreams", 
-        category: "flowers", 
-        image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1737159079/IMG_0594_yndoza.jpg", 
-        shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/img-0594?product_gallery=302625&product_id=7841105",
-        galleryUrl: "https://www.prettyfoto.com/tulips"
-    },
-    { 
-        id: 21, 
-        title: "Orchid Elegance", 
-        category: "flowers", 
-        image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1693521613/Jennifer_McClellan_Img_0261_giehor.jpg", 
-        shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/jennifer-mcclellan-img-0261?product_gallery=302623&product_id=6350814",
-        galleryUrl: "https://www.prettyfoto.com/orchids"
-    },
-    { 
-        id: 22, 
-        title: "Blooming Delight", 
-        category: "flowers", 
-        image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1719113391/2N4A5107_imfztx.jpg", 
-        shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/2n4a5107?product_gallery=302623&product_id=7331073",
-        galleryUrl: "https://www.prettyfoto.com/orchids"
-    },
-    
-    // Additional Horses
-    { 
-        id: 23, 
-        title: "Sunset Serenity", 
-        category: "horses",
-        featuredWeek: 3,
-        image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1719113644/2N4A4928_ugnovr.jpg", 
-        shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/2n4a4928?product_gallery=331150&product_id=7331108",
-        galleryUrl: "https://www.prettyfoto.com/equine-beauties"
-    },
-    { 
-        id: 24, 
-        title: "Equine Grace", 
-        category: "horses",
-        featuredWeek: 4,
-        image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1708488576/IMG_2866_b8y05a.jpg", 
-        shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/img-2866?product_gallery=331150&product_id=6987885",
-        galleryUrl: "https://www.prettyfoto.com/equine-beauties"
-    },
-    
-    // Additional Landscapes
-    { 
-        id: 25, 
-        title: "Mountain Majesty", 
-        category: "landscapes",
-        featuredWeek: 4,
-        image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1719113554/2N4A4751_ugqv2k.jpg", 
-        shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/2n4a4751?product_gallery=303977&product_id=7331096",
-        galleryUrl: "https://www.prettyfoto.com/mountains"
-    },
-    { 
-        id: 26, 
-        title: "Scenic Vista", 
-        category: "landscapes", 
-        image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1719113577/IMG_2394_nbgkpf.jpg", 
-        shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/img-2394?product_gallery=303977&product_id=7331099",
-        galleryUrl: "https://www.prettyfoto.com/mountains"
-    },
-    { 
-        id: 27, 
-        title: "Rolling Hills", 
-        category: "landscapes",
-        featuredWeek: 3,
-        image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1719114051/2N4A5331_t6yzzm.jpg", 
-        shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/2n4a5331?product_gallery=303977&product_id=7331115",
-        galleryUrl: "https://www.prettyfoto.com/mountains"
-    },
-    { 
-        id: 28, 
-        title: "Nature's Canvas", 
-        category: "landscapes", 
-        image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1719113554/2N4A4751_ugqv2k.jpg", 
-        shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/2n4a4751?product_gallery=303977&product_id=7331096",
-        galleryUrl: "https://www.prettyfoto.com/mountains"
-    },
-    
-    // Animal Friends (Wildlife & Pets)
-    { 
-        id: 29, 
-        title: "The Group", 
-        category: "animal friends",
-        featuredWeek: 1,
-        image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1708435150/2N4A3976_exwxyi.jpg", 
-        shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/2n4a3976?product_gallery=356180&product_id=7051118",
-        galleryUrl: "https://www.prettyfoto.com/city-safari-wild-and-exotic-animals",
-        story: {
-            location: "Wildlife Park",
-            season: "Year-round",
-            moment: "Animal friends gathered together in harmony",
-            tags: ["wildlife", "animals", "nature", "zoo"]
-        }
-    },
-    { 
-        id: 30, 
-        title: "Bamboo Please", 
-        category: "animal friends",
-        featuredWeek: 2,
-        image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1708435121/2N4A3957_ghvvp3.jpg", 
-        shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/2n4a3957?product_gallery=356180&product_id=7051074",
-        galleryUrl: "https://www.prettyfoto.com/city-safari-wild-and-exotic-animals"
-    },
-    { 
-        id: 31, 
-        title: "Follow Me", 
-        category: "animal friends",
-        featuredWeek: 3,
-        image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1708435096/2N4A3943_aetdfe.jpg", 
-        shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/2n4a3943?product_gallery=356180&product_id=7051054",
-        galleryUrl: "https://www.prettyfoto.com/city-safari-wild-and-exotic-animals"
-    },
-    
-    // Rural (Farm & Countryside)
-    { 
-        id: 32, 
-        title: "Spring Bloom", 
-        category: "rural",
-        featuredWeek: 1,
-        image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1719947911/IMG_9542_fhxzpf.jpg", 
-        shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/img-9542?product_gallery=327278&product_id=7351883",
-        galleryUrl: "https://www.prettyfoto.com/blissful-spaces-farm-fields",
-        story: {
-            location: "Rolling Farmland",
-            season: "Spring",
-            moment: "Wildflowers blanket the countryside in nature's celebration",
-            tags: ["farm", "countryside", "wildflowers", "rural"]
-        }
-    },
-    { 
-        id: 33, 
-        title: "Forever Fields", 
-        category: "rural",
-        featuredWeek: 2,
-        image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1701051934/2037768f-721e-488f-b05f-175b45bcf26e_d10ldy.jpg", 
-        shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/2037768f-721e-488f-b05f-175b45bcf26e-9a66cw1rkzk?product_gallery=327278&product_id=6670029",
-        galleryUrl: "https://www.prettyfoto.com/blissful-spaces-farm-fields"
-    },
-    { 
-        id: 34, 
-        title: "Pastoral Peace", 
-        category: "rural",
-        featuredWeek: 3,
-        image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1719113554/2N4A4751_ugqv2k.jpg", 
-        shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/2n4a4751?product_gallery=303977&product_id=7331096",
-        galleryUrl: "https://www.prettyfoto.com/blissful-spaces-farm-fields"
-    },
-    
-    // City Safari (Zoo & Exotic Animals)
-    { 
-        id: 35, 
-        title: "Stripes", 
-        category: "city safari",
-        featuredWeek: 2,
-        image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1719947865/2N4A4432_b5v8fu.jpg", 
-        shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/2n4a4432?product_gallery=356180&product_id=7351884",
-        galleryUrl: "https://www.prettyfoto.com/city-safari-wild-and-exotic-animals",
-        story: {
-            location: "Zoo Safari",
-            season: "Year-round",
-            moment: "A zebra's striking pattern captured in golden light",
-            tags: ["zebra", "zoo", "wildlife", "exotic animals"]
-        }
-    },
-    { 
-        id: 36, 
-        title: "Hugs", 
-        category: "city safari",
-        featuredWeek: 3,
-        image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1708435066/2N4A3890_ldyacl.jpg", 
-        shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/2n4a3890?product_gallery=356180&product_id=7051039",
-        galleryUrl: "https://www.prettyfoto.com/city-safari-wild-and-exotic-animals"
-    },
-    { 
-        id: 37, 
-        title: "Baby Rhino", 
-        category: "city safari",
-        featuredWeek: 4,
-        image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1708435019/2N4A3869_geyxxu.jpg", 
-        shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/2n4a3869?product_gallery=356180&product_id=7051045",
-        galleryUrl: "https://www.prettyfoto.com/city-safari-wild-and-exotic-animals"
-    },
-    { 
-        id: 38, 
-        title: "King of the Jungle", 
-        category: "city safari",
-        featuredWeek: 1,
-        image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1708435145/2N4A3983_xaxwpc.jpg", 
-        shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/2n4a3983?product_gallery=356180&product_id=7051109",
-        galleryUrl: "https://www.prettyfoto.com/city-safari-wild-and-exotic-animals"
-    },
-    { 
-        id: 39, 
-        title: "Burning Bright", 
-        category: "city safari",
-        image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1708435346/2N4A4011_aw6vdq.jpg", 
-        shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/2n4a4011?product_gallery=356180&product_id=7051143",
-        galleryUrl: "https://www.prettyfoto.com/city-safari-wild-and-exotic-animals"
-    },
-    { 
-        id: 40, 
-        title: "The Elephant in the Room", 
-        category: "city safari",
-        image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1708435033/2N4A3874_svvqoj.jpg", 
-        shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/2n4a3874?product_gallery=356180&product_id=7051057",
-        galleryUrl: "https://www.prettyfoto.com/city-safari-wild-and-exotic-animals"
-    },
+    }
 ];
 
 // ============ CONSTANTS ============
@@ -444,6 +192,12 @@ let cachedTileSize = 0; // avoid forced reflow: cache from renderBoard, reuse in
 let shuffleSeed = 0;
 let soundEnabled = true;
 let deferredPrompt = null;
+
+// ============ GALLERY ROTATION ============
+const GALLERY_SIZE = 12; // Show only 12 images at a time
+let galleryOffset = 0; // Current rotation offset
+const GALLERY_ROTATION_INTERVAL = 60000; // Rotate every 60 seconds (1 minute)
+let galleryRotationTimer = null;
 
 // ============ STATS ============
 let stats = {
@@ -882,6 +636,21 @@ document.addEventListener('DOMContentLoaded', () => {
     setupPWAInstall();
     updateSoundButton();
     setupStoryModal();
+    
+    // Stop gallery rotation when page is hidden to save resources
+    document.addEventListener('visibilitychange', () => {
+        if (document.hidden) {
+            stopGalleryRotation();
+        } else if (!puzzleView.classList.contains('hidden')) {
+            // Don't restart rotation if we're in puzzle view
+            return;
+        } else {
+            // Restart rotation when returning to gallery
+            const activeFilter = document.querySelector('.filter-btn.active');
+            const category = activeFilter ? activeFilter.dataset.category : 'all';
+            renderGallery(category);
+        }
+    });
 });
 
 function applyPersonalization() {
@@ -1223,6 +992,7 @@ function hideDailyCompleted() {
 
 function playDaily() {
     playSound('click');
+    stopGalleryRotation(); // Stop rotation when leaving gallery
     isDaily = true;
     currentPuzzle = getDailyPuzzle();
     gridSize = 3; // Easier default so more people complete the daily without frustration
@@ -1305,7 +1075,26 @@ function renderGallery(category = 'all') {
         return 0;
     });
     
-    puzzleGallery.innerHTML = filtered.map(puzzle => {
+    // Rotate through images: show only GALLERY_SIZE at a time
+    const totalImages = filtered.length;
+    const displayImages = [];
+    
+    console.log(`Gallery: Total images=${totalImages}, Display limit=${GALLERY_SIZE}, Offset=${galleryOffset}`);
+    
+    if (totalImages <= GALLERY_SIZE) {
+        // If we have fewer images than the display size, show all
+        displayImages.push(...filtered);
+    } else {
+        // Rotate through images using galleryOffset
+        for (let i = 0; i < GALLERY_SIZE; i++) {
+            const index = (galleryOffset + i) % totalImages;
+            displayImages.push(filtered[index]);
+        }
+    }
+    
+    console.log(`Displaying ${displayImages.length} images:`, displayImages.map(p => p.title));
+    
+    puzzleGallery.innerHTML = displayImages.map(puzzle => {
         const isFeatured = isPuzzleFeaturedThisWeek(puzzle);
         const badge = isFeatured ? '<span class="featured-badge">✨ New This Week</span>' : '';
         
@@ -1323,10 +1112,41 @@ function renderGallery(category = 'all') {
         </div>
     `;
     }).join('');
+    
+    // Start rotation timer if not already running
+    startGalleryRotation(category);
+}
+
+function startGalleryRotation(category = 'all') {
+    // Clear existing timer
+    if (galleryRotationTimer) {
+        clearInterval(galleryRotationTimer);
+    }
+    
+    // Set up new rotation timer
+    galleryRotationTimer = setInterval(() => {
+        const filtered = category === 'all' 
+            ? puzzles 
+            : puzzles.filter(p => p.category === category);
+        
+        // Only rotate if we have more images than display size
+        if (filtered.length > GALLERY_SIZE) {
+            galleryOffset = (galleryOffset + GALLERY_SIZE) % filtered.length;
+            renderGallery(category);
+        }
+    }, GALLERY_ROTATION_INTERVAL);
+}
+
+function stopGalleryRotation() {
+    if (galleryRotationTimer) {
+        clearInterval(galleryRotationTimer);
+        galleryRotationTimer = null;
+    }
 }
 
 function selectPuzzle(id) {
     playSound('click');
+    stopGalleryRotation(); // Stop rotation when leaving gallery
     isDaily = false;
     currentPuzzle = puzzles.find(p => p.id === id);
     if (!currentPuzzle) return;
@@ -1371,6 +1191,10 @@ function goHome() {
     setViewAria(homeView, false);
     resetGame();
     setupDailyPuzzle();
+    // Restart gallery rotation when returning home
+    const activeFilter = document.querySelector('.filter-btn.active');
+    const category = activeFilter ? activeFilter.dataset.category : 'all';
+    renderGallery(category);
 }
 
 function goHomeAndShowGallery() {
