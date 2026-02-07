@@ -356,6 +356,28 @@ body {
     position: relative;
 }
 
+.puzzle-card.featured {
+    border: 2px solid var(--accent);
+    box-shadow: 0 4px 20px rgba(225, 112, 85, 0.2);
+}
+
+.featured-badge {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    background: linear-gradient(135deg, var(--accent) 0%, var(--accent-dark) 100%);
+    color: white;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    z-index: 10;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
 .puzzle-card:active {
     transform: scale(0.97);
 }
