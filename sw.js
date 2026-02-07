@@ -1,5 +1,5 @@
 // PrettyFoto Puzzle - Service Worker
-const CACHE_NAME = 'prettyfoto-puzzle-v2';
+const CACHE_NAME = 'prettyfoto-puzzle-v3';
 const ASSETS_TO_CACHE = [
   '/',
   '/index.html',
