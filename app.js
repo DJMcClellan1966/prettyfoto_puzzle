@@ -295,106 +295,131 @@ const puzzles = [
     // Animal Friends (Wildlife & Pets)
     { 
         id: 29, 
-        title: "Feathered Friend", 
+        title: "The Group", 
         category: "animal friends",
         featuredWeek: 1,
-        image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1719947771/IMG_1842_z7mzjy.jpg", 
-        shopUrl: "https://www.prettyfoto.com/shop-art",
-        galleryUrl: "https://www.prettyfoto.com/shop-art",
+        image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1708435150/2N4A3976_exwxyi.jpg", 
+        shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/2n4a3976?product_gallery=356180&product_id=7051118",
+        galleryUrl: "https://www.prettyfoto.com/city-safari-wild-and-exotic-animals",
         story: {
-            location: "Backyard Wildlife",
+            location: "Wildlife Park",
             season: "Year-round",
-            moment: "A delightful visitor bringing joy to everyday moments",
-            tags: ["wildlife", "birds", "nature", "animals"]
+            moment: "Animal friends gathered together in harmony",
+            tags: ["wildlife", "animals", "nature", "zoo"]
         }
     },
     { 
         id: 30, 
-        title: "Wild Encounter", 
+        title: "Bamboo Please", 
         category: "animal friends",
         featuredWeek: 2,
-        image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1694475326/Jennifer_McClellan_008Cfc2f-1102-42Ba-Afef-D728dcafa2b5_o6h4nh.jpg", 
-        shopUrl: "https://www.prettyfoto.com/shop-art",
-        galleryUrl: "https://www.prettyfoto.com/shop-art"
+        image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1708435121/2N4A3957_ghvvp3.jpg", 
+        shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/2n4a3957?product_gallery=356180&product_id=7051074",
+        galleryUrl: "https://www.prettyfoto.com/city-safari-wild-and-exotic-animals"
     },
     { 
         id: 31, 
-        title: "Creature Comforts", 
+        title: "Follow Me", 
         category: "animal friends",
         featuredWeek: 3,
-        image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1719113644/2N4A4928_ugnovr.jpg", 
-        shopUrl: "https://www.prettyfoto.com/shop-art",
-        galleryUrl: "https://www.prettyfoto.com/shop-art"
+        image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1708435096/2N4A3943_aetdfe.jpg", 
+        shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/2n4a3943?product_gallery=356180&product_id=7051054",
+        galleryUrl: "https://www.prettyfoto.com/city-safari-wild-and-exotic-animals"
     },
     
     // Rural (Farm & Countryside)
     { 
         id: 32, 
-        title: "Farm Life", 
+        title: "Spring Bloom", 
         category: "rural",
         featuredWeek: 1,
-        image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1719113554/2N4A4751_ugqv2k.jpg", 
-        shopUrl: "https://www.prettyfoto.com/shop-art",
-        galleryUrl: "https://www.prettyfoto.com/shop-art",
+        image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1719947911/IMG_9542_fhxzpf.jpg", 
+        shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/img-9542?product_gallery=327278&product_id=7351883",
+        galleryUrl: "https://www.prettyfoto.com/blissful-spaces-farm-fields",
         story: {
             location: "Rolling Farmland",
-            season: "Summer",
-            moment: "The peaceful rhythm of rural life captured in a single frame",
-            tags: ["farm", "countryside", "pastoral", "rural"]
+            season: "Spring",
+            moment: "Wildflowers blanket the countryside in nature's celebration",
+            tags: ["farm", "countryside", "wildflowers", "rural"]
         }
     },
     { 
         id: 33, 
-        title: "Country Roads", 
+        title: "Forever Fields", 
         category: "rural",
         featuredWeek: 2,
-        image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1719113577/IMG_2394_nbgkpf.jpg", 
-        shopUrl: "https://www.prettyfoto.com/shop-art",
-        galleryUrl: "https://www.prettyfoto.com/shop-art"
+        image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1701051934/2037768f-721e-488f-b05f-175b45bcf26e_d10ldy.jpg", 
+        shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/2037768f-721e-488f-b05f-175b45bcf26e-9a66cw1rkzk?product_gallery=327278&product_id=6670029",
+        galleryUrl: "https://www.prettyfoto.com/blissful-spaces-farm-fields"
     },
     { 
         id: 34, 
         title: "Pastoral Peace", 
         category: "rural",
         featuredWeek: 3,
-        image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1719114051/2N4A5331_t6yzzm.jpg", 
-        shopUrl: "https://www.prettyfoto.com/shop-art",
-        galleryUrl: "https://www.prettyfoto.com/shop-art"
+        image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1719113554/2N4A4751_ugqv2k.jpg", 
+        shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/2n4a4751?product_gallery=303977&product_id=7331096",
+        galleryUrl: "https://www.prettyfoto.com/blissful-spaces-farm-fields"
     },
     
-    // City Safari (Urban Photography)
+    // City Safari (Zoo & Exotic Animals)
     { 
         id: 35, 
-        title: "Urban Oasis", 
+        title: "Stripes", 
         category: "city safari",
         featuredWeek: 2,
-        image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1737159071/2N4A4426_o4lj30.jpg", 
-        shopUrl: "https://www.prettyfoto.com/shop-art",
-        galleryUrl: "https://www.prettyfoto.com/shop-art",
+        image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1719947865/2N4A4432_b5v8fu.jpg", 
+        shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/2n4a4432?product_gallery=356180&product_id=7351884",
+        galleryUrl: "https://www.prettyfoto.com/city-safari-wild-and-exotic-animals",
         story: {
-            location: "City Gardens",
-            season: "Spring",
-            moment: "Finding nature's beauty in unexpected urban spaces",
-            tags: ["urban", "city", "gardens", "cityscape"]
+            location: "Zoo Safari",
+            season: "Year-round",
+            moment: "A zebra's striking pattern captured in golden light",
+            tags: ["zebra", "zoo", "wildlife", "exotic animals"]
         }
     },
     { 
         id: 36, 
-        title: "City Blooms", 
+        title: "Hugs", 
         category: "city safari",
         featuredWeek: 3,
-        image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1737159079/IMG_0594_yndoza.jpg", 
-        shopUrl: "https://www.prettyfoto.com/shop-art",
-        galleryUrl: "https://www.prettyfoto.com/shop-art"
+        image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1708435066/2N4A3890_ldyacl.jpg", 
+        shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/2n4a3890?product_gallery=356180&product_id=7051039",
+        galleryUrl: "https://www.prettyfoto.com/city-safari-wild-and-exotic-animals"
     },
     { 
         id: 37, 
-        title: "Metropolitan Nature", 
+        title: "Baby Rhino", 
         category: "city safari",
         featuredWeek: 4,
-        image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1714324985/IMG_1453_ypftdw.jpg", 
-        shopUrl: "https://www.prettyfoto.com/shop-art",
-        galleryUrl: "https://www.prettyfoto.com/shop-art"
+        image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1708435019/2N4A3869_geyxxu.jpg", 
+        shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/2n4a3869?product_gallery=356180&product_id=7051045",
+        galleryUrl: "https://www.prettyfoto.com/city-safari-wild-and-exotic-animals"
+    },
+    { 
+        id: 38, 
+        title: "King of the Jungle", 
+        category: "city safari",
+        featuredWeek: 1,
+        image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1708435145/2N4A3983_xaxwpc.jpg", 
+        shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/2n4a3983?product_gallery=356180&product_id=7051109",
+        galleryUrl: "https://www.prettyfoto.com/city-safari-wild-and-exotic-animals"
+    },
+    { 
+        id: 39, 
+        title: "Burning Bright", 
+        category: "city safari",
+        image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1708435346/2N4A4011_aw6vdq.jpg", 
+        shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/2n4a4011?product_gallery=356180&product_id=7051143",
+        galleryUrl: "https://www.prettyfoto.com/city-safari-wild-and-exotic-animals"
+    },
+    { 
+        id: 40, 
+        title: "The Elephant in the Room", 
+        category: "city safari",
+        image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1708435033/2N4A3874_svvqoj.jpg", 
+        shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/2n4a3874?product_gallery=356180&product_id=7051057",
+        galleryUrl: "https://www.prettyfoto.com/city-safari-wild-and-exotic-animals"
     },
 ];
 
