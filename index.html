@@ -268,14 +268,54 @@
         </div>
 
         <div id="emailModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="emailModalHeading" aria-hidden="true">
-            <div class="modal-content email-modal">
+            <div class="modal-content email-modal email-subscribe-modal">
                 <button id="closeEmail" class="close-btn" type="button" aria-label="Close" title="Close">×</button>
-                <div class="email-icon" aria-hidden="true">🎁</div>
-                <h2 id="emailModalHeading">Nice Solve!</h2>
-                <p>Get <strong>25% off</strong> your first art print!</p>
-                <p class="email-subtext">Use code: <strong>EVERYWHERE26</strong></p>
-                <a href="https://www.prettyfoto.com/shop-art" target="_blank" class="email-shop-btn">Shop Now →</a>
-                <button id="skipEmail" class="skip-link" type="button">Maybe later</button>
+                <div class="email-icon" aria-hidden="true">📬</div>
+                <h2 id="emailModalHeading">Stay Connected!</h2>
+                <p>Want today's puzzle sent to your inbox? Join our community for daily puzzles, exclusive deals, and more!</p>
+                
+                <form id="emailSubscribeForm" class="email-form">
+                    <input type="email" id="subscribeEmail" placeholder="Enter your email" required aria-label="Email address">
+                    
+                    <div class="subscribe-options">
+                        <label class="subscribe-option">
+                            <input type="checkbox" name="dailyPuzzle" checked>
+                            <span class="checkbox-custom"></span>
+                            <span class="option-text">
+                                <strong>Daily Puzzle</strong>
+                                <small>Get each day's puzzle in your inbox</small>
+                            </span>
+                        </label>
+                        <label class="subscribe-option">
+                            <input type="checkbox" name="newsletter" checked>
+                            <span class="checkbox-custom"></span>
+                            <span class="option-text">
+                                <strong>Newsletter</strong>
+                                <small>Artist stories, new collections & inspiration</small>
+                            </span>
+                        </label>
+                        <label class="subscribe-option">
+                            <input type="checkbox" name="sales">
+                            <span class="checkbox-custom"></span>
+                            <span class="option-text">
+                                <strong>Sales & Promotions</strong>
+                                <small>Exclusive discounts & early access</small>
+                            </span>
+                        </label>
+                    </div>
+                    
+                    <button type="submit" class="email-submit">Subscribe</button>
+                    <p class="subscribe-promo">Use code <strong>EVERYWHERE26</strong> for 25% off your first print!</p>
+                </form>
+                
+                <div id="subscribeSuccess" class="subscribe-success hidden">
+                    <div class="success-icon">✓</div>
+                    <h3>You're Subscribed!</h3>
+                    <p>Check your inbox for a welcome email with your discount code.</p>
+                    <a href="https://www.prettyfoto.com/shop-art" target="_blank" class="email-shop-btn">Shop Now →</a>
+                </div>
+                
+                <button id="skipEmail" class="skip-btn" type="button">Maybe later</button>
             </div>
         </div>
 

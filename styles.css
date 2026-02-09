@@ -1170,6 +1170,142 @@ body {
     background: var(--accent-dark);
 }
 
+/* Email Subscribe Modal Enhancements */
+.email-subscribe-modal {
+    max-width: 400px;
+}
+
+.email-subscribe-modal p {
+    margin-bottom: 16px;
+    line-height: 1.5;
+}
+
+.subscribe-options {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+.subscribe-option {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px;
+    background: var(--bg-alt);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.subscribe-option:hover {
+    background: var(--border);
+}
+
+.subscribe-option input[type="checkbox"] {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.checkbox-custom {
+    flex-shrink: 0;
+    width: 22px;
+    height: 22px;
+    border: 2px solid var(--border);
+    border-radius: 4px;
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    margin-top: 2px;
+}
+
+.subscribe-option input[type="checkbox"]:checked + .checkbox-custom {
+    background: var(--accent);
+    border-color: var(--accent);
+}
+
+.subscribe-option input[type="checkbox"]:checked + .checkbox-custom::after {
+    content: '✓';
+    color: white;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.subscribe-option input[type="checkbox"]:focus + .checkbox-custom {
+    box-shadow: 0 0 0 3px rgba(225, 112, 85, 0.3);
+}
+
+.option-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.option-text strong {
+    font-size: 14px;
+    color: var(--text);
+}
+
+.option-text small {
+    font-size: 12px;
+    color: var(--text-dim);
+}
+
+.subscribe-promo {
+    font-size: 13px !important;
+    color: var(--accent) !important;
+    margin-top: 12px !important;
+    margin-bottom: 0 !important;
+}
+
+.subscribe-success {
+    text-align: center;
+    padding: 20px 0;
+}
+
+.subscribe-success .success-icon {
+    width: 60px;
+    height: 60px;
+    background: #00b894;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    margin: 0 auto 16px;
+}
+
+.subscribe-success h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    margin-bottom: 8px;
+}
+
+.subscribe-success p {
+    color: var(--text-dim);
+    margin-bottom: 20px;
+}
+
+.skip-btn {
+    background: none;
+    border: none;
+    color: var(--text-dim);
+    font-size: 14px;
+    cursor: pointer;
+    padding: 8px 16px;
+    margin-top: 8px;
+    transition: color 0.2s;
+}
+
+.skip-btn:hover {
+    color: var(--text);
+}
+
 .skip-link {
     position: absolute;
     left: -9999px;

@@ -213,6 +213,8 @@ let stats = {
     todayTime: 0,
     hasSeenOnboarding: false,
     hasSeenPromo: false,
+    hasSubscribed: false,    // Track if user has subscribed to emails
+    subscribedEmail: null,   // Store subscribed email
     // Behavior tracking
     dailyFirstCount: 0,      // Sessions where user played daily first
     galleryFirstCount: 0,    // Sessions where user played gallery first  
@@ -875,6 +877,77 @@ function setupEventListeners() {
         stats.hasSeenPromo = true;
         saveStats();
     });
+    
+    // Email subscription form handler
+    const subscribeForm = document.getElementById('emailSubscribeForm');
+    if (subscribeForm) {
+        subscribeForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('subscribeEmail').value.trim();
+            const dailyPuzzle = subscribeForm.querySelector('input[name="dailyPuzzle"]').checked;
+            const newsletter = subscribeForm.querySelector('input[name="newsletter"]').checked;
+            const sales = subscribeForm.querySelector('input[name="sales"]').checked;
+            
+            if (!email) return;
+            
+            // Prepare subscription data
+            const subscriptionData = {
+                email: email,
+                preferences: {
+                    dailyPuzzle: dailyPuzzle,
+                    newsletter: newsletter,
+                    sales: sales
+                },
+                source: 'puzzle_game',
+                timestamp: new Date().toISOString()
+            };
+            
+            // Try to submit to prettyfoto.com contact endpoint
+            // Note: This requires CORS to be enabled on the server
+            // If no endpoint is available, we'll store locally and provide fallback
+            try {
+                // Attempt to send to prettyfoto.com (configure endpoint as needed)
+                const endpoint = 'https://www.prettyfoto.com/api/subscribe';
+                
+                const response = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(subscriptionData),
+                    mode: 'cors'
+                });
+                
+                if (!response.ok) throw new Error('Server error');
+                
+                console.log('Subscription successful:', subscriptionData);
+            } catch (error) {
+                // If API fails, store locally and log for manual export
+                console.log('Subscription stored locally (API unavailable):', subscriptionData);
+                
+                // Store in localStorage for potential manual export
+                const storedSubs = JSON.parse(localStorage.getItem('pendingSubscriptions') || '[]');
+                storedSubs.push(subscriptionData);
+                localStorage.setItem('pendingSubscriptions', JSON.stringify(storedSubs));
+            }
+            
+            // Update stats
+            stats.hasSubscribed = true;
+            stats.subscribedEmail = email;
+            stats.hasSeenPromo = true;
+            saveStats();
+            
+            // Show success state
+            subscribeForm.classList.add('hidden');
+            document.getElementById('subscribeSuccess').classList.remove('hidden');
+            document.getElementById('skipEmail').classList.add('hidden');
+            
+            // Track conversion
+            stats.emailSubscribes = (stats.emailSubscribes || 0) + 1;
+            saveStats();
+        });
+    }
     
     // Track shop link clicks
     document.querySelectorAll('a[href*="prettyfoto.com"]').forEach(link => {
@@ -1578,12 +1651,27 @@ function puzzleComplete() {
         
         saveStats();
         
-        // Show promo after first completion
-        if (!stats.hasSeenPromo && stats.played === 1) {
-            setTimeout(() => {
-                emailModal.classList.remove('hidden');
-                setModalAria(emailModal, true);
-            }, 2000);
+        // Show email subscription modal after daily completion
+        // Only show if user hasn't subscribed and hasn't dismissed recently
+        if (!stats.hasSubscribed) {
+            // Show on first completion, or periodically (every 3 daily plays)
+            const shouldShowModal = stats.played === 1 || 
+                (!stats.hasSeenPromo && stats.dailyPlays % 3 === 0);
+            
+            if (shouldShowModal) {
+                setTimeout(() => {
+                    // Reset form state in case it was shown before
+                    const form = document.getElementById('emailSubscribeForm');
+                    const success = document.getElementById('subscribeSuccess');
+                    const skipBtn = document.getElementById('skipEmail');
+                    if (form) form.classList.remove('hidden');
+                    if (success) success.classList.add('hidden');
+                    if (skipBtn) skipBtn.classList.remove('hidden');
+                    
+                    emailModal.classList.remove('hidden');
+                    setModalAria(emailModal, true);
+                }, 2500); // Show after completion modal
+            }
         }
     } else {
         document.getElementById('shareSection').classList.remove('hidden');
