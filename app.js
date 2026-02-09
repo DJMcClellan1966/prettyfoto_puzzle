@@ -173,7 +173,8 @@ const puzzles = [
 
 // ============ CONSTANTS ============
 const STORAGE_KEY = 'prettyfoto_puzzle';
-const EPOCH = new Date('2026-02-03').getTime();
+// Use explicit year/month/day to get local midnight (month is 0-indexed)
+const EPOCH = new Date(2026, 1, 3, 0, 0, 0, 0).getTime();
 const DAY_MS = 24 * 60 * 60 * 1000;
 const WEEK_MS = 7 * DAY_MS;
 
