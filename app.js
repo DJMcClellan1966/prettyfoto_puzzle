@@ -1003,7 +1003,19 @@ function updateSoundButton() {
 function getDailyPuzzleNumber() {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    return Math.floor((today.getTime() - EPOCH) / DAY_MS) + 1;
+    const dayNum = Math.floor((today.getTime() - EPOCH) / DAY_MS) + 1;
+    // Debug logging - remove after fixing
+    console.log('DEBUG Daily:', {
+        today: today.toISOString(),
+        todayMs: today.getTime(),
+        epochMs: EPOCH,
+        diffMs: today.getTime() - EPOCH,
+        diffDays: (today.getTime() - EPOCH) / DAY_MS,
+        dayNum: dayNum,
+        puzzleIndex: (dayNum - 1) % puzzles.length,
+        puzzleTitle: puzzles[(dayNum - 1) % puzzles.length].title
+    });
+    return dayNum;
 }
 
 function getDailyPuzzle() {
