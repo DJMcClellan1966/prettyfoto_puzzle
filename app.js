@@ -1486,16 +1486,17 @@ function shuffleTiles() {
     
     let seed = shuffleSeed;
     
-    // Progressive difficulty: easier puzzles for new players
-    // Increases from 15 moves (very easy) to full difficulty over first 5 wins
-    const baseShuffleMoves = gridSize * gridSize * 25; // Full difficulty: 225 for 3x3
-    const minShuffleMoves = 15; // Very easy starting point
-    const winsForFullDifficulty = 5;
+    // Progressive difficulty: very easy puzzles for new players
+    // First puzzle: only 5 shuffle moves (trivially easy - solvable in ~5-8 moves)
+    // Scales up over 10 wins to full difficulty
+    const baseShuffleMoves = gridSize * gridSize * 20; // Full difficulty: 180 for 3x3
+    const minShuffleMoves = 5; // Trivially easy starting point
+    const winsForFullDifficulty = 10;
     
     const progressLevel = Math.min(stats.won || 0, winsForFullDifficulty) / winsForFullDifficulty;
     const shuffleMoves = Math.round(minShuffleMoves + (baseShuffleMoves - minShuffleMoves) * progressLevel);
     
-    console.log(`Shuffle difficulty: ${shuffleMoves} moves (${Math.round(progressLevel * 100)}% of full)`);
+    console.log(`Shuffle difficulty: ${shuffleMoves} moves (wins: ${stats.won || 0}, ${Math.round(progressLevel * 100)}% of full)`);
     
     for (let i = 0; i < shuffleMoves; i++) {
         const neighbors = getMovableNeighbors(emptyIndex);
