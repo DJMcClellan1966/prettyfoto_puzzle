@@ -920,9 +920,11 @@ function setupEventListeners() {
             });
             
             script.src = `${mailchimpUrl}&${params.toString()}`;
+            console.log('Mailchimp request URL:', script.src);
             
             // Setup callback
             window[callbackName] = (response) => {
+                console.log('Mailchimp response:', response);
                 // Clean up
                 delete window[callbackName];
                 document.body.removeChild(script);
@@ -963,7 +965,8 @@ function setupEventListeners() {
             };
             
             // Handle script load error
-            script.onerror = () => {
+            script.onerror = (err) => {
+                console.error('Mailchimp script error:', err);
                 delete window[callbackName];
                 submitBtn.textContent = originalText;
                 submitBtn.disabled = false;
