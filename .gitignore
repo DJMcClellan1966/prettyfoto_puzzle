@@ -38,3 +38,6 @@ build/
 *.tmp
 *.temp
 .cache/
+
+.codelearn.db
+prettyfoto_puzzle/
