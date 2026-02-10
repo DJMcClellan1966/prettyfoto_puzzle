@@ -942,11 +942,9 @@ function setupEventListeners() {
             });
             
             script.src = `${mailchimpUrl}&${params.toString()}`;
-            console.log('Mailchimp request URL:', script.src);
             
             // Setup callback
             window[callbackName] = (response) => {
-                console.log('Mailchimp response:', response);
                 // Clean up
                 delete window[callbackName];
                 document.body.removeChild(script);
@@ -987,8 +985,7 @@ function setupEventListeners() {
             };
             
             // Handle script load error
-            script.onerror = (err) => {
-                console.error('Mailchimp script error:', err);
+            script.onerror = () => {
                 delete window[callbackName];
                 submitBtn.textContent = originalText;
                 submitBtn.disabled = false;
@@ -1202,8 +1199,6 @@ function renderGallery(category = 'all') {
     const totalImages = filtered.length;
     const displayImages = [];
     
-    console.log(`Gallery: Total images=${totalImages}, Display limit=${GALLERY_SIZE}, Offset=${galleryOffset}`);
-    
     if (totalImages <= GALLERY_SIZE) {
         // If we have fewer images than the display size, show all
         displayImages.push(...filtered);
@@ -1214,8 +1209,6 @@ function renderGallery(category = 'all') {
             displayImages.push(filtered[index]);
         }
     }
-    
-    console.log(`Displaying ${displayImages.length} images:`, displayImages.map(p => p.title));
     
     puzzleGallery.innerHTML = displayImages.map(puzzle => {
         const isFeatured = isPuzzleFeaturedThisWeek(puzzle);
@@ -1517,8 +1510,6 @@ function shuffleTiles() {
     
     const progressLevel = Math.min(stats.won || 0, winsForFullDifficulty) / winsForFullDifficulty;
     const shuffleMoves = Math.round(minShuffleMoves + (baseShuffleMoves - minShuffleMoves) * progressLevel);
-    
-    console.log(`Shuffle difficulty: ${shuffleMoves} moves (wins: ${stats.won || 0}, ${Math.round(progressLevel * 100)}% of full)`);
     
     for (let i = 0; i < shuffleMoves; i++) {
         const neighbors = getMovableNeighbors(emptyIndex);
