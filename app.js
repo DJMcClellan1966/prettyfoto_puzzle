@@ -879,10 +879,10 @@ function setupEventListeners() {
         saveStats();
     });
     
-    // Email subscription form handler
+    // Email subscription form handler - Mailchimp integration
     const subscribeForm = document.getElementById('emailSubscribeForm');
     if (subscribeForm) {
-        subscribeForm.addEventListener('submit', async (e) => {
+        subscribeForm.addEventListener('submit', (e) => {
             e.preventDefault();
             
             const email = document.getElementById('subscribeEmail').value.trim();
@@ -892,61 +892,85 @@ function setupEventListeners() {
             
             if (!email) return;
             
-            // Prepare subscription data
-            const subscriptionData = {
-                email: email,
-                preferences: {
-                    dailyPuzzle: dailyPuzzle,
-                    newsletter: newsletter,
-                    sales: sales
-                },
-                source: 'puzzle_game',
-                timestamp: new Date().toISOString()
+            // Disable submit button while processing
+            const submitBtn = subscribeForm.querySelector('.email-submit');
+            const originalText = submitBtn.textContent;
+            submitBtn.textContent = 'Subscribing...';
+            submitBtn.disabled = true;
+            
+            // Mailchimp JSONP endpoint
+            const mailchimpUrl = 'https://prettyfoto.us21.list-manage.com/subscribe/post-json?u=464111773affbbac03ed81839&id=ff53185dfe';
+            
+            // Build preferences string for merge tag
+            const prefs = [];
+            if (dailyPuzzle) prefs.push('Daily Puzzle');
+            if (newsletter) prefs.push('Newsletter');
+            if (sales) prefs.push('Sales');
+            
+            // Create JSONP request
+            const callbackName = 'mailchimpCallback_' + Date.now();
+            const script = document.createElement('script');
+            
+            // Build URL with parameters
+            const params = new URLSearchParams({
+                EMAIL: email,
+                MERGE1: prefs.join(', '),  // Preferences as merge field
+                SOURCE: 'puzzle_game',
+                c: callbackName
+            });
+            
+            script.src = `${mailchimpUrl}&${params.toString()}`;
+            
+            // Setup callback
+            window[callbackName] = (response) => {
+                // Clean up
+                delete window[callbackName];
+                document.body.removeChild(script);
+                
+                submitBtn.textContent = originalText;
+                submitBtn.disabled = false;
+                
+                if (response.result === 'success') {
+                    // Update stats
+                    stats.hasSubscribed = true;
+                    stats.subscribedEmail = email;
+                    stats.hasSeenPromo = true;
+                    stats.emailSubscribes = (stats.emailSubscribes || 0) + 1;
+                    saveStats();
+                    
+                    // Show success state
+                    subscribeForm.classList.add('hidden');
+                    document.getElementById('subscribeSuccess').classList.remove('hidden');
+                    document.getElementById('skipEmail').classList.add('hidden');
+                } else {
+                    // Handle error (usually "already subscribed" or invalid email)
+                    let errorMsg = response.msg || 'Subscription failed';
+                    
+                    // Clean up Mailchimp's error messages
+                    if (errorMsg.includes('already subscribed')) {
+                        errorMsg = 'You\'re already subscribed!';
+                        // Still show success since they're in the list
+                        stats.hasSubscribed = true;
+                        stats.hasSeenPromo = true;
+                        saveStats();
+                        subscribeForm.classList.add('hidden');
+                        document.getElementById('subscribeSuccess').classList.remove('hidden');
+                        document.getElementById('skipEmail').classList.add('hidden');
+                    } else {
+                        alert(errorMsg.replace(/<[^>]*>/g, '')); // Strip HTML
+                    }
+                }
             };
             
-            // Try to submit to prettyfoto.com contact endpoint
-            // Note: This requires CORS to be enabled on the server
-            // If no endpoint is available, we'll store locally and provide fallback
-            try {
-                // Attempt to send to prettyfoto.com (configure endpoint as needed)
-                const endpoint = 'https://www.prettyfoto.com/api/subscribe';
-                
-                const response = await fetch(endpoint, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(subscriptionData),
-                    mode: 'cors'
-                });
-                
-                if (!response.ok) throw new Error('Server error');
-                
-                console.log('Subscription successful:', subscriptionData);
-            } catch (error) {
-                // If API fails, store locally and log for manual export
-                console.log('Subscription stored locally (API unavailable):', subscriptionData);
-                
-                // Store in localStorage for potential manual export
-                const storedSubs = JSON.parse(localStorage.getItem('pendingSubscriptions') || '[]');
-                storedSubs.push(subscriptionData);
-                localStorage.setItem('pendingSubscriptions', JSON.stringify(storedSubs));
-            }
+            // Handle script load error
+            script.onerror = () => {
+                delete window[callbackName];
+                submitBtn.textContent = originalText;
+                submitBtn.disabled = false;
+                alert('Connection error. Please try again.');
+            };
             
-            // Update stats
-            stats.hasSubscribed = true;
-            stats.subscribedEmail = email;
-            stats.hasSeenPromo = true;
-            saveStats();
-            
-            // Show success state
-            subscribeForm.classList.add('hidden');
-            document.getElementById('subscribeSuccess').classList.remove('hidden');
-            document.getElementById('skipEmail').classList.add('hidden');
-            
-            // Track conversion
-            stats.emailSubscribes = (stats.emailSubscribes || 0) + 1;
-            saveStats();
+            document.body.appendChild(script);
         });
     }
     
