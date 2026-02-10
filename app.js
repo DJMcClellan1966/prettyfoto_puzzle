@@ -914,7 +914,7 @@ function setupEventListeners() {
             // Build URL with parameters
             const params = new URLSearchParams({
                 EMAIL: email,
-                MERGE1: prefs.join(', '),  // Preferences as merge field
+                MERGE6: prefs.join(', '),  // Preferences as merge field
                 SOURCE: 'puzzle_game',
                 c: callbackName
             });
