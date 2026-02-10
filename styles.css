@@ -982,9 +982,14 @@ body {
 }
 
 /* Shuffle Button */
+.puzzle-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 16px;
+}
+
 .shuffle-btn {
-    display: block;
-    width: 100%;
+    flex: 1;
     padding: 14px;
     background: var(--bg-card);
     border: 2px solid var(--border);
@@ -997,6 +1002,27 @@ body {
 
 .shuffle-btn:active {
     background: var(--border);
+}
+
+.skip-puzzle-btn {
+    flex: 1;
+    padding: 14px 20px;
+    background: var(--accent);
+    border: none;
+    border-radius: var(--radius);
+    font-size: 15px;
+    font-weight: 600;
+    color: white;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.skip-puzzle-btn:hover {
+    background: var(--accent-dark);
+}
+
+.skip-puzzle-btn:active {
+    transform: scale(0.98);
 }
 
 /* ============ MODALS ============ */

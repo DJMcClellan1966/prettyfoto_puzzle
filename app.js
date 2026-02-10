@@ -828,6 +828,28 @@ function setupEventListeners() {
         updateGameStats();
     });
     
+    // Skip puzzle button - auto-complete for struggling players
+    document.getElementById('skipPuzzleBtn').addEventListener('click', () => {
+        playSound('click');
+        // Auto-solve: put all tiles in correct position
+        const totalTiles = gridSize * gridSize;
+        tiles = Array.from({ length: totalTiles }, (_, i) => i);
+        emptyIndex = totalTiles - 1;
+        
+        // Add some moves so it doesn't look weird
+        if (moves < 5) moves = 5;
+        
+        // Render solved board and trigger completion
+        if (cachedTileSize > 0) {
+            renderBoard(cachedTileSize);
+        }
+        
+        // Short delay then show completion
+        setTimeout(() => {
+            puzzleComplete();
+        }, 300);
+    });
+    
     // Completion modal buttons
     document.getElementById('playAgainBtn').addEventListener('click', () => {
         completionModal.classList.add('hidden');
