@@ -183,20 +183,8 @@ function getConsistentDate() {
     const now = new Date();
     // Always use local timezone but normalize to start of day
     const normalized = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0);
-    
-    // Store today's date to localStorage to ensure consistency within same day
-    const todayKey = 'prettyfoto_today';
-    const storedToday = localStorage.getItem(todayKey);
-    const todayStr = normalized.toDateString();
-    
-    // If stored date is different, clear it and use new date
-    if (storedToday && storedToday !== todayStr) {
-        localStorage.removeItem(todayKey);
-    }
-    
-    // Store current normalized date
-    localStorage.setItem(todayKey, todayStr);
-    
+    // Return normalized local date (no persistent storage)
+    // Using session-level caching elsewhere ensures consistency during a page session.
     return normalized;
 }
 
