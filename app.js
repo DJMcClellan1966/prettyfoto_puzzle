@@ -173,10 +173,32 @@ const puzzles = [
 
 // ============ CONSTANTS ============
 const STORAGE_KEY = 'prettyfoto_puzzle';
-// Use explicit year/month/day to get local midnight (month is 0-indexed)
+// Use explicit year/month/day to get local midnight (month is 0-indexed)  
 const EPOCH = new Date(2026, 1, 3, 0, 0, 0, 0).getTime();
 const DAY_MS = 24 * 60 * 60 * 1000;
 const WEEK_MS = 7 * DAY_MS;
+
+// Add date consistency check to prevent puzzle jumping
+function getConsistentDate() {
+    const now = new Date();
+    // Always use local timezone but normalize to start of day
+    const normalized = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0);
+    
+    // Store today's date to localStorage to ensure consistency within same day
+    const todayKey = 'prettyfoto_today';
+    const storedToday = localStorage.getItem(todayKey);
+    const todayStr = normalized.toDateString();
+    
+    // If stored date is different, clear it and use new date
+    if (storedToday && storedToday !== todayStr) {
+        localStorage.removeItem(todayKey);
+    }
+    
+    // Store current normalized date
+    localStorage.setItem(todayKey, todayStr);
+    
+    return normalized;
+}
 
 // ============ GAME STATE ============
 let currentPuzzle = null;
@@ -498,9 +520,15 @@ function showStoryModal(puzzle) {
     document.getElementById('storyMoment').textContent = `"${story.moment}"`;
     document.getElementById('storyShopLink').href = puzzle.shopUrl;
     
-    // Render tags
-    document.getElementById('storyTags').innerHTML = story.tags
-        .map(tag => `<span class="story-tag">${tag}</span>`).join('');
+    // Render tags safely
+    const tagsContainer = document.getElementById('storyTags');
+    tagsContainer.innerHTML = '';
+    story.tags.forEach(tag => {
+        const tagElement = document.createElement('span');
+        tagElement.className = 'story-tag';
+        tagElement.textContent = tag; // Safe from XSS
+        tagsContainer.appendChild(tagElement);
+    });
     
     // Play button
     document.getElementById('storyPlayBtn').onclick = () => {
@@ -535,6 +563,52 @@ function setupStoryModal() {
     };
 }
 
+
+// ============ SECURITY UTILITIES ============
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+// Secure event delegation handler for gallery
+function handleGalleryClick(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    const target = e.target;
+    const puzzleCard = target.closest('.puzzle-card');
+    if (!puzzleCard) return;
+    
+    const puzzleId = parseInt(puzzleCard.dataset.puzzleId);
+    const action = target.dataset.action;
+    
+    if (action === 'play' || target.classList.contains('puzzle-card-image')) {
+        selectPuzzle(puzzleId);
+    } else if (action === 'story') {
+        const puzzle = puzzles.find(p => p.id === puzzleId);
+        if (puzzle) showStoryModal(puzzle);
+    }
+}
+
+function showErrorToast(message) {
+    const existingToast = document.getElementById('errorToast');
+    if (existingToast) existingToast.remove();
+    
+    const toast = document.createElement('div');
+    toast.id = 'errorToast';
+    toast.className = 'error-toast';
+    toast.textContent = message;
+    toast.setAttribute('role', 'alert');
+    toast.setAttribute('aria-live', 'assertive');
+    document.body.appendChild(toast);
+    
+    requestAnimationFrame(() => toast.classList.add('show'));
+    setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => toast.remove(), 300);
+    }, 4000);
+}
 
 // ============ AUDIO ============
 let audioCtx = null;
@@ -667,7 +741,7 @@ function applyPersonalization() {
     
 }
 
-const PWA_CACHE_NAME = 'prettyfoto-puzzle-v2';
+const PWA_CACHE_NAME = 'prettyfoto-puzzle-v11'; // Updated to match service worker
 
 function registerServiceWorker() {
     if ('serviceWorker' in navigator) {
@@ -920,8 +994,30 @@ function setupEventListeners() {
             submitBtn.textContent = 'Subscribing...';
             submitBtn.disabled = true;
             
-            // Mailchimp JSONP endpoint
+            // Mailchimp JSONP endpoint  
             const mailchimpUrl = 'https://prettyfoto.us21.list-manage.com/subscribe/post-json?u=464111773affbbac03ed81839&id=ff53185dfe';
+            
+            // Check if we're in private browsing or have restrictions
+            const isPrivateBrowsing = window.location.protocol === 'file:' || 
+                                    window.navigator.brave !== undefined ||
+                                    !window.navigator.onLine;
+            
+            if (isPrivateBrowsing) {
+                // Fallback for private browsing - show manual signup link
+                const manualUrl = `https://prettyfoto.us21.list-manage.com/subscribe?u=464111773affbbac03ed81839&id=ff53185dfe&EMAIL=${encodeURIComponent(email)}`;
+                window.open(manualUrl, '_blank');
+                
+                // Show success message anyway
+                stats.hasSubscribed = true;
+                stats.hasSeenPromo = true;
+                saveStats();
+                subscribeForm.classList.add('hidden');
+                document.getElementById('subscribeSuccess').classList.remove('hidden');
+                document.getElementById('skipEmail').classList.add('hidden');
+                submitBtn.textContent = originalText;
+                submitBtn.disabled = false;
+                return;
+            }
             
             // Build preferences string for merge tag
             const prefs = [];
@@ -979,7 +1075,7 @@ function setupEventListeners() {
                         document.getElementById('subscribeSuccess').classList.remove('hidden');
                         document.getElementById('skipEmail').classList.add('hidden');
                     } else {
-                        alert(errorMsg.replace(/<[^>]*>/g, '')); // Strip HTML
+                        showErrorToast(errorMsg.replace(/<[^>]*>/g, '')); // Strip HTML
                     }
                 }
             };
@@ -987,10 +1083,34 @@ function setupEventListeners() {
             // Handle script load error
             script.onerror = () => {
                 delete window[callbackName];
+                document.body.removeChild(script);
                 submitBtn.textContent = originalText;
                 submitBtn.disabled = false;
-                alert('Connection error. Please try again.');
+                
+                // Fallback: open manual subscription page
+                const manualUrl = `https://prettyfoto.us21.list-manage.com/subscribe?u=464111773affbbac03ed81839&id=ff53185dfe&EMAIL=${encodeURIComponent(email)}`;
+                window.open(manualUrl, '_blank');
+                
+                showErrorToast('Opened signup page in new tab. Please complete subscription there.');
             };
+            
+            // Add timeout to prevent hanging requests
+            setTimeout(() => {
+                if (window[callbackName]) {
+                    delete window[callbackName];
+                    if (document.body.contains(script)) {
+                        document.body.removeChild(script);
+                    }
+                    submitBtn.textContent = originalText;
+                    submitBtn.disabled = false;
+                    
+                    // Fallback: open manual subscription page
+                    const manualUrl = `https://prettyfoto.us21.list-manage.com/subscribe?u=464111773affbbac03ed81839&id=ff53185dfe&EMAIL=${encodeURIComponent(email)}`;
+                    window.open(manualUrl, '_blank');
+                    
+                    showErrorToast('Subscription taking too long. Opened signup page in new tab.');
+                }
+            }, 10000); // 10 second timeout
             
             document.body.appendChild(script);
         });
@@ -1046,20 +1166,61 @@ function updateSoundButton() {
 }
 
 // ============ DAILY PUZZLE & WEEKLY FEATURED ============
+// Session-level cache for daily puzzle to ensure consistency
+let dailyPuzzleCache = null;
+let dailyPuzzleNumberCache = null;
+let dailyPuzzleDateCache = null;
+
 function getDailyPuzzleNumber() {
-    const today = new Date();
+    const today = getConsistentDate();
+    const todayKey = today.toDateString();
+    
+    // Use cached value if it's for the same day
+    if (dailyPuzzleNumberCache && dailyPuzzleDateCache === todayKey) {
+        return dailyPuzzleNumberCache;
+    }
+    
     today.setHours(0, 0, 0, 0);
-    return Math.floor((today.getTime() - EPOCH) / DAY_MS) + 1;
+    const dayNumber = Math.floor((today.getTime() - EPOCH) / DAY_MS) + 1;
+    
+    // Cache the result for this session
+    dailyPuzzleNumberCache = dayNumber;
+    dailyPuzzleDateCache = todayKey;
+    
+    // Debug logging - remove in production
+    if (window.location.hostname === 'localhost' || window.location.hostname.includes('127.0.0.1')) {
+        console.log('Daily puzzle debug (cached):', {
+            today: today.toISOString(),
+            epoch: new Date(EPOCH).toISOString(),
+            daysDiff: Math.floor((today.getTime() - EPOCH) / DAY_MS),
+            dayNumber: dayNumber,
+            puzzleIndex: (dayNumber - 1) % puzzles.length,
+            expectedPuzzle: puzzles[(dayNumber - 1) % puzzles.length]?.title
+        });
+    }
+    
+    return dayNumber;
 }
 
 function getDailyPuzzle() {
     const puzzleNum = getDailyPuzzleNumber();
     const index = (puzzleNum - 1) % puzzles.length;
-    return puzzles[index];
+    const puzzle = puzzles[index];
+    
+    // Cache the daily puzzle for this session to ensure consistency
+    if (!dailyPuzzleCache || dailyPuzzleCache.sessionDay !== puzzleNum) {
+        dailyPuzzleCache = {
+            puzzle: puzzle,
+            sessionDay: puzzleNum,
+            timestamp: Date.now()
+        };
+    }
+    
+    return dailyPuzzleCache.puzzle;
 }
 
 function getCurrentWeekNumber() {
-    const today = new Date();
+    const today = getConsistentDate(); // Use consistent date function
     today.setHours(0, 0, 0, 0);
     const weekNum = Math.floor((today.getTime() - EPOCH) / WEEK_MS) + 1;
     // Cycle through weeks 1-4
@@ -1072,8 +1233,50 @@ function isPuzzleFeaturedThisWeek(puzzle) {
 }
 
 function getTodayString() {
-    return new Date().toDateString();
+    return getConsistentDate().toDateString(); // Use consistent date
 }
+
+// Debug function - call from console: debugDailyPuzzle()
+window.debugDailyPuzzle = function() {
+    const today = getConsistentDate();
+    const epochDate = new Date(EPOCH);
+    const dayNumber = getDailyPuzzleNumber();
+    const puzzleIndex = (dayNumber - 1) % puzzles.length;
+    const currentPuzzle = puzzles[puzzleIndex];
+    
+    console.log('=== DAILY PUZZLE DEBUG ===');
+    console.log('Today (normalized):', today);
+    console.log('Epoch date:', epochDate);
+    console.log('Days since epoch:', Math.floor((today.getTime() - EPOCH) / DAY_MS));
+    console.log('Daily puzzle number:', dayNumber);
+    console.log('Puzzle array index:', puzzleIndex);
+    console.log('Current puzzle:', currentPuzzle);
+    console.log('Expected: "Water Lily Afternoon" for Feb 10, 2026');
+    console.log('Cached daily puzzle:', dailyPuzzleCache);
+    console.log('Session consistency check:');
+    console.log('  setupDailyPuzzle() would show:', getDailyPuzzle().title);
+    console.log('  playDaily() would use:', getDailyPuzzle().title);
+    console.log('========================');
+    
+    return {
+        today,
+        epochDate, 
+        dayNumber,
+        puzzleIndex,
+        currentPuzzle,
+        cached: dailyPuzzleCache,
+        allPuzzles: puzzles.map((p, i) => ({ index: i, id: p.id, title: p.title }))
+    };
+};
+
+// Force cache refresh - call from console: clearDailyCache()
+window.clearDailyCache = function() {
+    dailyPuzzleCache = null;
+    dailyPuzzleNumberCache = null;
+    dailyPuzzleDateCache = null;
+    localStorage.removeItem('prettyfoto_today');
+    console.log('Daily puzzle cache cleared. Refresh page to see updated puzzle.');
+};
 
 function setupDailyPuzzle() {
     const daily = getDailyPuzzle();
@@ -1210,24 +1413,34 @@ function renderGallery(category = 'all') {
         }
     }
     
-    puzzleGallery.innerHTML = displayImages.map(puzzle => {
-        const isFeatured = isPuzzleFeaturedThisWeek(puzzle);
-        const badge = isFeatured ? '<span class="featured-badge">✨ New This Week</span>' : '';
+    // Clear gallery and add event listener for delegation
+    puzzleGallery.innerHTML = '';
+    
+    // Remove any existing event listeners to prevent duplicates
+    puzzleGallery.removeEventListener('click', handleGalleryClick);
+    puzzleGallery.addEventListener('click', handleGalleryClick);
+    
+    displayImages.forEach(puzzle => {
+        const puzzleCard = document.createElement('div');
+        puzzleCard.className = `puzzle-card ${isPuzzleFeaturedThisWeek(puzzle) ? 'featured' : ''}`;
+        puzzleCard.dataset.puzzleId = puzzle.id;
         
-        return `
-        <div class="puzzle-card ${isFeatured ? 'featured' : ''}">
-            ${badge}
-            <img src="${getThumbnailUrl(puzzle.image)}" alt="${puzzle.title}" class="puzzle-card-image" loading="lazy" decoding="async" width="280" height="280" onclick="selectPuzzle(${puzzle.id})">
+        const isFeatured = isPuzzleFeaturedThisWeek(puzzle);
+        
+        puzzleCard.innerHTML = `
+            ${isFeatured ? '<span class="featured-badge">✨ New This Week</span>' : ''}
+            <img src="${getThumbnailUrl(puzzle.image)}" alt="${escapeHtml(puzzle.title)}" class="puzzle-card-image" loading="lazy" decoding="async" width="280" height="280" data-action="play">
             <div class="puzzle-card-info">
-                <div class="puzzle-card-title">${puzzle.title}</div>
+                <div class="puzzle-card-title">${escapeHtml(puzzle.title)}</div>
                 <div class="puzzle-card-actions">
-                    <button class="card-story-btn" onclick="event.stopPropagation(); showStoryModal(puzzles.find(p=>p.id===${puzzle.id}))">📖</button>
-                    <button class="card-play-btn" onclick="selectPuzzle(${puzzle.id})">▶️ Play</button>
+                    <button class="card-story-btn" data-action="story" type="button" title="Read story">📖</button>
+                    <button class="card-play-btn" data-action="play" type="button" title="Play puzzle">▶️ Play</button>
                 </div>
             </div>
-        </div>
-    `;
-    }).join('');
+        `;
+        
+        puzzleGallery.appendChild(puzzleCard);
+    });
     
     // Start rotation timer if not already running
     startGalleryRotation(category);

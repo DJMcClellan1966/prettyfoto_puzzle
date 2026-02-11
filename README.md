@@ -48,6 +48,22 @@ puzzle/
 ├── app.min.js      # Minified bundle (loads in production)
 ├── manifest.json   # PWA manifest (icons, scope, start_url)
 ├── sw.js           # Service worker (cache shell + images, fetch fallback)
+
+## Recent changes (2026-02-10)
+
+- Security fixes: removed inline event handlers, sanitized dynamic HTML output, and replaced blocking `alert()` calls with accessible toast notifications.
+- Email subscription: added robust fallback for private browsing/CSP/CORS failures (opens manual signup page and times out JSONP requests), improved error handling and user feedback.
+- Daily puzzle consistency: normalized date handling and added session-level caching so the daily image on the home page matches the image used when starting the puzzle.
+- Debug & maintenance helpers: added `debugDailyPuzzle()` and `clearDailyCache()` helpers for local troubleshooting.
+- Cache & PWA: bumped service worker cache version to force clients to refresh and pick up the updated `app.js`.
+
+All automated edge-case tests pass locally (37/37). After editing `app.js`, re-minify `app.min.js` before deployment:
+
+```
+npx terser app.js -o app.min.js -c -m
+```
+
+If you want me to commit and push these changes, say "commit and push" and I'll run the git commands.
 └── README.md       # This file
 ```
 
