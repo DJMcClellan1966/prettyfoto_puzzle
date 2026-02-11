@@ -56,10 +56,11 @@ const puzzles = [
     },
     { 
         id: 5, 
-        title: "Love's Flame", 
+        title: "Spring Petals", 
         category: "flowers", 
-        image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1737159079/IMG_0631_nuav1f.jpg", 
-        shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/img-0631?product_gallery=302625&product_id=7841103",
+        // Replaced the original "Love's Flame" asset per request
+        image: "https://images.discerningassets.com/image/upload/c_fill,w_600,h_600,q_auto:best/v1737159071/2N4A4426_o4lj30.jpg", 
+        shopUrl: "https://www.prettyfoto.com/warehouse-open-edition-prints/art_print_products/2n4a4426?product_gallery=302625&product_id=7841076",
         galleryUrl: "https://www.prettyfoto.com/tulips"
     },
     
